@@ -5,6 +5,7 @@ import DefaultView from "@/views/DefaultView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import { useMainStore } from "@/store/mainStore";
 
+
 const routes = [
   {
     path: "/auth",
