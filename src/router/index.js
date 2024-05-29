@@ -4,14 +4,31 @@ import MainView from "@/views/MainView.vue";
 import DefaultView from "@/views/DefaultView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import { useMainStore } from "@/store/mainStore";
+import AuthFormComp from "@/components/authView/authFormComp.vue";
+import RegFormComp from "@/components/authView/regFormComp.vue";
 
 
 const routes = [
   {
-    path: "/auth",
+    path: "/auth/",
     name: "auth",
     component: AuthView,
     meta: { requiredAuth: false },
+    redirect: { name: 'login' },
+    children: [
+      {
+        path: "log-in",
+        component: AuthFormComp,
+        name: 'login',
+        meta: { requiredAuth: false }
+      },
+      {
+        path: "log-up",
+        component: RegFormComp,
+        name: 'logup', 
+        meta: { requiredAuth: false }
+      }
+    ]
   },
   {
     path: "/",
@@ -42,6 +59,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const store = useMainStore();
+    const token = localStorage.getItem('token');
+    if(token) store.isAuth = true;
     if(to.meta.requiredAuth === true) {
         if(store.isAuth === true) {
           next();
@@ -52,5 +71,6 @@ router.beforeEach((to, from, next) => {
     } 
     next();
 });
+
 
 export default router;

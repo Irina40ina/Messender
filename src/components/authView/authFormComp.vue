@@ -2,7 +2,7 @@
     <form 
     class="auth-form"
     @submit.prevent
-    >
+    > 
         <h1 class="auth-form__title">Авторизация</h1>
         <div class="input-block">
             <inputComp  
@@ -11,7 +11,7 @@
             v-model="email"
             ></inputComp>
             <inputComp 
-            type="'password'" 
+            type="password" 
             placeholder="Введите пароль"
             v-model="password"
             ></inputComp>
@@ -20,13 +20,13 @@
         <div class="action-block">
             <btnComp 
             style="margin-left: 2rem;"
-            @click="changeMode"
+            @click="$router.push({ name: 'logup' })"
             >
                 Регистрация
             </btnComp>
             <btnComp
             style="margin-right: 2rem;"
-            @click="dataSubmit"
+            @click="handlerLogin"
             >
             Войти</btnComp>
         </div>
@@ -34,6 +34,7 @@
     </form>
 </template>
 <script>
+import { login } from "@/api/authApi.js"
 export default {
     data() {
         return {
@@ -45,11 +46,21 @@ export default {
     methods: {
         dataSubmit() {
             this.$emit('dataSubmit', { email: this.email, password: this.password })
+        },
+        async handlerLogin() {
+            try {
+                if(this.email !== '' && this.password !== '') { 
+                    await login(this.email, this.password);
+                    this.$router.push({ name: 'main' });
+                } else {
+                    return;
+                }
+            } catch (err) {
+                console.error(`components/authView/authFormComp.vue: handlerLogin  => ${err}`)
+            }
         }
     },
-    changeMode() {
-        this.$emit('isShow', true)
-    }
+    
 }
 </script>
 <style scoped>
