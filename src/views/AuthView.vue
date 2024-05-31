@@ -2,20 +2,14 @@
     <div class="auth-view">
         <div class="auth-form__container">
             <!-- ФОРМА АВТОРИЗВАЦИИ (ВОЙТИ В СИСТЕМУ) -->
-            <authFormComp
-            @data-submit="handlerSubmit"
-            @is-show="isShow"
-            ></authFormComp>
-            <regFormComp
-            v-show="isShow"
-            ></regFormComp>
+            <router-view></router-view>
         </div>
     </div>
 </template>
 <script>
 import { login } from '@/api/authApi.js'
-import authFormComp from '@/components/AuthViewComp/authFormComp.vue';
-import regFormComp from '@/components/AuthViewComp/regFormComp.vue'
+import authFormComp from '@/components/authView/authFormComp.vue';
+import regFormComp from '@/components/authView/regFormComp.vue';
 export default {
     components: {
         authFormComp,
