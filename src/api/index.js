@@ -6,10 +6,9 @@ const headersJSON = {
 };
 
 
-
-
 const headersUrl = {
     "Content-Type": "application/x-www-form-urlencoded",
+    "Authorization": "Bearer " + localStorage.getItem('token')
 }
 
 

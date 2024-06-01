@@ -6,7 +6,9 @@ import NotFoundView from "@/views/NotFoundView.vue";
 import { useMainStore } from "@/store/mainStore";
 import AuthFormComp from "@/components/authView/authFormComp.vue";
 import RegFormComp from "@/components/authView/regFormComp.vue";
-
+import profileComp from "@/components/mainView/profile/profileComp.vue";
+import messangerComp from "@/components/mainView/messanger/messangerComp.vue";
+import usersComp from "@/components/mainView/users/usersComp.vue";
 
 const routes = [
   {
@@ -38,10 +40,30 @@ const routes = [
     meta: { requiredAuth: true },
   },
   {
-    path: "/main",
+    path: "/main/",
     name: "main",
     component: MainView,
     meta: { requiredAuth: true },
+    children: [
+      {
+        path: "profile",
+        component: profileComp,
+        name: "profile",
+        meta: { requiredAuth: true },
+      },
+      {
+        path: "users",
+        component: usersComp,
+        name: "users",
+        meta: { requiredAuth: true },
+      },
+      {
+        path: "messanger",
+        component: messangerComp,
+        name: "messanger",
+        meta: { requiredAuth: true },
+      }
+    ]
   },
   {
     path: "/:notFound(.*)*",
