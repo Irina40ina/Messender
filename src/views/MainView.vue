@@ -24,13 +24,13 @@ export default {
         navdrawerComp,
         topbarComp,
     },
-    async mounted() {
-        try {
-            await getUserById(1);
-        } catch {
-            console.error(`views/MainView: mounted[getUserById] => ${err}`);
-        }
-    },
+    // async mounted() {
+    //     try {
+    //         await getUserById(1);
+    //     } catch {
+    //         console.error(`views/MainView: mounted[getUserById] => ${err}`);
+    //     }
+    // },
 }
 </script>
 <style scoped>
@@ -39,11 +39,10 @@ export default {
     height: 100vh;
     position: relative;
     display: grid;
-    grid-template-columns: 25% auto;
-    grid-template-rows: 70px auto;
+    grid-template-columns: 4% 96%;
+    grid-template-rows: 60px auto;
     grid-template-areas:
       "header header"
       "nav main";
-    
 }
 </style>

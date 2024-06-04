@@ -16,21 +16,21 @@ const routes = [
     name: "auth",
     component: AuthView,
     meta: { requiredAuth: false },
-    redirect: { name: 'login' },
+    redirect: { name: "login" },
     children: [
       {
         path: "log-in",
         component: AuthFormComp,
-        name: 'login',
-        meta: { requiredAuth: false }
+        name: "login",
+        meta: { requiredAuth: false },
       },
       {
         path: "log-up",
         component: RegFormComp,
-        name: 'logup', 
-        meta: { requiredAuth: false }
-      }
-    ]
+        name: "logup",
+        meta: { requiredAuth: false },
+      },
+    ],
   },
   {
     path: "/",
@@ -62,8 +62,8 @@ const routes = [
         component: messangerComp,
         name: "messanger",
         meta: { requiredAuth: true },
-      }
-    ]
+      },
+    ],
   },
   {
     path: "/:notFound(.*)*",
@@ -78,21 +78,19 @@ const router = createRouter({
   routes,
 });
 
-
-router.beforeEach((to, from, next) => {
-    const store = useMainStore();
-    const token = localStorage.getItem('token');
-    if(token) store.isAuth = true;
-    if(to.meta.requiredAuth === true) {
-        if(store.isAuth === true) {
-          next();
-        } 
-        else {
-          next({ name: 'auth' });
-        }
-    } 
-    next();
-});
-
+// router.beforeEach((to, from, next) => {
+//     const store = useMainStore();
+//     const token = localStorage.getItem('token');
+//     if(token) store.isAuth = true;
+//     if(to.meta.requiredAuth === true) {
+//         if(store.isAuth === true) {
+//           next();
+//         }
+//         else {
+//           next({ name: 'auth' });
+//         }
+//     }
+//     next();
+// });
 
 export default router;
