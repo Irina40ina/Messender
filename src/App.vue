@@ -19,6 +19,9 @@
   --font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   --radius: 3px;
   --default-bg: rgba(128, 128, 128, 0.2);
+  --solid-bg: rgb(197, 197, 197);
+  --topbar-bg: rgba(128, 128, 128, 0.366);
+  --topbar-fg: rgba(128, 128, 128, 0.744);
 }
 
 
