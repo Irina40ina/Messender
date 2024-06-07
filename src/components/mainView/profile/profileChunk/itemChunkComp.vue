@@ -8,13 +8,25 @@
             <font-awesome-icon 
             class="edit-icon"
             icon="fa-pen-to-square"
+            @click="openEditField"
             ></font-awesome-icon>
         </p>
+        
+        <editFieldComp
+        :item="$props.item"
+        @confirm=""
+        @close="closeEditField"
+        />
     </div>
 </template>
 
 <script>
+import editFieldComp from './editFieldComp.vue';
+import gsap from 'gsap';
 export default {
+    components: {
+        editFieldComp,
+    },
     props: {
         item: {
             type: Object,
@@ -23,13 +35,17 @@ export default {
     },
     computed: {
         computeValue() {
-            // if(!this.$props.item.value) {
-            //     return 'Не указано'
-            // }
-            // return this.$props.item.value;
             return this.$props.item.value ?? 'Не указано';
         }
-    }
+    },
+    methods: {
+        openEditField() {
+            gsap.to(`#edit-field__${this.$props.item.id}`, { duration: .3, right: 0 });
+        },
+        closeEditField() {
+            gsap.to(`#edit-field__${this.$props.item.id}`, { duration: .3, right: '-100%' });
+        }
+    },  
 }
 </script>
 

@@ -13,17 +13,17 @@
                 <div class="profile__chunk"> 
                     <!-- E-MAIL -->
                     <itemChunkComp
-                    :item="{ id: 'email', key: 'E-mail', value: null }"
+                    :item="{ id: 'email', key: 'E-mail', value: store.profileData.email }"
                     />
 
                     <!-- LOGIN -->
                     <itemChunkComp
-                    :item="{ id: 'login', key: 'Логин', value: null }"
+                    :item="{ id: 'login', key: 'Логин', value: store.profileData.login }"
                     />
 
                     <!-- PHONE NUMBER -->
                     <itemChunkComp
-                    :item="{ id: 'phone-number', key: 'Номер телефона', value: null }"
+                    :item="{ id: 'phone-number', key: 'Номер телефона', value: store.profileData.phoneNumber }"
                     />
                 </div>
 
@@ -31,17 +31,17 @@
                 <div class="profile__chunk">
                     <!-- NAME -->
                     <itemChunkComp 
-                    :item="{ id: 'name', key: 'Имя', value: null }"
+                    :item="{ id: 'name', key: 'Имя', value: store.profileData.name }"
                     />
 
                     <!-- LASTNAME -->
                     <itemChunkComp 
-                    :item="{ id: 'lastname', key: 'Фамилия', value: null }"
+                    :item="{ id: 'lastname', key: 'Фамилия', value: store.profileData.lastname }"
                     />
 
                     <!-- SURNAME -->
                     <itemChunkComp 
-                    :item="{ id: 'surname', key: 'Отчество', value: null }"
+                    :item="{ id: 'surname', key: 'Отчество', value: store.profileData.surname }"
                     />
                 </div>
 
@@ -49,17 +49,17 @@
                 <div class="profile__chunk" style="grid-column: 1 / span 2;">
                     <!-- GENDER -->
                     <itemChunkComp 
-                    :item="{ id: 'gender', key: 'Пол', value: null }"
+                    :item="{ id: 'gender', key: 'Пол', value: store.profileData.gender }"
                     />
 
                     <!-- BIRTH AT -->
                     <itemChunkComp 
-                    :item="{ id: 'birth-at', key: 'Дата рождения', value: null }"
+                    :item="{ id: 'birth-at', key: 'Дата рождения', value: store.profileData.birthAt }"
                     />
 
                     <!-- CREATED AT -->
                     <itemChunkComp 
-                    :item="{ id: 'created-at', key: 'Дата создания аккаунта', value: null }"
+                    :item="{ id: 'created-at', key: 'Дата создания аккаунта', value: store.profileData.createdAt }"
                     />
                 </div>
             </main>
@@ -69,10 +69,16 @@
 
 <script>
 import itemChunkComp from './profileChunk/itemChunkComp.vue';
+import { useMainStore } from '@/store/mainStore';
 export default {
     components: {
         itemChunkComp,
-    }
+    },
+    data() {
+        return {
+            store: useMainStore(),
+        }
+    },
 }
 </script>
 
