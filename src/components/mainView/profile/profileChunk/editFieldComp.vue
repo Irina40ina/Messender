@@ -5,7 +5,7 @@
     >
         <editTextFormComp
         :item="$props.item"
-        @confirm="(value) => $emit('confirm', value)"
+        @confirm-text-data="(value) => $emit('confirmTextData', value)"
         @close="$emit('close')"
         ></editTextFormComp>
     </div>
@@ -23,7 +23,7 @@ export default {
             required: true,
         }
     },
-    emits: ['confirm', 'close'],
+    emits: ['confirmTextData', 'close'],
 }
 </script>
 

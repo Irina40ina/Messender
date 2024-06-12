@@ -5,16 +5,17 @@
             {{ computeValue }}
             
             <!-- EDIT ICON -->
-            <font-awesome-icon 
+            <font-awesome-icon
             class="edit-icon"
             icon="fa-pen-to-square"
+            v-if="$props.item.id !== 'created-at'"
             @click="openEditField"
             ></font-awesome-icon>
         </p>
         
         <editFieldComp
         :item="$props.item"
-        @confirm=""
+        @confirm-text-data="(value) => $emit('confirmTextData', value)"
         @close="closeEditField"
         />
     </div>
@@ -33,6 +34,7 @@ export default {
             required: true,
         },
     },
+    emits: ['confirmTextData', 'openDateTimePicker'],
     computed: {
         computeValue() {
             return this.$props.item.value ?? 'Не указано';
@@ -40,6 +42,9 @@ export default {
     },
     methods: {
         openEditField() {
+            if(this.$props.item.id === 'birth-at'){
+                return this.$emit('openDateTimePicker');
+            }
             gsap.to(`#edit-field__${this.$props.item.id}`, { duration: .3, right: 0 });
         },
         closeEditField() {

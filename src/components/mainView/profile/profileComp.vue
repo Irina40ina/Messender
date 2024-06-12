@@ -9,21 +9,30 @@
             </header>
             <main class="profile__info">
 
+                <primaryDialogComp
+                :is-show="isShowDateTimePicker"
+                @close="isShowDateTimePicker = false"
+                >
+                </primaryDialogComp>
+
                 <!-- БЛОК Учетных данных пользователя -->
                 <div class="profile__chunk"> 
                     <!-- E-MAIL -->
                     <itemChunkComp
                     :item="{ id: 'email', key: 'E-mail', value: store.profileData.email }"
+                    @confirm-text-data="(value) => console.log(value)"
                     />
 
                     <!-- LOGIN -->
                     <itemChunkComp
                     :item="{ id: 'login', key: 'Логин', value: store.profileData.login }"
+                    @confirm-text-data="(value) => console.log(value)"
                     />
 
                     <!-- PHONE NUMBER -->
                     <itemChunkComp
-                    :item="{ id: 'phone-number', key: 'Номер телефона', value: store.profileData.phoneNumber }"
+                    :item="{ id: 'phone-number', key: 'Номер телефона', value: null /* store.profileData.phoneNumber */ }"
+                    @confirm-text-data="(value) => console.log(value)"
                     />
                 </div>
 
@@ -32,16 +41,19 @@
                     <!-- NAME -->
                     <itemChunkComp 
                     :item="{ id: 'name', key: 'Имя', value: store.profileData.name }"
+                    @confirm-text-data="(value) => console.log(value)"
                     />
 
                     <!-- LASTNAME -->
                     <itemChunkComp 
                     :item="{ id: 'lastname', key: 'Фамилия', value: store.profileData.lastname }"
+                    @confirm-text-data="(value) => console.log(value)"
                     />
 
                     <!-- SURNAME -->
                     <itemChunkComp 
                     :item="{ id: 'surname', key: 'Отчество', value: store.profileData.surname }"
+                    @confirm-text-data="(value) => console.log(value)"
                     />
                 </div>
 
@@ -54,6 +66,7 @@
 
                     <!-- BIRTH AT -->
                     <itemChunkComp 
+                    @open-date-time-picker="isShowDateTimePicker = true"
                     :item="{ id: 'birth-at', key: 'Дата рождения', value: store.profileData.birthAt }"
                     />
 
@@ -70,15 +83,22 @@
 <script>
 import itemChunkComp from './profileChunk/itemChunkComp.vue';
 import { useMainStore } from '@/store/mainStore';
+import { replacePhoneNumber } from "@/utils/maskUtils"
+import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
 export default {
     components: {
         itemChunkComp,
+        primaryDialogComp,
     },
     data() {
         return {
             store: useMainStore(),
+            isShowDateTimePicker: false,
         }
     },
+    mounted() {
+        console.log(replacePhoneNumber('9991231212'));
+    }
 }
 </script>
 
