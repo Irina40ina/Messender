@@ -4,6 +4,9 @@ import "./registerServiceWorker";
 import router from "./router";
 import { createPinia } from "pinia";
 import components from '@/components';
+import { vuetify } from "./plugins/vuetify";
+import { vMaska } from "maska";
+
 
 // ICON AWESOME
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -20,8 +23,10 @@ components.forEach((component) => {
     app.component(component.name, component);
 });
 
-app;
+app.directive('maska', vMaska);
+
 app
     .use(pinia)
     .use(router)
+    .use(vuetify)
     .mount("#app")

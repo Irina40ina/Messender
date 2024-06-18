@@ -1,13 +1,18 @@
 <template>
     <div class="primary-dialog__overlay"
     @click="$emit('close')"
-    v-show="$props.isShow"
+    v-show="isShowDialog"
     >
-        <div class="primary-dialog__content">
+        <div class="primary-dialog__content" 
+        @click.stop
+        >
+            <slot></slot>
         </div>
     </div>
 </template>
+
 <script>
+import gsap from "gsap"
 export default {
     props: {
         isShow: {
@@ -15,9 +20,34 @@ export default {
             default: false,
         }
     },
-    emits: ['close']
+    data() {
+        return {
+            isShowDialog: false,
+        }
+    },
+    emits: ['close'],
+ 
+    watch: {
+        isShow: {
+            handler(newValue) {
+                if(newValue === true) {
+                    this.isShowDialog = true;
+                    gsap.to('.primary-dialog__overlay', { duration: 0.3, opacity: 1 });
+                    gsap.to('.primary-dialog__content', { duration: 0.4, scale: 1 });
+                    
+                } else {
+                    gsap.to('.primary-dialog__overlay', { duration: 0.3, opacity: 0 })
+                    gsap.to('.primary-dialog__content', { duration: 0.4, scale: 0 })
+                        .then(() => {
+                            this.isShowDialog = false;
+                        })
+                }
+            }
+        }
+    },
 }
 </script>
+
 <style scoped>
 .primary-dialog__overlay {
     position: fixed;
@@ -30,6 +60,7 @@ export default {
     align-items: center;
     background-color: rgba(0,0,0,0.1);
     backdrop-filter: blur(2px);
+    opacity: 0;
     z-index: 1000;
 
 }
@@ -44,5 +75,7 @@ export default {
     max-height: 80%;
     background-color: var(--color-bg-main);
     overflow: auto;
+    scale: 0;
+    border-radius: 5px;
 }
 </style>

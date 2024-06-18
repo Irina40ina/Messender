@@ -13,6 +13,7 @@
                 :is-show="isShowDateTimePicker"
                 @close="isShowDateTimePicker = false"
                 >
+                    <dateTimePickerComp />
                 </primaryDialogComp>
 
                 <!-- БЛОК Учетных данных пользователя -->
@@ -85,10 +86,12 @@ import itemChunkComp from './profileChunk/itemChunkComp.vue';
 import { useMainStore } from '@/store/mainStore';
 import { replacePhoneNumber } from "@/utils/maskUtils"
 import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
+import dateTimePickerComp from '@/components/UI/dateTimePickerComp.vue';
 export default {
     components: {
         itemChunkComp,
         primaryDialogComp,
+        dateTimePickerComp,
     },
     data() {
         return {
