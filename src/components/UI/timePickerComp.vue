@@ -56,7 +56,7 @@
                 type="text" 
                 :placeholder="'00'"
                 :value="selectedMinute"
-                v-maska:[maskTemplate]  
+                v-maska:[maskTemplate]
                 @input="(e) => selectMinutes(e)"
                 ref="minutesInput"
                 >

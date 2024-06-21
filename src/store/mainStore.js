@@ -8,7 +8,7 @@ export const useMainStore = defineStore('useMainStore', {
             isAuth: false,
             profileData: {
                 id: null,
-                avatar: null, 
+                avatar: null,
                 birthAt: null,
                 createdAt: null, 
                 deletedAt: null, 
@@ -21,6 +21,17 @@ export const useMainStore = defineStore('useMainStore', {
                 phoneNumber: null,
                 updatedAt: null,
                 userId: null,
+            },
+            profileEditData: {
+                avatar: null,
+                birthAt: null,
+                email: null, 
+                gender: null, 
+                lastname: null,
+                surname: null,
+                login: null,
+                name: null,
+                phoneNumber: null,
             }
         }
     },

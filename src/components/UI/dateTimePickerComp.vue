@@ -6,16 +6,21 @@
             <v-date-picker 
             show-adjacent-months
             class="date-picker"
+            v-model="selectedDate"
             >
             </v-date-picker>
             
             <!-- TimePicker -->
             <timePickerComp 
             class="time-picker"
+            @select-time="(data) => selectedTime = data"
             />
         </div>
         <div class="date-time-picker__actions">
-            <button class="actions-btn">Подтвердить</button>
+            <button 
+            class="actions-btn"
+            @click="selectDateTime"
+            >Подтвердить</button>
             <button class="actions-btn"
             @click="toggleMode"
             >{{ computeNameSelect }}</button>
@@ -30,9 +35,12 @@ export default {
     components: {
         timePickerComp,
     },
+    emits: ['selectDateTime'],
     data() {
         return {
-            selectionMode: 'date', // date | time
+            selectionMode: 'date', // date | time,
+            selectedDate: null,
+            selectedTime: '00:00:00',
         }
     },
     computed: {
@@ -55,7 +63,15 @@ export default {
                 gsap.to('.time-picker', { duration: .2, right: '-100%' });
                 gsap.to('.date-picker', { duration: .2, left: 0 });
             }
-        }
+        },
+        selectDateTime() {
+            const currentDate = new Date(this.selectedDate);
+            const [hours, min, sec] = this.selectedTime.split(":");
+            currentDate.setHours(hours);
+            currentDate.setMinutes(min);
+            currentDate.setSeconds(sec);
+            this.$emit('selectDateTime', currentDate);
+        },
     }
 }
 </script>
