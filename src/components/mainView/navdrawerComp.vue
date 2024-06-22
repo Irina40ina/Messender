@@ -78,7 +78,7 @@ export default {
     grid-area: nav;
     border-right: var(--border); 
     background-color: var(--color-bg-main);
-    z-index: 1000;
+    z-index: 1;
 }
 .nav-list {
     display: flex;

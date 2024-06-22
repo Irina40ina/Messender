@@ -22,6 +22,12 @@
   --default-bg: rgba(128, 128, 128, 0.2);
   --topbar-bg: rgba(128, 128, 128, 0.366);
   --topbar-fg: rgba(128, 128, 128, 0.744);
+  --timepicker-border: rgb(54, 161, 78);
+  --timepicker-bg: rgba(63, 205, 94, 0.3);
+  --timepicker-fg: rgb(63, 205, 94);
+  --profile-save-border: rgb(109, 172, 84);
+  --profile-save-fg: rgb(119, 172, 84);
+  --profile-save-hover: rgb(92, 209, 46);
 }
 
 

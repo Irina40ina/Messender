@@ -6,6 +6,7 @@
         v-model="textInput"
         class="edit-text-form__input"
         :placeholder="`${$props.item.key}`"
+        ref="editFieldInput"
         >
 
         <!-- CONFIRM -->
@@ -38,13 +39,14 @@
             <font-awesome-icon
             class="icon"
             icon="fa-xmark"
-            ></font-awesome-icon> 
+            ></font-awesome-icon>
         </button>
     </form> 
-</template>
+</template> 
 
 <script>
 import { animationFadeText } from '@/utils/animationUtils';
+import Inputmask from 'inputmask';
 export default {
     props: {
         item: {
@@ -52,7 +54,7 @@ export default {
             required: true,
         }
     },
-    emits: [ 'confirm', 'close', ],
+    emits: [ 'confirmTextData', 'close', ],
     data() {
         return {
             textInput: '',
@@ -60,7 +62,7 @@ export default {
     },
     methods: {
         confirm() {
-            this.$emit('confirm', this.textInput);
+            this.$emit('confirmTextData', this.textInput);
             this.textInput = '';
         },
         reset() {
@@ -71,6 +73,11 @@ export default {
         close() {
             this.$emit('close');
         },
+    },
+    mounted() {
+        if(this.$props.item.id === 'phone-number') {
+            Inputmask({ mask: '+7 (999) 999-99-99' }).mask(this.$refs.editFieldInput);
+        }
     }
 }
 </script>

@@ -9,21 +9,33 @@
             </header>
             <main class="profile__info">
 
+                <primaryDialogComp
+                :is-show="isShowDateTimePicker"
+                @close="isShowDateTimePicker = false"
+                >
+                    <dateTimePickerComp
+                    @select-date-time="(data) => selectDateTime(data)"
+                     />
+                </primaryDialogComp>
+
                 <!-- БЛОК Учетных данных пользователя -->
                 <div class="profile__chunk"> 
                     <!-- E-MAIL -->
                     <itemChunkComp
                     :item="{ id: 'email', key: 'E-mail', value: store.profileData.email }"
+                    @confirm-text-data="(value) => store.profileEditData.email = value"
                     />
 
                     <!-- LOGIN -->
                     <itemChunkComp
                     :item="{ id: 'login', key: 'Логин', value: store.profileData.login }"
+                    @confirm-text-data="(value) => store.profileEditData.login = value"
                     />
 
                     <!-- PHONE NUMBER -->
                     <itemChunkComp
-                    :item="{ id: 'phone-number', key: 'Номер телефона', value: store.profileData.phoneNumber }"
+                    :item="{ id: 'phone-number', key: 'Номер телефона', value: null /* store.profileData.phoneNumber */ }"
+                    @confirm-text-data="(value) => store.profileEditData.phoneNumber = value"
                     />
                 </div>
 
@@ -32,16 +44,19 @@
                     <!-- NAME -->
                     <itemChunkComp 
                     :item="{ id: 'name', key: 'Имя', value: store.profileData.name }"
+                    @confirm-text-data="(value) => store.profileEditData.name = value"
                     />
 
                     <!-- LASTNAME -->
                     <itemChunkComp 
                     :item="{ id: 'lastname', key: 'Фамилия', value: store.profileData.lastname }"
+                    @confirm-text-data="(value) => store.profileEditData.lastname = value"
                     />
 
                     <!-- SURNAME -->
                     <itemChunkComp 
                     :item="{ id: 'surname', key: 'Отчество', value: store.profileData.surname }"
+                    @confirm-text-data="(value) => store.profileEditData.surname = value"
                     />
                 </div>
 
@@ -54,6 +69,7 @@
 
                     <!-- BIRTH AT -->
                     <itemChunkComp 
+                    @open-date-time-picker="isShowDateTimePicker = true"
                     :item="{ id: 'birth-at', key: 'Дата рождения', value: store.profileData.birthAt }"
                     />
 
@@ -62,6 +78,22 @@
                     :item="{ id: 'created-at', key: 'Дата создания аккаунта', value: store.profileData.createdAt }"
                     />
                 </div>
+                
+                <div class="profile__actions">
+                    <button class="profile__action-btn save-changed"
+                    v-show="changeData.isChanged"
+                    >
+                            <p>Сохранить изменения ({{changeData.countFields}})</p>
+                            <font-awesome-icon
+                            :icon="['fas', 'floppy-disk']"
+                            />
+                    </button>
+                    <button class="profile__action-btn delete-profile">
+                        <p>Удалить аккаунт</p>
+                        <font-awesome-icon :icon="['fas', 'trash']" />
+                    </button>
+                </div>
+
             </main>
         </div>
     </div>
@@ -70,15 +102,52 @@
 <script>
 import itemChunkComp from './profileChunk/itemChunkComp.vue';
 import { useMainStore } from '@/store/mainStore';
+import { replacePhoneNumber } from "@/utils/maskUtils"
+import { watch } from 'vue';
+import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
+import dateTimePickerComp from '@/components/UI/dateTimePickerComp.vue';
 export default {
     components: {
         itemChunkComp,
+        primaryDialogComp,
+        dateTimePickerComp,
     },
     data() {
         return {
             store: useMainStore(),
+            isShowDateTimePicker: false,
+            changeData: {
+                isChanged: false, // Было ли хотя-бы одно изменение
+                multiple: false, // Было ли редактировано  более чем 1 поле
+                countFields: null,  // Кол-во редактируемых полей
+            }
         }
     },
+    methods: {
+        selectDateTime(currentDate) {
+            this.isShowDateTimePicker = false;
+            this.store.profileEditData.birthAt = currentDate;
+        }
+    },
+    created() {
+        watch(() => this.store.profileEditData, (newValue) => {
+            const values = Object.values(newValue);
+            let countFields = 0;
+            values.forEach((el) => {
+                if(el !== null) {
+                    countFields++;
+                    this.changeData.isChanged = true;
+                }
+            })
+            if(countFields > 1) {
+                this.changeData.multiple = true;
+            }
+            this.changeData.countFields = countFields;
+        }, { deep: true })
+    },
+    mounted() {
+        console.log(replacePhoneNumber('9991231212'));
+    }
 }
 </script>
 
@@ -146,5 +215,53 @@ export default {
         justify-content: center;
         border-radius: var(--radius);
         align-self: start;
+    }
+    .profile__actions {
+        width: 100%;
+        height: 100%;
+        grid-row: 4 / span 1;
+        grid-column: 1 / span 2;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-end;
+    }
+    .profile__action-btn {
+        height: 30px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        outline: rgba(0,0,0,0);
+        border-radius: 3px;
+        cursor: pointer;
+        transition: all .3s ease;
+    }
+
+    .profile__action-btn p {
+        margin-right: .4rem;
+        font-size: 17px;
+        font-family: var(--font);
+        font-weight: 300;
+    }
+    
+    .profile__action-btn.save-changed {
+        border: 1px solid rgb(109, 172, 84);
+        color: rgb(119, 172, 84);
+        margin-bottom: .5rem;
+    }
+    .profile__action-btn.delete-profile {
+        border: 1px solid rgb(172, 84, 84);
+        color: rgb(172, 84, 84);
+    }
+    .profile__action-btn.save-changed:hover {
+        color: rgb(92, 209, 46);
+        border-color: rgb(92, 209, 46);
+        transition: all .3 ease;
+    }
+    .profile__action-btn.delete-profile:hover {
+        border: 1px solid red;
+        color: red;
+        transition: all .3s ease;
     }
 </style>
