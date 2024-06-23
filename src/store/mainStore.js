@@ -13,7 +13,7 @@ export const useMainStore = defineStore('useMainStore', {
                 createdAt: null, 
                 deletedAt: null, 
                 email: null, 
-                gender: null, 
+                gender: 0, 
                 lastname: null,
                 surname: null,
                 login: null,

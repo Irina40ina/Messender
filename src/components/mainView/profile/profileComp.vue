@@ -102,7 +102,6 @@
 <script>
 import itemChunkComp from './profileChunk/itemChunkComp.vue';
 import { useMainStore } from '@/store/mainStore';
-import { replacePhoneNumber } from "@/utils/maskUtils"
 import { watch } from 'vue';
 import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
 import dateTimePickerComp from '@/components/UI/dateTimePickerComp.vue';
@@ -127,7 +126,7 @@ export default {
         selectDateTime(currentDate) {
             this.isShowDateTimePicker = false;
             this.store.profileEditData.birthAt = currentDate;
-        }
+        },
     },
     created() {
         watch(() => this.store.profileEditData, (newValue) => {
@@ -145,9 +144,6 @@ export default {
             this.changeData.countFields = countFields;
         }, { deep: true })
     },
-    mounted() {
-        console.log(replacePhoneNumber('9991231212'));
-    }
 }
 </script>
 
