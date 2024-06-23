@@ -2,7 +2,6 @@
     <div class="messanger-container">
         <messangerChatsComp></messangerChatsComp>
         <messangerWidgetComp></messangerWidgetComp>
-        
     </div>
 </template>
 

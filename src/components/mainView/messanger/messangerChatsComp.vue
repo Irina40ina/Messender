@@ -13,7 +13,5 @@ export default {
 <style scoped>
     .messanger-container__chats {
         width: 20%;
-        
-
     }
 </style>
