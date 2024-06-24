@@ -83,7 +83,7 @@ export default {
             required: true,
         }
     },
-    emits: ['selectGender'],
+    emits: ['selectGender', 'close'],
     created() {
         this.filledSelectedGender();
     },
@@ -98,7 +98,10 @@ export default {
             } else if(this.$props.item.value === null) {
                 return this.selectedGender;
             }
-        }
+        },
+        close() {
+            this.$emit('close');
+        },
     }
 }
 </script>
