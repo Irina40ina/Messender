@@ -86,5 +86,7 @@ export default {
         border-radius: 10px;
         box-shadow: -10px -6px 10px -3px rgba(81,  115,  81, 0.5);
         outline: rgba(255, 255, 255, 0);
+        resize: none;
+        padding: 0.5rem 1rem;
     }
 </style>

@@ -17,7 +17,6 @@
         v-else
         ></editTextFormComp>
 
-
     </div>
 </template>
 
