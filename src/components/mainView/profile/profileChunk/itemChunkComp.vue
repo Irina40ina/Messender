@@ -1,7 +1,7 @@
 <template>
     <div class="chunk-item">
         <p class="chunk-item__key">{{ $props.item.key }}: </p>
-        <p class="chunk-item__value" :class="(this.$props.item.value)? '': 'none'">
+        <p class="chunk-item__value" :class="computeClassNone">
             {{ computeValue }}
             
             <!-- EDIT ICON -->
@@ -37,7 +37,26 @@ export default {
     emits: ['confirmTextData', 'openDateTimePicker'],
     computed: {
         computeValue() {
+            if(this.$props.item.id === 'gender') {
+                if(this.$props.item.value == 0){
+                    return 'М'
+                } 
+                if(this.$props.item.value == 1){
+                    return 'Ж'
+                }
+                if(this.$props.item.value == 2){
+                    return 'Другое'
+                } 
+                return 'Не указано';
+            }
             return this.$props.item.value ?? 'Не указано';
+        },
+        computeClassNone() {
+            if(this.$props.item.value) {
+                return '';
+            } else {
+                return 'none';
+            }
         }
     },
     methods: {
@@ -50,7 +69,7 @@ export default {
         closeEditField() {
             gsap.to(`#edit-field__${this.$props.item.id}`, { duration: .3, right: '-100%' });
         }
-    },  
+    },
 }
 </script>
 
