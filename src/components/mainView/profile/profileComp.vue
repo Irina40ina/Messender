@@ -68,7 +68,7 @@
                     />
 
                     <!-- BIRTH AT -->
-                    <itemChunkComp 
+                    <itemChunkComp
                     @open-date-time-picker="isShowDateTimePicker = true"
                     :item="{ id: 'birth-at', key: 'Дата рождения', value: store.profileData.birthAt }"
                     />
@@ -82,6 +82,7 @@
                 <div class="profile__actions">
                     <button class="profile__action-btn save-changed"
                     v-show="changeData.isChanged"
+                    @click="confirmEditData"
                     >
                             <p>Сохранить изменения ({{changeData.countFields}})</p>
                             <font-awesome-icon
@@ -105,6 +106,7 @@ import { useMainStore } from '@/store/mainStore';
 import { watch } from 'vue';
 import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
 import dateTimePickerComp from '@/components/UI/dateTimePickerComp.vue';
+import { multipleProfileUpdate, singleProfileUpdate } from '@/api/profileApi';
 export default {
     components: {
         itemChunkComp,
@@ -127,6 +129,18 @@ export default {
             this.isShowDateTimePicker = false;
             this.store.profileEditData.birthAt = currentDate;
         },
+        confirmEditData() {
+            if(this.changeData.isChanged === true) {
+                // PATCH-запрос  (изменение одного поля)
+                if(this.changeData.multiple === false) {
+                    singleProfileUpdate()
+                } 
+                // PUT-запрос  (изменение нескольких полей)
+                else if(this.changeData.multiple === true) {
+                    multipleProfileUpdate()
+                }
+            }
+        }
     },
     created() {
         watch(() => this.store.profileEditData, (newValue) => {

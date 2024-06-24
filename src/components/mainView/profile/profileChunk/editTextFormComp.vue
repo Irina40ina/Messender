@@ -47,6 +47,7 @@
 <script>
 import { animationFadeText } from '@/utils/animationUtils';
 import Inputmask from 'inputmask';
+import { useMainStore } from '@/store/mainStore';
 export default {
     props: {
         item: {
@@ -62,6 +63,11 @@ export default {
     },
     methods: {
         confirm() {
+            if(this.$props.item.id === 'phone-number') {
+                const readyNumber = useMainStore().resetPhoneNumberMask(this.textInput);
+                this.$emit('confirmTextData', readyNumber);
+                return this.textInput = '';
+            }
             this.$emit('confirmTextData', this.textInput);
             this.textInput = '';
         },
