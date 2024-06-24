@@ -1,7 +1,7 @@
 <template>
     <div class="chunk-item">
         <p class="chunk-item__key">{{ $props.item.key }}: </p>
-        <p class="chunk-item__value" :class="computeClassNone">
+        <p class="chunk-item__value" :class="class">
             {{ computeValue }}
             
             <!-- EDIT ICON -->
@@ -28,6 +28,12 @@ export default {
     components: {
         editFieldComp,
     },
+    data() {
+        return {
+            computedValue: '',
+            class: '',
+        }
+    },
     props: {
         item: {
             type: Object,
@@ -35,29 +41,41 @@ export default {
         },
     },
     emits: ['confirmTextData', 'openDateTimePicker'],
+    watch: {
+        computedValue(newValue, oldValue) {
+            if(newValue === 'Не указано' || oldValue === 'Не указано') {
+                this.class = 'none';
+            } else {
+                this.class = '';
+            }
+        },
+    },
     computed: {
         computeValue() {
             if(this.$props.item.id === 'gender') {
                 if(this.$props.item.value == 0){
-                    return 'М'
+                    this.computedValue = 'М';
+                    return 'М';
                 } 
                 if(this.$props.item.value == 1){
-                    return 'Ж'
+                    this.computedValue = 'Ж';
+                    return 'Ж';
                 }
                 if(this.$props.item.value == 2){
-                    return 'Другое'
+                    this.computedValue = 'Другое';
+                    return 'Другое';
                 } 
                 return 'Не указано';
             }
-            return this.$props.item.value ?? 'Не указано';
-        },
-        computeClassNone() {
-            if(this.$props.item.value) {
-                return '';
+            if(this.$props.item.value == null){
+                this.computedValue = 'Не указано';
+                return 'Не указано'
             } else {
-                return 'none';
+                this.computedValue = this.$props.item.value;
+                return this.$props.item.value;
             }
-        }
+        },
+        
     },
     methods: {
         openEditField() {

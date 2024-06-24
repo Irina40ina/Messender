@@ -2,9 +2,7 @@
     <div class="message-widget">
         <div class="message-content">
             <wraperMessageComp
-            v-if="send"
-            :send
-            :messageText
+            :arr-messages="arrMessages"
             ></wraperMessageComp>
         </div>
         <div class="input-message-panel">
@@ -29,14 +27,16 @@ export default {
     data() {
         return {
             message: '',
-            messageText: '',
-            send: false,
+            arrMessages: [],
         }
     },
     methods: {
         sendMessage(text){
-            this.messageText = text;
-            this.send = true;
+            let obj = {
+                id: Date.now(),
+                value: text,
+            }
+            this.arrMessages.push(obj);
         }
     },
     mounted() {
@@ -48,8 +48,7 @@ export default {
                     if(this.message != ''){
                         this.sendMessage(this.message);
                     }
-                    // this.send = false;
-                    // this.message = '';
+                    this.message = '';
                 }
             })
         }

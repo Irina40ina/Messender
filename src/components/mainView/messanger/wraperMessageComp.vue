@@ -1,23 +1,22 @@
 <template>
-    <div class="wraper-message">
+    <div class="wraper-message"
+    v-for="message in $props.arrMessages"
+    :key="message.id"
+    >
         <div class="message">
-            <p>{{ `${$props.messageText}` }}</p>
+            <p>{{ message.value }}</p>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    props: {
-        send: {
-            type: Boolean,
-        },
-        messageText: {
-            type: String,
-        }
-    },
-    
-}
+   props: {
+    arrMessages: {
+        type: Array,
+    }
+   },
+   }
 </script>
 
 <style scoped>
@@ -25,7 +24,7 @@ export default {
         width: 100%;
         display: flex;
         align-items: center;
-        padding: 0.3rem 0.8rem;
+        padding: 0.5rem 1rem;
     } 
     .message {
         max-width: 70%;
