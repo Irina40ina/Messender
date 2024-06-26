@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { getProfile } from '@/api/profileApi';
 
 export const useMainStore = defineStore("useMainStore", {
   state: () => {

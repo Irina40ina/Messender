@@ -5,7 +5,7 @@
     >
         <editRadioFormComp
         :item="$props.item"
-        @confirm-text-data="(value) => $emit('confirmTextData', value)"
+        @select-gender="(value) => $emit('confirmTextData', value)"
         @close="$emit('close')"
         v-if="$props.item.id === 'gender'"
         ></editRadioFormComp>
