@@ -9,7 +9,7 @@ export async function getProfile() {
         const response = await axios.get(hostName + '/profile/me', {
             headers: headersUrl,
         });
-        console.log(response);
+        return response.data.data;
     } catch(err) {
         console.error(`api/profileApi: getProfile => ${err}`);
     }
@@ -27,7 +27,7 @@ export async function multipleProfileUpdate() {
         }, {
             headers: headersJSON,
         });
-        console.log(response);
+        return response.data.data;
     } catch(err) {
         console.error(`api/profileApi: multipleProfileUpdate => ${err}`);
     }
@@ -43,7 +43,7 @@ export async function singleProfileUpdate() {
         }, {
             headers: headersJSON,
         });
-        console.log(response);
+        return response.data.data;
     } catch(err) {
         console.error(`api/profileApi: singleProfileUpdate => ${err}`);
     }

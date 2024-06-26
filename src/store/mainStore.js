@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { getProfile } from '@/api/profileApi';
+import { getProfile } from "@/api/profileApi";
+import moment from '@/plugins/momentPlugin';
 
 export const useMainStore = defineStore("useMainStore", {
   state: () => {
@@ -49,15 +50,23 @@ export const useMainStore = defineStore("useMainStore", {
       return filteredObj;
     },
     resetPhoneNumberMask(number) {
-        let sourceNumber = number.split('');
+        let sourceNumber = number.split("");
         let readyValue = [];
-        let excludedChars = '+()- '
+        let excludedChars = "+()- ";
         sourceNumber.forEach((char) => {
             if (!excludedChars.includes(char)) {
-                readyValue.push(char);
+            readyValue.push(char);
             }
-        })
-        return readyValue.join('').slice(1);
+        });
+        return readyValue.join("").slice(1);
+    },
+    replaceDateTimeSrting(dateTime, template, utcOffset) {
+      if(utcOffset) {
+        return moment(dateTime).utcOffset(utcOffset).format(template ?? 'HH:mm:ss / ll');    
+      } else {
+        return moment(dateTime).utcOffset('+03:00').format(template ?? 'HH:mm:ss / ll');    
+      }
     }
+    
   },
 });

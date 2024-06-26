@@ -9,6 +9,7 @@
             </header>
             <main class="profile__info">
 
+                <!-- Birth At picker -->
                 <primaryDialogComp
                 :is-show="isShowDateTimePicker"
                 @close="isShowDateTimePicker = false"
@@ -16,6 +17,16 @@
                     <dateTimePickerComp
                     @select-date-time="(data) => selectDateTime(data)"
                      />
+                </primaryDialogComp>
+
+                <!-- Delete Profile Dialog -->
+                <primaryDialogComp
+                :is-show="isShowDeleteDialogWindow"
+                @close="isShowDeleteDialogWindow = false"
+                >
+                    <deleteDialogWindowComp
+                    @close="isShowDeleteDialogWindow = false"
+                />
                 </primaryDialogComp>
 
                 <!-- БЛОК Учетных данных пользователя -->
@@ -70,22 +81,15 @@
                     <!-- BIRTH AT -->
                     <itemChunkComp
                     @open-date-time-picker="isShowDateTimePicker = true"
-                    :item="{ id: 'birth-at', key: 'Дата рождения', value: store.profileData.birthAt }"
+                    :item="{ id: 'birth-at', key: 'Дата рождения', value: store.replaceDateTimeSrting(store.profileData.birthAt) }"
                     />
 
                     <!-- CREATED AT -->
                     <itemChunkComp 
-                    :item="{ id: 'created-at', key: 'Дата создания аккаунта', value: store.profileData.createdAt }"
+                    :item="{ id: 'created-at', key: 'Дата создания аккаунта', value: store.replaceDateTimeSrting(store.profileData.createdAt) }"
                     />
                 </div>
-                <primaryDialogComp
-                :is-show="isShowDeleteDialogWindow"
-                @close="isShowDeleteDialogWindow = false"
-                >
-                <deleteDialogWindowComp
-                @close="isShowDeleteDialogWindow = false"
-                />
-                </primaryDialogComp>
+
                 <div class="profile__actions">
                     <button class="profile__action-btn save-changed"
                     v-show="changeData.isChanged"
@@ -171,13 +175,9 @@ export default {
             this.changeData.countFields = countFields;
         }, { deep: true })
     },
-    mounted() {
-        {
-            
-            const response = getProfile();
-            console.log(response);  
-            
-        }
+    async mounted() {
+        const response = await getProfile();
+        this.store.profileData = response;
     }
 }
 </script>
