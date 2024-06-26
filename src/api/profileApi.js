@@ -16,6 +16,7 @@ export async function getProfile() {
 }
 
 
+
 export async function multipleProfileUpdate() {
     const store = useMainStore();
     try {

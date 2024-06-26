@@ -24,6 +24,7 @@ export async function login(email, password) {
     console.error(`api/authApi: login => ${err}`);
   }
 }
+// Выйти из системы
 export async function logup(firstName, lastName, email, password) {
   try {
     const response = await axios.post(hostName + '/users/create', {
@@ -40,3 +41,5 @@ export async function logup(firstName, lastName, email, password) {
     console.error(`api/authApi: logup => ${err}`);
   }
 }
+// Зарегистрироваться в системе
+

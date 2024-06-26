@@ -78,7 +78,14 @@
                     :item="{ id: 'created-at', key: 'Дата создания аккаунта', value: store.profileData.createdAt }"
                     />
                 </div>
-                
+                <primaryDialogComp
+                :is-show="isShowDeleteDialogWindow"
+                @close="isShowDeleteDialogWindow = false"
+                >
+                <deleteDialogWindowComp
+                @close="isShowDeleteDialogWindow = false"
+                />
+                </primaryDialogComp>
                 <div class="profile__actions">
                     <button class="profile__action-btn save-changed"
                     v-show="changeData.isChanged"
@@ -89,7 +96,10 @@
                             :icon="['fas', 'floppy-disk']"
                             />
                     </button>
-                    <button class="profile__action-btn delete-profile">
+                    <button
+                    class="profile__action-btn delete-profile"
+                    @click="isShowDeleteDialogWindow = true"
+                    >
                         <p>Удалить аккаунт</p>
                         <font-awesome-icon :icon="['fas', 'trash']" />
                     </button>
@@ -106,22 +116,25 @@ import { useMainStore } from '@/store/mainStore';
 import { watch } from 'vue';
 import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
 import dateTimePickerComp from '@/components/UI/dateTimePickerComp.vue';
-import { multipleProfileUpdate, singleProfileUpdate } from '@/api/profileApi';
+import deleteDialogWindowComp from '@/components/UI/deleteDialogWindowComp.vue';
+import { getProfile, multipleProfileUpdate, singleProfileUpdate } from '@/api/profileApi';
 export default {
     components: {
         itemChunkComp,
         primaryDialogComp,
         dateTimePickerComp,
+        deleteDialogWindowComp,
     },
     data() {
         return {
             store: useMainStore(),
             isShowDateTimePicker: false,
+            isShowDeleteDialogWindow: false,
             changeData: {
                 isChanged: false, // Было ли хотя-бы одно изменение
                 multiple: false, // Было ли редактировано  более чем 1 поле
                 countFields: null,  // Кол-во редактируемых полей
-            }
+            },
         }
     },
     methods: {
@@ -140,7 +153,7 @@ export default {
                     multipleProfileUpdate()
                 }
             }
-        }
+        },
     },
     created() {
         watch(() => this.store.profileEditData, (newValue) => {
@@ -158,6 +171,14 @@ export default {
             this.changeData.countFields = countFields;
         }, { deep: true })
     },
+    mounted() {
+        {
+            
+            const response = getProfile();
+            console.log(response);  
+            
+        }
+    }
 }
 </script>
 

@@ -66,10 +66,12 @@ export default {
             if(this.$props.item.id === 'phone-number') {
                 const readyNumber = useMainStore().resetPhoneNumberMask(this.textInput);
                 this.$emit('confirmTextData', readyNumber);
+                this.$emit('close');
                 return this.textInput = '';
             }
             this.$emit('confirmTextData', this.textInput);
             this.textInput = '';
+            this.$emit('close');
         },
         reset() {
             animationFadeText(this.textInput, (result) => {

@@ -88,6 +88,10 @@ export default {
         this.filledSelectedGender();
     },
     methods: {
+        confirm() {
+          this.$emit('selectGender');
+          this.$emit('close');
+        },
         reset() {
             this.selectedGender = null;
             this.filledSelectedGender();
