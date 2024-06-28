@@ -25,6 +25,22 @@
                 <div class="users-item">
                     
                 </div>
+                <div class="users-item">
+                    
+                </div>
+                <div class="users-item">
+                    
+                </div>
+                <div class="users-item">
+                    
+                </div>
+               
+                <div 
+                class="triggerPagination"
+                ref="triggerPagination"
+                >
+
+                </div>
             </div>
         </main>
     </div>
@@ -32,7 +48,19 @@
 
 <script>
 export default {
-    
+    mounted() {
+        const options = {
+            rootMargin: "0px",
+            threshold: 1.0,
+        };
+        const callback = (entries) => {
+            if(entries[0].isIntersecting === true) {
+                
+            }
+        };
+        const observer = new IntersectionObserver(callback, options);
+        observer.observe(this.$refs.triggerPagination);
+    }
 }
 </script>
 
@@ -106,17 +134,18 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
     }
     .users-wrapper {
         width: 90%;
         height: 90%;
         border-top: 1px solid var(--primary-fg);
         border-bottom: 1px solid var(--primary-fg);
-        overflow: auto;
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: start;
     }
     .users-item {
         width: 95%;
@@ -124,5 +153,15 @@ export default {
         border: 1px solid var(--primary-fg);
         border-radius: 10px;
         box-shadow: var(--shadow);
+        margin-top: .5rem;
+    }
+    .triggerPagination {
+        width: 100%;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        margin-top: 0.5rem;
     }
 </style>

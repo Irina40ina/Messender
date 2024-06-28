@@ -6,11 +6,11 @@
         <div class="topbar-user-area">
 
             <div class="topbar-name-container">
-                <h2 class="topbar-user-name">Alex Mercer Surname</h2>
+                <h2 class="topbar-user-name">{{ store.editName().fullname }}</h2>
             </div>
 
             <div class="topbar-avatar">
-                <p class="avatar-stub">AM</p>
+                <p class="avatar-stub">{{ store.editName().initials }}</p>
             </div>
             
             <font-awesome-icon 
@@ -25,8 +25,13 @@
 </template>
 
 <script>
+import { useMainStore } from '@/store/mainStore';
 export default {
-    
+    data() {
+        return {
+            store: useMainStore(),
+        }
+    }
 }
 </script>
 

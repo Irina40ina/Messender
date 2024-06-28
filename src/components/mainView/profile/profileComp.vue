@@ -3,9 +3,9 @@
         <div class="profile">
             <header class="profile__header">
                 <div class="profile__avatar">
-                    <h1 class="avatar-stub">AM</h1>
+                    <h1 class="avatar-stub">{{ store.editName().initials }}</h1>
                 </div>
-                <h1 class="profile__username">Alex Mercer Surname</h1>
+                <h1 class="profile__username">{{ store.editName().fullname }}</h1>
             </header>
             <main class="profile__info">
 
@@ -134,6 +134,8 @@ export default {
             store: useMainStore(),
             isShowDateTimePicker: false,
             isShowDeleteDialogWindow: false,
+            fullname: '',
+            initials: '',
             changeData: {
                 isChanged: false, // Было ли хотя-бы одно изменение
                 multiple: false, // Было ли редактировано  более чем 1 поле
@@ -146,15 +148,25 @@ export default {
             this.isShowDateTimePicker = false;
             this.store.profileEditData.birthAt = currentDate;
         },
+        async singleProfileUpdateVeiw() {
+            const response = await singleProfileUpdate();
+            this.store.profileData = response; 
+        },
+        async multipleProfileUpdateVeiw() {
+            const response = await multipleProfileUpdate();
+            this.store.profileData = response; 
+        },
         confirmEditData() {
             if(this.changeData.isChanged === true) {
                 // PATCH-запрос  (изменение одного поля)
                 if(this.changeData.multiple === false) {
-                    singleProfileUpdate()
+                singleProfileUpdate();
+                this.singleProfileUpdateVeiw();
                 } 
                 // PUT-запрос  (изменение нескольких полей)
                 else if(this.changeData.multiple === true) {
-                    multipleProfileUpdate()
+                    multipleProfileUpdate();
+                    this.multipleProfileUpdateVeiw();
                 }
             }
         },
