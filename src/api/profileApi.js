@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { hostName, headersJSON, headersUrl } from "./index";
+import { hostName, ContentTypeJSON, ContentTypeURL, getBearerToken } from "./index";
 import { useMainStore } from '@/store/mainStore';
 
 
@@ -7,14 +7,16 @@ import { useMainStore } from '@/store/mainStore';
 export async function getProfile() {
     try {
         const response = await axios.get(hostName + '/profile/me', {
-            headers: headersUrl,
+            headers: {
+                ...ContentTypeURL,
+                ...getBearerToken(),
+            },
         });
         return response.data.data;
     } catch(err) {
         console.error(`api/profileApi: getProfile => ${err}`);
     }
 }
-
 
 
 export async function multipleProfileUpdate() {
@@ -25,7 +27,10 @@ export async function multipleProfileUpdate() {
         const response = await axios.put(hostName + `/profile/1/update`, {
             ...readyData
         }, {
-            headers: headersJSON,
+            headers: {
+                ...ContentTypeJSON,
+                ...getBearerToken(),
+            },
         });
         return response.data.data;
     } catch(err) {
@@ -41,7 +46,10 @@ export async function singleProfileUpdate() {
         const response = await axios.patch(hostName + `/profile/1/update-one`, {
             ...readyData
         }, {
-            headers: headersJSON,
+            headers: {
+                ...ContentTypeJSON,
+                ...getBearerToken(),
+            },
         });
         return response.data.data;
     } catch(err) {

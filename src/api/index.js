@@ -1,20 +1,24 @@
 
+// const hostName = "http://localhost:3333";
 const hostName = "http://5.35.92.127:3333";
-const headersJSON = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + localStorage.getItem('token')
-};
 
-
-const headersUrl = {
+let ContentTypeURL = {
     "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer " + localStorage.getItem('token')
+}
+let ContentTypeJSON = {
+    "Content-Type": "application/json",
 }
 
-
+function getBearerToken() {
+    const token = localStorage.getItem('token');
+    return {
+        "Bearer": token,
+    }
+}
 
 export {
     hostName,
-    headersJSON,
-    headersUrl,
+    ContentTypeURL,
+    ContentTypeJSON,
+    getBearerToken,
 }

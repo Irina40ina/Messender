@@ -3,9 +3,9 @@
         <div class="profile">
             <header class="profile__header">
                 <div class="profile__avatar">
-                    <h1 class="avatar-stub">{{ store.editName().initials }}</h1>
+                    <h1 class="avatar-stub">{{ 'AM'/* store.editName().initials */ }}</h1>
                 </div>
-                <h1 class="profile__username">{{ store.editName().fullname }}</h1>
+                <h1 class="profile__username">{{ 'Alex'/* store.editName().fullname */ }}</h1>
             </header>
             <main class="profile__info">
 
@@ -189,7 +189,8 @@ export default {
     },
     async mounted() {
         const response = await getProfile();
-        this.store.profileData = response;
+        console.log(response);
+        // this.store.profileData = response;
     }
 }
 </script>

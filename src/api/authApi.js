@@ -1,4 +1,4 @@
-import { hostName, headersJSON, headersUrl } from "@/api";
+import { hostName, ContentTypeJSON, getBearerToken } from "@/api";
 import axios from "axios";
 import { useMainStore } from "@/store/mainStore"
 
@@ -9,7 +9,10 @@ export async function login(email, password) {
         email,
         password,
     }, {
-        headers: headersJSON,
+        headers: {
+          ...ContentTypeJSON,
+          ...getBearerToken(),
+        },
     });
     const responseObj = {
       user: response.data.data.user,
@@ -33,7 +36,10 @@ export async function logup(firstName, lastName, email, password) {
         name: firstName,
         lastname: lastName,
     }, {
-        headers: headersJSON,
+        headers: {
+          ...ContentTypeJSON,
+          ...getBearerToken(),
+        },
     });
     console.log(response)
 

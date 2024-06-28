@@ -66,18 +66,18 @@ export const useMainStore = defineStore("useMainStore", {
         return moment(dateTime).utcOffset('+03:00').format(template ?? 'HH:mm:ss / ll');    
       }
     },
-    editName() {
-      let fullname = `${this.profileData.name} ${this.profileData.lastname} ${this.profileData.surname}`;
-      let firstLetter = '';
-      let secondLetter = '';
-      if(this.profileData.name !== null) {
-        firstLetter = this.profileData.name.slice(0,1).toUpperCase();
-      } 
-      if(this.profileData.lastname !== null) {
-        secondLetter = this.profileData.lastname.slice(0,1).toUpperCase();
-      }
-      let initials = firstLetter + secondLetter + '';
-      return { fullname, initials }
-    }
+    // editName() {
+    //   let fullname = `${this.profileData.name} ${this.profileData.lastname} ${this.profileData.surname}`;
+    //   let firstLetter = '';
+    //   let secondLetter = '';
+    //   if(this.profileData.name !== null) {
+    //     firstLetter = this.profileData.name.slice(0,1).toUpperCase();
+    //   } 
+    //   if(this.profileData.lastname !== null) {
+    //     secondLetter = this.profileData.lastname.slice(0,1).toUpperCase();
+    //   }
+    //   let initials = firstLetter + secondLetter + '';
+    //   return { fullname, initials }
+    // }
   },
 });

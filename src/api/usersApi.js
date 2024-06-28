@@ -1,11 +1,14 @@
 import axios from 'axios';
-import { hostName, headersJSON, headersUrl } from "./index";
+import { hostName, ContentTypeJSON, ContentTypeURL, getBearerToken } from "./index";
 
 // Получение пользователя по ID
 export async function getUserById(userId) {
     try {
         const response = await axios.get(hostName + `/users/${userId}`, {
-            headers: headersUrl,
+            headers: {
+                ...ContentTypeURL,
+                ...getBearerToken(),
+            }
         });
         console.log(response);
     } catch (err) {

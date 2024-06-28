@@ -6,11 +6,11 @@
         <div class="topbar-user-area">
 
             <div class="topbar-name-container">
-                <h2 class="topbar-user-name">{{ store.editName().fullname }}</h2>
+                <h2 class="topbar-user-name">{{ 'Alex'/* store.editName().fullname */ }}</h2>
             </div>
 
             <div class="topbar-avatar">
-                <p class="avatar-stub">{{ store.editName().initials }}</p>
+                <p class="avatar-stub">{{ 'AM'/* tore.editName().initials */ }}</p>
             </div>
             
             <font-awesome-icon 
