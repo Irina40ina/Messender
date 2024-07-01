@@ -5,22 +5,26 @@
     >
         <h1 class="auth-form__title">Регистрация</h1>
         <div class="input-block">
-            <inputComp  
+            <inputComp
+            class="input-block__item"
             :type="'text'"
             :placeholder= "'Введите Имя'"
             v-model="firstName"
             ></inputComp>
-            <inputComp  
+            <inputComp
+            class="input-block__item"
             :type="'text'" 
             :placeholder= "'Введите Фамилию'"
             v-model="lastName"
             ></inputComp>
-            <inputComp  
+            <inputComp
+            class="input-block__item"
             :type="'email'" 
             :placeholder= "'Введите email'"
             v-model="email"
             ></inputComp>
-            <inputComp 
+            <inputComp
+            class="input-block__item"
             type="password" 
             placeholder="Введите пароль"
             v-model="password"
@@ -93,5 +97,18 @@ export default {
     align-items: center;
     background-color: var(--color-bg-main);
     z-index: 10;
+}
+.input-block {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.auth-form__title {
+    color: var(--primary-fg);
+    font-family: var(--font);
+}
+.input-block__item {
+    width: 100%;
 }
 </style>

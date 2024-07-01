@@ -10,7 +10,7 @@ export async function login(email, password) {
         password,
     }, {
         headers: {
-          ...ContentTypeJSON,
+          'Content-Type': "application/json"
         },
     });
     const responseObj = {

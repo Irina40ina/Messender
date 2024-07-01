@@ -15,37 +15,22 @@
             <div class="actions-panel"
             v-if="false"
             >
-                <button></button>
             </div>
         </header>
 
         <!-- MAIN -->
         <main class="users-main">
             <div class="users-wrapper">
-                <usersItemComp
+                <usersListComp
                 :array-users="arrayUsers"
-                ></usersItemComp>
-               
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
-                <div class="users-item"></div>
+                ></usersListComp>
 
-                <div 
+                <div
                 class="triggerPagination"
                 ref="triggerPagination"
+                v-show="loading"
                 >
-
+                    <font-awesome-icon class="icon" :icon="['fas', 'spinner']" />
                 </div>
             </div>
         </main>
@@ -54,32 +39,42 @@
 
 <script>
 import { getUsers } from "@/api/usersApi"
-import usersItemComp from "@/components/mainView/users/usersItemComp.vue"
+import usersListComp from "@/components/mainView/users/usersListComp.vue"
 export default {
     components: {
-        usersItemComp,
+        usersListComp,
     },
     data() {
         return {
             page: 1,
+            perPage: 3, 
             arrayUsers: [],
             paginator: null,
+            loading: true,
         }
     },
     watch: {
         async page(newPage, oldPage) {
             if(newPage !== oldPage) {
-                const response = await getUsers(this.page);
-                this.arrayUsers = response.data;
+                const response = await getUsers(this.page, this.perPage);
+                this.arrayUsers = [...this.arrayUsers, ...response.data];
+                console.log(this.arrayUsers);
                 this.paginator = response.paginator;
+                if(this.paginator.hasNext === true) {
+                    this.loading = true;
+                } 
+                else if(this.paginator.hasNext === false) {
+                    this.loading = false;
+                }
             }
         }
     },
     async mounted() {
-        const response = await getUsers(this.page);
+        const response = await getUsers(this.page, this.perPage);
         this.arrayUsers = response.data;
         this.paginator = response.paginator;
-        console.log(this.arrayUsers)
+
+        // Observer ============
         const options = {
             rootMargin: "0px",
             threshold: 1.0,
@@ -91,19 +86,12 @@ export default {
         };
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.triggerPagination);
+        // ============
     }
 }
 </script>
 
 <style scoped>
-    .users-item {
-        width: 95%;
-        height: 120px;
-        border: 1px solid var(--primary-fg);
-        border-radius: 10px;
-        box-shadow: var(--shadow);
-        margin-top: .5rem;
-    }
     .users-container {
         width: 100%;
         height: 100%;
@@ -116,7 +104,6 @@ export default {
     }
     .users-header {
         height: 60px;
-        border: 1px solid black;
         display: flex;
         align-items: center;
     }
@@ -164,14 +151,12 @@ export default {
         display: flex;
         align-items: center;
         flex-grow: 2;
-        border: 1px solid black;
     }
     
     .users-main {
         position: relative;
         height: 100%;
         max-height: 100%;
-        border: 1px solid black;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -192,6 +177,8 @@ export default {
         flex-direction: column;
         align-items: center;
         justify-content: start;
+        margin-top: 1.3rem;
+        padding: 2rem 0;
     }
     .triggerPagination {
         width: 100%;
@@ -199,7 +186,19 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: white;
+        background-color: rgba(255, 254, 254, 0);
         margin-top: 0.5rem;
+    }
+    @keyframes rotate-circle {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    .icon {
+        color: var(--primary-fg);
+        font-size: 1.25rem;
+        animation-name: rotate-circle;
+        animation-duration: .8s;
+        animation-iteration-count: infinite;
     }
 </style>

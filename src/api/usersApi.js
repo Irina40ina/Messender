@@ -6,40 +6,33 @@ export async function getUserById(userId) {
     try {
         const response = await axios.get(hostName + `/users/${userId}`, {
             headers: {
-                ...ContentTypeURL,
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer " + localStorage.getItem('token'),
             }
         });
-        console.log(response);
+        console.log(response.data);
     } catch (err) {
         console.error(`api/usersApi: getUserById => ${err}`)
     }
 }
- export async function getUsers(page) {
-    // try {
-       const obj = axios.get(hostName + '/users', {
+
+
+export async function getUsers(page, perPage) {
+    try {
+       const obj = await axios.get(hostName + '/users', {
         headers: {
             ...ContentTypeURL,
             "Authorization": "Bearer " + localStorage.getItem('token'),
         },
         params: {
             page: page,
+            per_page: perPage,
         }
     }); 
-    let data = (await obj).data.data.users;
-    let paginator = (await obj).data.meta.paginator;
+    let data = obj.data.data.users;
+    let paginator = obj.data.meta.paginator;
     return { data, paginator };
-    // } catch (error) {
-    //     console.error(`api/usersApi: getUsers => ${err}`)
-    // }
- }
-//  this.page++
-//  const { data: { meta: { paginator }, data } } = axios.get(hostName + '/users, { 
-//      headers: {},  
-//      params: {
-//          page: this.page,
-//          per_page: 15,
-//      }
-//  });
-//  paginator; // { currentPage: 1, hasNext: true, hasPrev: false }
-// */
+    } catch (error) {
+        console.error(`api/usersApi: getUsers => ${err}`)
+    }
+}

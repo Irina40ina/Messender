@@ -1,36 +1,38 @@
 <template>
-    <div 
-    class="users-item"
-    v-for="user in arrayUsers"
-    :key="user.id"
-    >
-        <div class="users__avatar-container">
-           <div class="users__avatar">
-                <h1 class="avatar-stub">{{ user.name.slice(0,1).toUpperCase() + user.lastname.slice(0,1).toUpperCase() }}</h1>
-            </div> 
+    <div class="users-list">
+        <div 
+        class="users-item"
+        v-for="user in arrayUsers"
+        :key="user.id"
+        >
+            <div class="users__avatar-container">
+               <div class="users__avatar">
+                    <h1 class="avatar-stub">{{ user.name.slice(0,1).toUpperCase() + user.lastname.slice(0,1).toUpperCase() }}</h1>
+                </div> 
+            </div>
+            <div class="users__name-container">
+                <p class="users__name">{{ user.name + ' ' + user.lastname }}</p>
+            </div>
+            <div class="users__last-activity-container">
+                <p class="users__last-activity"> {{ user.lastActivity }} </p>
+            </div>
         </div>
-        <div class="users__name-container">
-            <p class="users__name">{{ user.name + ' ' + user.lastname }}</p>
-        </div>
-        <div class="users__last-activity-container"></div>
-        <p class="users__last-activity"> {{ user.lastActivity }} </p>
-        
     </div>
 </template>
 
 <script>
 export default {
-    data() {
-        return {
-            users: [],
-            initials: '',
-        }
-    },
     props: {
         arrayUsers: {
             type: Array,
             default: () => [],
         },
+    },
+    data() {
+        return {
+            users: [],
+            initials: '',
+        }
     },
     mounted() {
         this.users = this.$props.arrayUsers;
@@ -39,9 +41,13 @@ export default {
 </script>
 
 <style scoped>
+    .users-list {
+        width: 95%;
+        height: max-content;
+    }
 
     .users-item {
-        width: 95%;
+        width: 100%;
         height: 120px;
         border: 1px solid var(--primary-fg);
         border-radius: 10px;
