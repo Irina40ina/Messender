@@ -9,16 +9,15 @@ let ContentTypeJSON = {
     "Content-Type": "application/json",
 }
 
-function getBearerToken() {
-    const token = localStorage.getItem('token');
-    return {
-        "Bearer": token,
-    }
-}
+// function getBearerToken() {
+//     const token = localStorage.getItem('token');
+//     return {
+//         "Bearer": token,
+//     }
+// }
 
 export {
     hostName,
     ContentTypeURL,
     ContentTypeJSON,
-    getBearerToken,
 }

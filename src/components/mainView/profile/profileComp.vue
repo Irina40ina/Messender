@@ -3,9 +3,9 @@
         <div class="profile">
             <header class="profile__header">
                 <div class="profile__avatar">
-                    <h1 class="avatar-stub">{{ 'AM'/* store.editName().initials */ }}</h1>
+                    <h1 class="avatar-stub">{{ initials }}</h1>
                 </div>
-                <h1 class="profile__username">{{ 'Alex'/* store.editName().fullname */ }}</h1>
+                <h1 class="profile__username">{{ fullname }}</h1>
             </header>
             <main class="profile__info">
 
@@ -76,6 +76,7 @@
                     <!-- GENDER -->
                     <itemChunkComp 
                     :item="{ id: 'gender', key: 'Пол', value: store.profileData.gender }"
+                    @confirm-text-data="(value) => store.profileEditData.gender = value"
                     />
 
                     <!-- BIRTH AT -->
@@ -188,9 +189,14 @@ export default {
         }, { deep: true })
     },
     async mounted() {
+        const awaitProfileData = this.store.editName();
         const response = await getProfile();
-        console.log(response);
-        // this.store.profileData = response;
+        this.store.profileData = response;
+        awaitProfileData(({ fullname, initials }) => {
+            console.log('AwaitProfileData', this.store.profileData);
+           this.fullname = fullname;
+           this.initials = initials;
+        });
     }
 }
 </script>
@@ -198,7 +204,7 @@ export default {
 <style scoped>
     .profile-container {
         width: 100%;
-        height: 100%;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;

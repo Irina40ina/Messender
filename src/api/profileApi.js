@@ -1,15 +1,16 @@
 import axios from 'axios';
-import { hostName, ContentTypeJSON, ContentTypeURL, getBearerToken } from "./index";
+import { hostName, ContentTypeJSON, ContentTypeURL } from "./index";
 import { useMainStore } from '@/store/mainStore';
 
 
 // Получение профиля пользователя
 export async function getProfile() {
+
     try {
         const response = await axios.get(hostName + '/profile/me', {
             headers: {
                 ...ContentTypeURL,
-                ...getBearerToken(),
+                "Authorization": "Bearer " + localStorage.getItem('token'),
             },
         });
         return response.data.data;
@@ -29,7 +30,7 @@ export async function multipleProfileUpdate() {
         }, {
             headers: {
                 ...ContentTypeJSON,
-                ...getBearerToken(),
+                "Authorization": "Bearer " + localStorage.getItem('token'),
             },
         });
         return response.data.data;
@@ -48,7 +49,7 @@ export async function singleProfileUpdate() {
         }, {
             headers: {
                 ...ContentTypeJSON,
-                ...getBearerToken(),
+                "Authorization": "Bearer " + localStorage.getItem('token'),
             },
         });
         return response.data.data;
