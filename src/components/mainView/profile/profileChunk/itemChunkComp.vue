@@ -43,7 +43,7 @@ export default {
     emits: ['confirmTextData', 'openDateTimePicker'],
     watch: {
         computedValue(newValue, oldValue) {
-            if(newValue === 'Не указано' || oldValue === 'Не указано') {
+            if(newValue === 'Не указано') {
                 this.class = 'none';
             } else {
                 this.class = '';
@@ -65,6 +65,7 @@ export default {
                     this.computedValue = 'Другое';
                     return 'Другое';
                 } 
+                this.computedValue = 'Не указано';
                 return 'Не указано';
             }
             if(this.$props.item.value == null){

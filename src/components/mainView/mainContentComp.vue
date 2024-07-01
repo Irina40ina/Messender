@@ -13,6 +13,9 @@ export default {
 <style scoped>
 .main-content {
     grid-area: main;
+    height: 800px;
+    position: relative;
+    overflow: hidden auto;
 }
     
 </style>

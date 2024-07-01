@@ -1,4 +1,4 @@
-import { hostName, ContentTypeJSON, getBearerToken } from "@/api";
+import { hostName, ContentTypeJSON } from "@/api";
 import axios from "axios";
 import { useMainStore } from "@/store/mainStore"
 
@@ -11,7 +11,6 @@ export async function login(email, password) {
     }, {
         headers: {
           ...ContentTypeJSON,
-          ...getBearerToken(),
         },
     });
     const responseObj = {
@@ -27,7 +26,7 @@ export async function login(email, password) {
     console.error(`api/authApi: login => ${err}`);
   }
 }
-// Выйти из системы
+// Зарегистрироваться в системе
 export async function logup(firstName, lastName, email, password) {
   try {
     const response = await axios.post(hostName + '/users/create', {
@@ -38,7 +37,6 @@ export async function logup(firstName, lastName, email, password) {
     }, {
         headers: {
           ...ContentTypeJSON,
-          ...getBearerToken(),
         },
     });
     console.log(response)
@@ -47,5 +45,5 @@ export async function logup(firstName, lastName, email, password) {
     console.error(`api/authApi: logup => ${err}`);
   }
 }
-// Зарегистрироваться в системе
+
 

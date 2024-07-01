@@ -61,6 +61,7 @@ export default {
     .message-widget {
         width: 80%;
         height: 100%;
+        position: relative;
         display: flex;
         flex-direction: column;
         justify-content: center;

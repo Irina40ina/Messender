@@ -6,20 +6,17 @@
         <div class="topbar-user-area">
 
             <div class="topbar-name-container">
-                <h2 class="topbar-user-name">{{ 'Alex'/* store.editName().fullname */ }}</h2>
+                <h2 class="topbar-user-name">{{  }}</h2>
             </div>
 
             <div class="topbar-avatar">
-                <p class="avatar-stub">{{ 'AM'/* tore.editName().initials */ }}</p>
+                <p class="avatar-stub">{{  }}</p>
             </div>
             
             <font-awesome-icon 
             class="leave-icon"
             icon="fa-arrow-right-from-bracket"
             ></font-awesome-icon>
-            
-            
-            
         </div>    
     </div>
 </template>
