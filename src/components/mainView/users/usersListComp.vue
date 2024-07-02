@@ -1,5 +1,16 @@
 <template>
     <div class="users-list">
+
+        <!-- Создание нового сообщения с новым чатом -->
+        <primaryDialogComp
+        :is-show="isShowInviteChat"
+        @close="isShowInviteChat = false"
+        >
+            <inviteChatComp
+            :user="selectedInviteUser"
+            ></inviteChatComp>
+        </primaryDialogComp>
+
         <div 
         class="users-item"
         v-for="user in arrayUsers"
@@ -13,15 +24,27 @@
             <div class="users__name-container">
                 <p class="users__name">{{ user.name + ' ' + user.lastname }}</p>
             </div>
+
+            <!-- Last Activity -->
             <div class="users__last-activity-container">
-                <p class="users__last-activity"> {{ user.lastActivity }} </p>
+                <p class="users__last-activity"> {{ /* user.lastActivity */  '2 ч. назад' }} </p>
             </div>
+            <button 
+            class="btn-invite" 
+            @click="() => handlerInviteChat(user)"
+            >Написать сообщение</button>
         </div>
     </div>
 </template>
 
 <script>
+import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
+import inviteChatComp from "@/components/mainView/users/inviteChatComp.vue";
 export default {
+    components: {
+        primaryDialogComp,
+        inviteChatComp,
+    },
     props: {
         arrayUsers: {
             type: Array,
@@ -32,6 +55,14 @@ export default {
         return {
             users: [],
             initials: '',
+            isShowInviteChat: false,
+            selectedInviteUser: null,
+        }
+    },
+    methods: {
+        handlerInviteChat(user) {
+            this.isShowInviteChat = true;
+            this.selectedInviteUser = user;
         }
     },
     mounted() {
@@ -92,14 +123,28 @@ export default {
     }
     .users__last-activity-container {
         position: absolute;
-        width: 400px;
-        height: 40px;
+        width: max-content;
+        height: max-content;
         right: 20px;
         top: 10px;
-        border: 1px solid gray;
     }
     .users__last-activity {
         font-family: var(--font);
         color: gray;
+    }
+    .btn-invite {
+        padding: .3rem .8rem;
+        white-space: nowrap;
+        outline: rgba(0,0,0,0);
+        border: 1px solid var(--primary-fg);
+        cursor: pointer; 
+        margin-right: 1rem;   
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: all .6s ease;
+    }
+    .btn-invite:active {
+        transition: all .3s ease;
+        box-shadow: none;
     }
 </style>

@@ -1,10 +1,24 @@
 <template>
     <div class="message-widget">
+        
+        <!-- Header -->
+        <div class="message-header">
+            <div class="message-user__avatar">
+                <p class="avatar-stub">{{ 'HH' }}</p>
+            </div> 
+            <div class="message__users-name-container">
+                <p class="users__name">{{ 'Harry Potter' }}</p>
+            </div>
+        </div>
+
+        <!-- Content -->
         <div class="message-content">
             <wraperMessageComp
             :arr-messages="arrMessages"
             ></wraperMessageComp>
         </div>
+
+        <!-- Input Panel -->
         <div class="input-message-panel">
             <textarea 
                 name="input-message"
@@ -68,13 +82,55 @@ export default {
         align-items: center;
         background-color: #9fce9f;
     }
+    .message-header {
+        width: 100%;
+        height: 5%;
+        background-color: var(--color-bg-main);
+        display: flex;
+        align-items: center;
+        padding: .3rem 2rem;
+        border-bottom: 1px solid var(--primary-fg-light);
+    }
+    
+    .message-user__avatar {
+        left: 5%;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: rgb(161, 80, 161);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: .5rem;
+    }
+    .avatar-stub {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        font-family: var(--font);
+        font-weight: bolder;
+    }
+    .message__users-name-container {
+        width: 90%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        position: relative;
+    }
+    .users__name {
+        font-size: 16px;
+        font-family: var(--font);
+    }
     .message-content {
         width: 100%;
         height: 85%;
         overflow: auto;
     }
     .input-message-panel {
-        height: 15%;
+        height: 10%;
         width: 100%;
         display: flex;
         justify-content: center;
@@ -89,5 +145,6 @@ export default {
         outline: rgba(255, 255, 255, 0);
         resize: none;
         padding: 0.5rem 1rem;
+        box-shadow: var(--shadow);
     }
 </style>

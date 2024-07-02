@@ -34,7 +34,7 @@ export default {
     word-wrap: break-word;
     padding: 1rem 1.5rem;
     border-radius: 15px;
-    box-shadow: -10px -6px 10px -3px rgba(81, 115, 81, 0.5);
+    box-shadow: var(--shadow);
     background-color: #fff;
 }
 </style>

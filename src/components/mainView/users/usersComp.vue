@@ -58,7 +58,6 @@ export default {
             if(newPage !== oldPage) {
                 const response = await getUsers(this.page, this.perPage);
                 this.arrayUsers = [...this.arrayUsers, ...response.data];
-                console.log(this.arrayUsers);
                 this.paginator = response.paginator;
                 if(this.paginator.hasNext === true) {
                     this.loading = true;

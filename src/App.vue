@@ -12,6 +12,7 @@
   --color-fg-header: rgb(54, 54, 54);
   --color-fg-chunk: rgb(48, 48, 48);
   --primary-fg: rgb(63, 205, 94);
+  --primary-fg-light: rgba(63, 205, 94, 0.5);
   --color-bg-main: rgb(255, 255, 255);
   --color-bg-input: rgb(240, 240, 240);
   --shadow: 1px 2px 10px rgba(0, 0, 0, 0.2);

@@ -68,12 +68,13 @@ export default {
 .primary-dialog__content {
     position: relative;
     min-width: 200px;
-    min-height: 100px;
+    min-height: 80px;
     width: max-content;
     height: max-content;
     max-width: 80%;
     max-height: 80%;
     background-color: var(--color-bg-main);
+    box-shadow: var(--shadow);
     overflow: auto;
     scale: 0;
     border-radius: 5px;
