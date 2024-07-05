@@ -1,8 +1,18 @@
 <template>
     <div class="message-widget">
-        
+        <!-- Блок с уведомлением -->
+        <div 
+        class="notice-container"
+        v-show="isShowNotice"
+        >
+            <h1 class="notice-text">Выберите чат для общения</h1>
+            <font-awesome-icon class="notice-icon" icon="fa-solid fa-comment" />
+        </div>
         <!-- Header -->
-        <div class="message-header">
+        <div 
+        class="message-header"
+        v-show="isShowChat"
+        >
             <div class="message-user__avatar">
                 <p class="avatar-stub">{{ 'HH' }}</p>
             </div> 
@@ -14,6 +24,7 @@
         <!-- Content -->
         <div class="message-content">
             <wraperMessageComp
+            v-show="isShowChat"
             :arr-messages="arrMessages"
             ></wraperMessageComp>
         </div>
@@ -21,6 +32,7 @@
         <!-- Input Panel -->
         <div class="input-message-panel">
             <textarea 
+                v-show="isShowChat"
                 name="input-message"
                 id="input-message" 
                 placeholder="Введите сообщение"
@@ -34,38 +46,68 @@
 
 <script>
 import wraperMessageComp from './wraperMessageComp.vue';
+import { getChatMessagesById } from '@/api/messagesApi';
+import { useMainStore } from '@/store/mainStore';
+import { watch } from 'vue';
 export default {
     components: {
         wraperMessageComp,
     },
     data() {
         return {
+            store: useMainStore(),
             message: '',
             arrMessages: [],
+            isShowNotice: true,
+            isShowChat: false,
+            chatId: null,
         }
     },
-    methods: {
-        sendMessage(text){
-            let obj = {
-                id: Date.now(),
-                value: text,
+    props: {
+        
+    },
+    
+    created() {
+        watch(() => this.store.chatData, (newValue, oldValue) => {
+            this.chatId = newValue.chatId;
+            if(newValue.isShowNotice === false) {
+                this.isShowNotice = false;
             }
-            this.arrMessages.push(obj);
+            if(newValue.isShowChat === true) {
+                this.isShowChat = true;
+                this.renderChat();
+            }
+            if(newValue.chatId !== oldValue.chatId) {
+            this.renderChat();
+            }
+            
+        }, { deep: true });
+    },
+    methods: {
+        
+        async renderChat() {
+            const response = await getChatMessagesById(this.chatId);
+            this.arrMessages = response;
         }
     },
     mounted() {
-        {
-            const textarea = document.getElementById('input-message');
-            textarea.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    if(this.message != ''){
-                        this.sendMessage(this.message);
-                    }
-                    this.message = '';
+        const textarea = document.getElementById('input-message');
+        textarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if(this.message != ''){
+                    this.sendMessage(this.message);
                 }
-            })
-        }
+                this.message = '';
+            }
+        })
+
+
+        // if(this.isShowNotice = false) {
+        //     const response = await getChatMessagesById(this.chatId);
+        //     console.log(response)
+        // }
+        
     }
 }
 
@@ -81,6 +123,26 @@ export default {
         justify-content: center;
         align-items: center;
         background-color: #9fce9f;
+    }
+    .notice-container {
+        position: absolute;
+        top: 42%;
+        left: 11%;
+        width: 80%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .notice-text {
+        text-align: center;
+        font-family: var(--font);
+        color: var(--color-fg-main);
+    }
+    .notice-icon {
+        width: 40px;
+        height: 100px;
+        color: rgb(61, 118, 61);
+        padding: 1.5rem;
     }
     .message-header {
         width: 100%;

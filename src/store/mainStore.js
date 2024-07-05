@@ -32,6 +32,11 @@ export const useMainStore = defineStore("useMainStore", {
         name: null,
         phoneNumber: null,
       },
+      chatData: {
+        chatId: null,
+        isShowNotice: true,
+        isShowChat: false,
+      }
     };
   },
   getters: {},

@@ -193,7 +193,6 @@ export default {
         const response = await getProfile();
         this.store.profileData = response;
         awaitProfileData(({ fullname, initials }) => {
-            console.log('AwaitProfileData', this.store.profileData);
            this.fullname = fullname;
            this.initials = initials;
         });

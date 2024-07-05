@@ -10,10 +10,10 @@ import { vMaska } from "maska";
 
 // ICON AWESOME
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faUser, faUserGroup, faEnvelope, faPenToSquare, faArrowRightFromBracket, faXmark, faRotateLeft, faCheck, faFloppyDisk, faTrash, faMagnifyingGlass, faSpinner, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faUserGroup, faEnvelope, faPenToSquare, faArrowRightFromBracket, faXmark, faRotateLeft, faCheck, faFloppyDisk, faTrash, faMagnifyingGlass, faSpinner, faPaperPlane, faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add(faUser, faUserGroup, faEnvelope, faPenToSquare, faArrowRightFromBracket, faXmark, faRotateLeft, faCheck, faFloppyDisk, faTrash, faMagnifyingGlass, faSpinner, faPaperPlane );
+library.add(faUser, faUserGroup, faEnvelope, faPenToSquare, faArrowRightFromBracket, faXmark, faRotateLeft, faCheck, faFloppyDisk, faTrash, faMagnifyingGlass, faSpinner, faPaperPlane, faComment );
 
 const app = createApp(App);
 const pinia = createPinia();
