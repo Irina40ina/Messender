@@ -1,18 +1,16 @@
 <template>
     <div 
     class="chat-item"
-    v-for="chat in $props.arrayChats"
-    :key="chat.id"
-    @click="() => handlerGetChatById(chat.id)"
+    @click="() => handlerGetChatById($props.chat.id)"
     >
         <div class="chat__header">
             <div class="chat__avatar-container">
                 <div class="users__avatar">
-                    <h1 class="avatar-stub">{{ chat.name.slice(0,1).toUpperCase() + chat.lastname.slice(0,1).toUpperCase() }}</h1>
+                    <h1 class="avatar-stub">{{ $props.chat.users[0].name.slice(0,1).toUpperCase() + $props.chat.users[0].lastname.slice(0,1).toUpperCase() }}</h1>
                 </div> 
             </div>
             <div class="users__name-container">
-                <p class="users__name">{{ chat.name + ' ' + chat.lastname }}</p>
+                <p class="users__name">{{ $props.chat.users[0].name + ' ' + $props.chat.users[0].lastname }}</p>
             </div>
         </div>
         <div class="chat__last-message-container">
@@ -34,9 +32,9 @@ export default {
         }
     },
     props: {
-        arrayChats: {
-            type: Array,
-            default: () => [],
+        chat: {
+            type: Object,
+            required: true,
         }
     },
     methods: {

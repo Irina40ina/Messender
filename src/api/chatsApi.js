@@ -1,12 +1,11 @@
 import axios from 'axios';
 import { hostName, ContentTypeJSON, ContentTypeURL } from "./index";
 
-let resultArray = [];
 
 // Получение всех чатов
 export async function getChats(page, perPage) {
     try {
-       const obj = await axios.get(hostName + '/chats', {
+       const response = await axios.get(hostName + '/chats', {
         headers: {
             ...ContentTypeURL,
             "Authorization": "Bearer " + localStorage.getItem('token'),
@@ -16,20 +15,11 @@ export async function getChats(page, perPage) {
             per_page: perPage,
         }
     }); 
-    let data = obj.data.data;
-    let paginator = obj.data.meta.paginator;
-    createResultArray(data);
-    return { resultArray, paginator };
+    const { data: { meta: { paginator }, data } } = response;
+    return { data, paginator };
     } catch (error) {
         console.error(`api/chatsApi: getChats => ${err}`)
     }
-}
-
-function createResultArray(array) {
-    array.forEach((elem)=> {
-        resultArray.push(elem.users[0])
-        return
-    })
 }
 
 // Получение чата по Id

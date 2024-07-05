@@ -25,7 +25,9 @@
         <div class="message-content">
             <wraperMessageComp
             v-show="isShowChat"
-            :arr-messages="arrMessages"
+            v-for="message in arrMessages" 
+            :message="message"
+            :key="message.id"
             ></wraperMessageComp>
         </div>
 
@@ -39,7 +41,6 @@
                 @input="(e) => message = e.target.value"
                 :value="message"
                 ></textarea>
-           
         </div>
     </div>
 </template>
@@ -60,13 +61,24 @@ export default {
             arrMessages: [],
             isShowNotice: true,
             isShowChat: false,
-            chatId: null,
+            paginator: null,
+            page: 1,
+            perPage: 20,
         }
     },
-    props: {
-        
+    methods: {
+        async renderChat(id) {
+            this.$router.push({ name: 'chat', params: { chatId: id } });
+        },
+        async handlerGetMessages(chatId) {
+            const response = await getChatMessagesById(chatId, this.page, this.perPage);
+            this.arrMessages = response.messages;
+            this.paginator = response.paginator;
+            this.store.chatData.chatId = chatId;
+            this.store.chatData.isShowChat = true;
+            this.store.chatData.isShowNotice = false;
+        }
     },
-    
     created() {
         watch(() => this.store.chatData, (newValue, oldValue) => {
             this.chatId = newValue.chatId;
@@ -75,22 +87,22 @@ export default {
             }
             if(newValue.isShowChat === true) {
                 this.isShowChat = true;
-                this.renderChat();
+                this.renderChat(newValue.chatId);
             }
             if(newValue.chatId !== oldValue.chatId) {
-            this.renderChat();
+                this.renderChat(newValue.chatId);
             }
-            
         }, { deep: true });
-    },
-    methods: {
         
-        async renderChat() {
-            const response = await getChatMessagesById(this.chatId);
-            this.arrMessages = response;
-        }
+        // Route params
+        watch(() => this.$route.params, async (newValue) => {
+            // { chatId: 18 }
+            this.handlerGetMessages(newValue.chatId);
+        })
     },
     mounted() {
+        this.handlerGetMessages(this.$route.params.chatId);
+
         const textarea = document.getElementById('input-message');
         textarea.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -101,13 +113,10 @@ export default {
                 this.message = '';
             }
         })
-
-
         // if(this.isShowNotice = false) {
         //     const response = await getChatMessagesById(this.chatId);
         //     console.log(response)
         // }
-        
     }
 }
 

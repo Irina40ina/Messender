@@ -1,7 +1,9 @@
 <template>
     <div class="messanger-container__chats">
         <chatItemComp
-        :array-chats="arrayChats"
+        v-for="chat in arrayChats"
+        :chat="chat"
+        :key="chat.id"
         ></chatItemComp>
         <div
             class="triggerPagination"
@@ -32,21 +34,25 @@ export default {
     watch: {
         async page(newPage, oldPage) {
             if(newPage !== oldPage) {
-                const response = await getChats(this.page, this.perPage);
-                this.arrayChats = [...this.arrayChats, ...response.resultArray];
-                this.paginator = response.paginator;
                 if(this.paginator.hasNext === true) {
-                    this.loading = true;
-                } 
-                else if(this.paginator.hasNext === false) {
-                    this.loading = false;
+                    const response = await getChats(this.page, this.perPage);
+                    this.arrayChats = [...this.arrayChats, ...response.resultArray];
+                    this.paginator = response.paginator;
+                    if(this.paginator.hasNext === true) {
+                        this.loading = true;
+                    } 
+                    else if(this.paginator.hasNext === false) {
+                        this.loading = false;
+                    }
                 }
+                this.loading = false;
             }
         }
     },
     async mounted() {
+        console.log(this.paginator);
         const response = await getChats(this.page, this.perPage);
-        this.arrayChats = response.resultArray;
+        this.arrayChats = response.data;
         this.paginator = response.paginator;
 
         // Observer ============
