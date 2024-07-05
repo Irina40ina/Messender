@@ -1,7 +1,9 @@
 <template>
     <div class="messanger-container">
-        <messangerChatsComp></messangerChatsComp>
-        <messangerWidgetComp></messangerWidgetComp>
+        <messangerChatsComp
+        ></messangerChatsComp>
+        <messangerWidgetComp
+        ></messangerWidgetComp>
     </div>
 </template>
 
@@ -13,7 +15,13 @@ export default {
     components: {
         messangerChatsComp,
         messangerWidgetComp,
-    }
+    },
+    data() {
+        return {
+            
+        }
+    },
+    
 }
 </script>
 

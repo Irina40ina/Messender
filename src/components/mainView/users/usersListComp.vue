@@ -8,12 +8,14 @@
         >
             <inviteChatComp
             :user="selectedInviteUser"
+            :my-id="myId"
+            @close="isShowInviteChat = false"
             ></inviteChatComp>
         </primaryDialogComp>
 
         <div 
         class="users-item"
-        v-for="user in arrayUsers"
+        v-for="user in $props.arrayUsers"
         :key="user.id"
         >
             <div class="users__avatar-container">
@@ -40,6 +42,8 @@
 <script>
 import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
 import inviteChatComp from "@/components/mainView/users/inviteChatComp.vue";
+import { getProfile } from '@/api/profileApi';
+import { getChatById } from '@/api/chatsApi';
 export default {
     components: {
         primaryDialogComp,
@@ -57,16 +61,20 @@ export default {
             initials: '',
             isShowInviteChat: false,
             selectedInviteUser: null,
+            myId: null,
         }
     },
     methods: {
-        handlerInviteChat(user) {
+        async handlerInviteChat(user) {
             this.isShowInviteChat = true;
             this.selectedInviteUser = user;
         }
     },
-    mounted() {
+    async mounted() {
         this.users = this.$props.arrayUsers;
+        // console.log(this.users, this.$props.arrayUsers)
+        const response = await getProfile();
+        this.myId = response.userId;
     }
 }
 </script>

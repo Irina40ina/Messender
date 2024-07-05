@@ -1,27 +1,68 @@
 <template>
     <div class="messanger-container__chats">
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
-        <div class="chat-item"></div>
+        <chatItemComp
+        :array-chats="arrayChats"
+        ></chatItemComp>
+        <div
+            class="triggerPagination"
+            ref="triggerPagination"
+            v-show="loading"
+            >
+                <font-awesome-icon class="icon" :icon="['fas', 'spinner']" />
+            </div>
     </div>
 </template>
 
 <script>
+import chatItemComp from '@/components/mainView/messanger/chatItemComp.vue'
+import { getChats } from '@/api/chatsApi';
 export default {
-    
+    components: {
+        chatItemComp,
+    },
+    data() {
+        return {
+            page: 1,
+            perPage: 3,
+            arrayChats: [],
+            paginator: null,
+            loading: true,
+        }
+    },
+    watch: {
+        async page(newPage, oldPage) {
+            if(newPage !== oldPage) {
+                const response = await getChats(this.page, this.perPage);
+                this.arrayChats = [...this.arrayChats, ...response.resultArray];
+                this.paginator = response.paginator;
+                if(this.paginator.hasNext === true) {
+                    this.loading = true;
+                } 
+                else if(this.paginator.hasNext === false) {
+                    this.loading = false;
+                }
+            }
+        }
+    },
+    async mounted() {
+        const response = await getChats(this.page, this.perPage);
+        this.arrayChats = response.resultArray;
+        this.paginator = response.paginator;
+
+        // Observer ============
+        const options = {
+            rootMargin: "0px",
+            threshold: 1.0,
+        };
+        const callback = (entries) => {
+            if(entries[0].isIntersecting === true) {
+                this.page = this.page + 1;
+            }
+        };
+        const observer = new IntersectionObserver(callback, options);
+        observer.observe(this.$refs.triggerPagination);
+        // ============
+    }
 }
 </script>
 
@@ -50,14 +91,25 @@ export default {
         background-color: #4b8f5c;
     }
 
-    .chat-item {
+    .triggerPagination {
         width: 100%;
-        height: 130px;
-        margin: .3rem auto 0 auto;
-        border: 1px solid var(--primary-fg);
-        border-radius: var(--radius);
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 254, 254, 0);
+        margin-top: 0.5rem;
     }
-    .chat-item + .chat-item {
-        margin: .5rem auto 0 auto;
+    @keyframes rotate-circle {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    .icon {
+        color: var(--primary-fg);
+        font-size: 1.25rem;
+        animation-name: rotate-circle;
+        animation-duration: .8s;
+        animation-iteration-count: infinite;
     }
 </style>

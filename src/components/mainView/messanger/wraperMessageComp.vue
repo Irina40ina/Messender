@@ -1,7 +1,11 @@
 <template>
-    <div class="wraper-message" v-for="message in $props.arrMessages" :key="message.id">
+    <div 
+    class="wraper-message" 
+    v-for="message in $props.arrMessages" 
+    :key="message.id"
+    >
         <div class="message">
-            <p>{{ message.value }}</p>
+            <p>{{ message }}</p>
         </div>
     </div>
 </template>

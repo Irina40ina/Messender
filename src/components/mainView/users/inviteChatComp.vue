@@ -12,8 +12,14 @@
 
         <!-- Input Panel -->
         <div class="invite-chat-form__input-panel">
-            <textarea class="input-panel__textarea" name="" id=""></textarea>
-            <button class="input-panel__btn">
+            <textarea 
+            class="input-panel__textarea" name="" id=""
+            v-model="messageText"
+            ></textarea>
+            <button 
+            class="input-panel__btn"
+            @click="handlerCreateNewChat"
+            >
                 <font-awesome-icon class="btn-icon" :icon="['fas', 'paper-plane']" />
             </button>
         </div>
@@ -23,15 +29,59 @@
 </template>
 
 <script>
+import { useMainStore } from '@/store/mainStore';
+import { createNewChatWithMessage } from '@/api/messagesApi';
+import { getChatById, createNewChat } from '@/api/chatsApi';
 export default {
+    data() {
+        return {
+            store: useMainStore(),
+            messageText: '',
+            messageObj: {
+                from_user_id: null,
+                to_user_id: null,
+                chat_id: null,
+                content: '',
+                forwarded_ids: null,
+            },
+            chatObj: {
+                creator: null,
+                companion_id: null,
+                preview_message: '',
+            }
+        }
+    },
     props: {
         user: {
             type: Object,
             default: null,
             required: false,
+        },
+        myId: {
+            type: Number,
+            default: null,
+        }
+    },
+    emits: ['close'],
+    methods: {
+        async handlerCreateNewChat() {
+            this.messageObj.from_user_id = this.myId;
+            this.messageObj.to_user_id = this.$props.user.id;
+            this.messageObj.chat_id = null;
+            this.messageObj.content = this.messageText;
+            await createNewChatWithMessage(this.messageObj);
+            this.$emit('close');
+
+// Создание чата
+        //     this.chatObj.creator = this.myId;
+        //     this.chatObj.companion_id = this.$props.user.id;
+        //     this.chatObj.preview_message = this.messageText;
+        //     await createNewChat(this.chatObj);
+        //     this.$emit('close');
         }
     }
 }
+
 </script>
 
 <style scoped>
