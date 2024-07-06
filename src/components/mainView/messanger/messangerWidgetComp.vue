@@ -14,10 +14,10 @@
         v-show="isShowChat"
         >
             <div class="message-user__avatar">
-                <p class="avatar-stub">{{ 'HH' }}</p>
+                <p class="avatar-stub">{{  }}</p>
             </div> 
             <div class="message__users-name-container">
-                <p class="users__name">{{ 'Harry Potter' }}</p>
+                <p class="users__name">{{  }}</p>
             </div>
         </div>
 
@@ -50,6 +50,7 @@ import wraperMessageComp from './wraperMessageComp.vue';
 import { getChatMessagesById } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
 import { watch } from 'vue';
+import { getUserById } from '@/api/usersApi';
 export default {
     components: {
         wraperMessageComp,
@@ -61,9 +62,12 @@ export default {
             arrMessages: [],
             isShowNotice: true,
             isShowChat: false,
+            chatId: null,
             paginator: null,
             page: 1,
             perPage: 20,
+            toUserName: '',
+            toUserLastname: '',
         }
     },
     methods: {
@@ -72,11 +76,16 @@ export default {
         },
         async handlerGetMessages(chatId) {
             const response = await getChatMessagesById(chatId, this.page, this.perPage);
+            console.log(response)
             this.arrMessages = response.messages;
             this.paginator = response.paginator;
             this.store.chatData.chatId = chatId;
             this.store.chatData.isShowChat = true;
             this.store.chatData.isShowNotice = false;
+            // const dataUser = await getUserById(response.messages.toUserId);
+            // this.toUserName = dataUser.name;
+            // this.toUserLastname = dataUser.lastname;
+
         }
     },
     created() {
