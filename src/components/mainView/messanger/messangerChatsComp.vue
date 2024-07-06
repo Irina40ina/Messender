@@ -50,7 +50,6 @@ export default {
         }
     },
     async mounted() {
-        console.log(this.paginator);
         const response = await getChats(this.page, this.perPage);
         this.arrayChats = response.data;
         this.paginator = response.paginator;
