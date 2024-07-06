@@ -1,21 +1,31 @@
 <template>
     <div 
     class="wraper-message" 
-    v-for="message in $props.arrMessages" 
-    :key="message.id"
     >
         <div class="message">
-            <p>{{ message }}</p>
+            <p>{{ $props.message.content }}</p>
         </div>
     </div>
 </template>
 
 <script>
+/* 
+    "id": null,
+    "fromUserId": null,
+    "toUserId": null,
+    "chatId": null,
+    "content": null,
+    "createdAt": null,
+    "updatedAt": null,
+    "deletedAt": null,
+    "isForwarding": null,
+*/
 export default {
+    
     props: {
-        arrMessages: {
-            type: Array,
-            default: () => [],
+        message: {
+            type: Object,
+            required: true,
         }
     },
 }

@@ -63,6 +63,13 @@ const routes = [
         name: "messanger",
         meta: { requiredAuth: true },
       },
+      {
+        path: "messanger/:chatId",
+        component: messangerComp,
+        name: "chat",
+        meta: { requiredAuth: true },
+      },
+
     ],
   },
   {

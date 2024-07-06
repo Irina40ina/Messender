@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { hostName, ContentTypeJSON, ContentTypeURL } from "./index";
 
-let messagesArray = [];
 
 // Создание сообщения
 export async function createNewChatWithMessage(message) {
@@ -22,23 +21,21 @@ export async function createNewChatWithMessage(message) {
 }
 
 // Получение сообщений в чате
-export async function getChatMessagesById(chat_id) {
+export async function getChatMessagesById(chat_id, page, perPage) {
     try {
        const response = await axios.get(hostName + `/messages/chat/${chat_id}`, {
+        params: {
+            page: page,
+            per_page: perPage,
+        },
         headers: {
             ...ContentTypeURL,
             "Authorization": "Bearer " + localStorage.getItem('token'),
         },
     }); 
-        createMessagesArray(response.data.data.messages)
-        return messagesArray;
+        const { data: { data: { messages }, meta: { paginator } } } = response;
+        return { messages, paginator };
     } catch (error) {
         console.error(`api/messagesApi: getChatMessagesById => ${err}`)
     }
-}
-function createMessagesArray(arr) {
-    arr.forEach((obj) => {
-        messagesArray.push(obj.content)
-    })
-    return
 }
