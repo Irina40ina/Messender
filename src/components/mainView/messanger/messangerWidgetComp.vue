@@ -68,7 +68,7 @@ export default {
     },
     
     created() {
-        watch(() => this.store.chatData, (newValue, oldValue) => {
+        watch(() => this.store.chatData, (newValue) => {
             this.chatId = newValue.chatId;
             if(newValue.isShowNotice === false) {
                 this.isShowNotice = false;
@@ -77,11 +77,17 @@ export default {
                 this.isShowChat = true;
                 this.renderChat();
             }
-            if(newValue.chatId !== oldValue.chatId) {
-            this.renderChat();
-            }
+            
             
         }, { deep: true });
+    },
+    watch: {
+        chatId(newValue, oldValue) {
+            console.log(newValue, oldValue)
+            if(newValue !== oldValue) {
+            this.renderChat();
+            }
+        }
     },
     methods: {
         
