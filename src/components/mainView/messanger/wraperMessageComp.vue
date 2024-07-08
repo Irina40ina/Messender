@@ -3,12 +3,19 @@
     class="wraper-message" 
     >
         <div class="message">
-            <p>{{ $props.message.content }}</p>
+            <div class="message-content__container">
+               <p class="message-content">{{ $props.message.content }}</p>
+            </div> 
+            <div class="message-time__container">
+                <p class="message-time">{{ store.messageTimeCreatedSrting($props.message.createdAt) }}</p>
+            </div>
+            
         </div>
     </div>
 </template>
 
 <script>
+import { useMainStore } from '@/store/mainStore';
 /* 
     "id": null,
     "fromUserId": null,
@@ -21,7 +28,11 @@
     "isForwarding": null,
 */
 export default {
-    
+    data() {
+        return {
+            store: useMainStore(),
+        }
+    },
     props: {
         message: {
             type: Object,
@@ -45,10 +56,31 @@ export default {
     width: max-content;
     height: max-content;
     margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     word-wrap: break-word;
     padding: 1rem 1.5rem;
     border-radius: 15px;
     box-shadow: var(--shadow);
     background-color: #fff;
+}
+.message-content__container {
+    width: 100%;
+    height: max-content;
+}
+.message-content {
+    font-family: var(--font);
+    font-size: 20px;
+}
+.message-time__container {
+    width: 100%;
+    height: 20px;
+    text-align: end;
+}
+.message-time {
+    color: gray;
+    font-family: var(--font);
+    font-size: 16px;
 }
 </style>

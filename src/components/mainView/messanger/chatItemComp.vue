@@ -1,7 +1,7 @@
 <template>
     <div 
     class="chat-item"
-    @click="() => handlerGetChatById($props.chat.id)"
+    @click="() => handlerGetChatById($props.chat)"
     >
         <div class="chat__header">
             <div class="chat__avatar-container">
@@ -38,15 +38,13 @@ export default {
         }
     },
     methods: {
-        handlerGetChatById(chatId) {
-            this.store.chatData.chatId = chatId;
+        handlerGetChatById(chat) {
+            this.store.chatData.chatId = chat.id;
             this.store.chatData.isShowNotice = false;
             this.store.chatData.isShowChat = true;
+            this.store.chatData.toUserId = chat.users[0].id;
         }
     },
-    mounted() {
-        
-    }
 }
 </script>
 
@@ -54,17 +52,18 @@ export default {
     .chat-item {
         position: relative;
         width: 100%;
-        height: 130px;
+        height: 105px;
         border: 1px solid var(--primary-fg);
         border-radius: var(--radius);
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         justify-content: center;
-        padding: .5rem;
+        padding: .2rem;
+        box-shadow: var(--shadow);
     }
     .chat-item + .chat-item {
-        margin: .5rem auto 0 auto;
+        margin: .8rem auto 0 auto;
     }
     .chat__header {
         width: 80%;
@@ -81,8 +80,8 @@ export default {
         justify-content: center;
     }
     .users__avatar {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         background-color: rgb(161, 80, 161);
         display: flex;
@@ -91,6 +90,7 @@ export default {
     }
     .avatar-stub {
         color: white;
+        font-size: 20px;
     }
     .users__name-container {
         width: 80%;
@@ -102,7 +102,7 @@ export default {
         padding: 0 0 0 0.5rem;
     }
     .users__name {
-        font-size: 24px;
+        font-size: 20px;
         font-family: var(--font);
     }
     .chat__last-message-container {
@@ -111,8 +111,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: start;
-        padding: .5rem;
-        box-shadow: var(--shadow);
+        padding: .2rem;
         border-radius: var(--radius);
     }
     .text-last-message {

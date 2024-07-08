@@ -3,7 +3,7 @@ import { hostName, ContentTypeJSON, ContentTypeURL } from "./index";
 
 
 // Создание сообщения
-export async function createNewChatWithMessage(message) {
+export async function createMessage(message) {
     try {
         const response = await axios.post(hostName + '/messages/create', {
             ...message
@@ -13,7 +13,6 @@ export async function createNewChatWithMessage(message) {
             "Authorization": "Bearer " + localStorage.getItem('token'),
             }
         });
-        console.log(response.data)
         return response.data;
     } catch (err) {
         console.error(`api/massagesApi: createNewChatWithMessage => ${err}`)

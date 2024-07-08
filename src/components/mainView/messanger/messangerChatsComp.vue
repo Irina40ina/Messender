@@ -25,7 +25,7 @@ export default {
     data() {
         return {
             page: 1,
-            perPage: 3,
+            perPage: 15,
             arrayChats: [],
             paginator: null,
             loading: true,
@@ -36,7 +36,7 @@ export default {
             if(newPage !== oldPage) {
                 if(this.paginator.hasNext === true) {
                     const response = await getChats(this.page, this.perPage);
-                    this.arrayChats = [...this.arrayChats, ...response.resultArray];
+                    this.arrayChats = [...this.arrayChats, ...response.data];
                     this.paginator = response.paginator;
                     if(this.paginator.hasNext === true) {
                         this.loading = true;
