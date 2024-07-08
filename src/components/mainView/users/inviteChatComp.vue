@@ -30,7 +30,7 @@
 
 <script>
 import { useMainStore } from '@/store/mainStore';
-import { createNewChatWithMessage } from '@/api/messagesApi';
+import { createMessage } from '@/api/messagesApi';
 import { getChatById, createNewChat } from '@/api/chatsApi';
 export default {
     data() {
@@ -69,7 +69,7 @@ export default {
             this.messageObj.to_user_id = this.$props.user.id;
             this.messageObj.chat_id = null;
             this.messageObj.content = this.messageText;
-            await createNewChatWithMessage(this.messageObj);
+            await createMessage(this.messageObj);
             this.$emit('close');
 
 // Создание чата

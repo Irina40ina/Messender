@@ -14,10 +14,10 @@
         v-show="isShowChat"
         >
             <div class="message-user__avatar">
-                <p class="avatar-stub">{{  }}</p>
+                <p class="avatar-stub">{{ toUserName.slice(0,1).toUpperCase() + toUserLastname.slice(0,1).toUpperCase() }}</p>
             </div> 
             <div class="message__users-name-container">
-                <p class="users__name">{{  }}</p>
+                <p class="users__name">{{ toUserName + ' ' + toUserLastname }}</p>
             </div>
         </div>
 
@@ -38,9 +38,14 @@
                 name="input-message"
                 id="input-message" 
                 placeholder="Введите сообщение"
-                @input="(e) => message = e.target.value"
-                :value="message"
-                ></textarea>
+                @input="(e) => messageObj.content = e.target.value"
+                :value="messageObj.content"
+            ></textarea>
+            <font-awesome-icon 
+            class="btn-send-message" 
+            :icon="['fas', 'paper-plane']" 
+            @click="sendMessage"
+            />
         </div>
     </div>
 </template>
@@ -51,6 +56,7 @@ import { getChatMessagesById } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
 import { watch } from 'vue';
 import { getUserById } from '@/api/usersApi';
+import { createMessage } from '@/api/messagesApi';
 export default {
     components: {
         wraperMessageComp,
@@ -58,7 +64,13 @@ export default {
     data() {
         return {
             store: useMainStore(),
-            message: '',
+            messageObj: {
+                from_user_id: null,
+                to_user_id: null,
+                chat_id: null,
+                content: '',
+                forwarded_ids: null,
+            },
             arrMessages: [],
             isShowNotice: true,
             isShowChat: false,
@@ -66,6 +78,7 @@ export default {
             paginator: null,
             page: 1,
             perPage: 20,
+            toUserId: null,
             toUserName: '',
             toUserLastname: '',
         }
@@ -76,16 +89,33 @@ export default {
         },
         async handlerGetMessages(chatId) {
             const response = await getChatMessagesById(chatId, this.page, this.perPage);
-            console.log(response)
             this.arrMessages = response.messages;
             this.paginator = response.paginator;
+            this.createMessageObj(response.messages[0].fromUserId, response.messages[0].toUserId, chatId);
             this.store.chatData.chatId = chatId;
+            this.store.chatData.toUserId = response.messages[0].toUserId;
             this.store.chatData.isShowChat = true;
             this.store.chatData.isShowNotice = false;
-            // const dataUser = await getUserById(response.messages.toUserId);
-            // this.toUserName = dataUser.name;
-            // this.toUserLastname = dataUser.lastname;
-
+        },
+        async renderHeaderById(userId) {
+            const dataUser = await getUserById(userId);
+            this.toUserName = dataUser.data.name;
+            this.toUserLastname = dataUser.data.lastname;
+        },
+        createMessageObj(fromId, toId, chatId) {
+            this.messageObj.from_user_id = fromId;
+            this.messageObj.to_user_id = toId;
+            this.messageObj.chat_id = chatId;
+        },
+        async sendMessage() {
+            if(this.messageObj.content !== ''){
+                await createMessage(this.messageObj);
+                this.handlerGetMessages(this.messageObj.chat_id);
+                this.messageObj.from_user_id = null;
+                this.messageObj.to_user_id = null;
+                this.messageObj.chat_id = null;
+                this.messageObj.content = '';
+            }
         }
     },
     created() {
@@ -97,6 +127,7 @@ export default {
             if(newValue.isShowChat === true) {
                 this.isShowChat = true;
                 this.renderChat(newValue.chatId);
+                this.renderHeaderById(newValue.toUserId)
             }
             if(newValue.chatId !== oldValue.chatId) {
                 this.renderChat(newValue.chatId);
@@ -106,12 +137,13 @@ export default {
         // Route params
         watch(() => this.$route.params, async (newValue) => {
             // { chatId: 18 }
-            this.handlerGetMessages(newValue.chatId);
+            this.handlerGetMessages(newValue.chatId);            
         })
     },
-    mounted() {
-        this.handlerGetMessages(this.$route.params.chatId);
-
+    async mounted() {
+        if(this.$route.params.chatId !== undefined) {
+            this.handlerGetMessages(this.$route.params.chatId);
+        } 
         const textarea = document.getElementById('input-message');
         textarea.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -122,10 +154,7 @@ export default {
                 this.message = '';
             }
         })
-        // if(this.isShowNotice = false) {
-        //     const response = await getChatMessagesById(this.chatId);
-        //     console.log(response)
-        // }
+        
     }
 }
 
@@ -206,12 +235,13 @@ export default {
     }
     .message-content {
         width: 100%;
-        height: 85%;
+        height: 80%;
         overflow: auto;
     }
     .input-message-panel {
-        height: 10%;
+        min-height: 15%;
         width: 100%;
+        position: relative;
         display: flex;
         justify-content: center;
         align-items: flex-start;
@@ -224,7 +254,22 @@ export default {
         box-shadow: -10px -6px 10px -3px rgba(81,  115,  81, 0.5);
         outline: rgba(255, 255, 255, 0);
         resize: none;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 4rem 0.5rem 1rem;
         box-shadow: var(--shadow);
+    }
+    .btn-send-message {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        right: 6%;
+        bottom: 18%;
+        color: var(--primary-fg);
+        padding: .2rem;
+        border-radius: var(--radius);
+        transition: all 0.3s ease;
+    }
+    .btn-send-message:hover {
+        transition: all 0.3s ease;
+        background-color: rgba(128, 128, 128, 0.13);
     }
 </style>

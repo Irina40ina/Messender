@@ -36,6 +36,7 @@ export const useMainStore = defineStore("useMainStore", {
         chatId: null,
         isShowNotice: true,
         isShowChat: false,
+        toUserId: null,
       }
     };
   },
@@ -69,6 +70,13 @@ export const useMainStore = defineStore("useMainStore", {
         return moment(dateTime).utcOffset(utcOffset).format(template ?? 'HH:mm:ss / ll');    
       } else {
         return moment(dateTime).utcOffset('+03:00').format(template ?? 'HH:mm:ss / ll');    
+      }
+    },
+    messageTimeCreatedSrting(time, utcOffset) {
+      if(utcOffset) {
+        return moment(time).utcOffset(utcOffset).format('HH:mm');    
+      } else {
+        return moment(time).utcOffset('+03:00').format('HH:mm');    
       }
     },
     editName() {
