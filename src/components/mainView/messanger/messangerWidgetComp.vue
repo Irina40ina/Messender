@@ -1,5 +1,10 @@
 <template>
     <div class="message-widget">
+        <contextMenuComp
+        :is-show="isShowContextMenu"
+        @close="isShowContextMenu = false"
+        @show-replyed-message="replyMessage"
+        />
         <!-- Блок с уведомлением -->
         <div 
         class="notice-container"
@@ -24,13 +29,22 @@
         <!-- Content -->
         <div class="message-content">
             <wraperMessageComp
+            @open-context-menu="isShowContextMenu = true"
             v-show="isShowChat"
             v-for="message in arrMessages" 
             :message="message"
             :key="message.id"
             ></wraperMessageComp>
         </div>
-
+        <div 
+        class="replyed-message-panel"
+        v-show="isShowReplyedMessage"
+        >
+            <font-awesome-icon  class="icon-reply" :icon="['fas', 'reply']" />
+            <div class="replyed-message-container">
+                <p class="replyed-message-text">Ответ на сообщение: </p>
+            </div>
+        </div>
         <!-- Input Panel -->
         <div class="input-message-panel">
             <textarea 
@@ -43,6 +57,7 @@
             ></textarea>
             <font-awesome-icon 
             class="btn-send-message" 
+            v-show="isShowChat"
             :icon="['fas', 'paper-plane']" 
             @click="sendMessage"
             />
@@ -57,9 +72,11 @@ import { useMainStore } from '@/store/mainStore';
 import { watch } from 'vue';
 import { getUserById } from '@/api/usersApi';
 import { createMessage } from '@/api/messagesApi';
+import contextMenuComp from '@/components/mainView/messanger/contextMenuComp.vue';
 export default {
     components: {
         wraperMessageComp,
+        contextMenuComp,
     },
     data() {
         return {
@@ -71,6 +88,8 @@ export default {
                 content: '',
                 forwarded_ids: null,
             },
+            isShowContextMenu: false,
+            isShowReplyedMessage: false,
             arrMessages: [],
             isShowNotice: true,
             isShowChat: false,
@@ -116,7 +135,11 @@ export default {
                 this.messageObj.chat_id = null;
                 this.messageObj.content = '';
             }
+        },
+        replyMessage() {
+            this.isShowReplyedMessage = true;
         }
+        
     },
     created() {
         watch(() => this.store.chatData, (newValue, oldValue) => {
@@ -129,15 +152,17 @@ export default {
                 this.renderChat(newValue.chatId);
                 this.renderHeaderById(newValue.toUserId)
             }
-            if(newValue.chatId !== oldValue.chatId) {
-                this.renderChat(newValue.chatId);
-            }
+            // if(newValue.chatId !== oldValue.chatId) {
+            //     this.renderChat(newValue.chatId);
+            // }
         }, { deep: true });
         
         // Route params
         watch(() => this.$route.params, async (newValue) => {
             // { chatId: 18 }
-            this.handlerGetMessages(newValue.chatId);            
+            if(this.$route.params.chatId !== undefined) {
+                this.handlerGetMessages(newValue.chatId);
+            }
         })
     },
     async mounted() {
@@ -154,7 +179,15 @@ export default {
                 this.message = '';
             }
         })
-        
+        window.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') {
+                this.$router.push({name: 'messanger'});
+                this.$route.params.chatId = undefined;
+                this.isShowNotice = true;
+                this.isShowChat = false;
+                this.isShowReplyedMessage = false;
+            }
+        })
     }
 }
 
@@ -237,6 +270,34 @@ export default {
         width: 100%;
         height: 80%;
         overflow: auto;
+    }
+    .replyed-message-panel {
+        width: 90%;
+        height: 40px;
+        border-radius: var(--radius);
+        border: 2px solid var(--violet);
+        background-color: #fff;
+        position: absolute;
+        bottom: 15%;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        padding: 0.1rem;
+        z-index: 900;
+    }
+    .icon-reply {
+        color: var(--violet);
+        width: 5%;
+        height: 30px;
+    }
+    .replyed-message-container {
+        width: 90%;
+    }
+    .replyed-message-text {
+        font-family: var(--font);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
     .input-message-panel {
         min-height: 15%;
