@@ -16,14 +16,17 @@ export function globalSocketStarted() {
         // Подключение по вебсокету
         socket.connect();
 
+        // Проверка установки socket соединения по событию "connect" 
         socket.on('connect', () => {
             console.log('Подключение по ws успешно установлено');
         });
 
+        // В случае ошибки при установке соединения  
         socket.on('connect_error', (err) => {
             console.error('Не удалось подключиться к серверу', err);
         });
 
+        // В случае разъединения соединения с сервером
         socket.on('disconnect', () => {
             if (socket.active) {
                 console.log('Клиент пытается переподключится');
@@ -35,11 +38,12 @@ export function globalSocketStarted() {
 
 // ==============================  Серверные события  ==============================
 
+        // получение информации от сервера об отсоединенном сокет-клиенте
         socket.on('status:disconnect', (data) => {
             const userId = data.userId;
         });
 
-        // TEST
+        // TEST (хз)
         socket.on('error', (err) => {
             console.log('socket:error', err);
         });
