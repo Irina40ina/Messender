@@ -29,7 +29,7 @@
         <!-- Content -->
         <div class="message-content">
             <wraperMessageComp
-            @open-context-menu="isShowContextMenu = true"
+            @open-context-menu="openContextMenu"
             v-show="isShowChat"
             v-for="message in arrMessages" 
             :message="message"
@@ -42,7 +42,7 @@
         >
             <font-awesome-icon  class="icon-reply" :icon="['fas', 'reply']" />
             <div class="replyed-message-container">
-                <p class="replyed-message-text">Ответ на сообщение: </p>
+                <p class="replyed-message-text">Ответ на сообщение: {{ selectedMessage?.content }}</p>
             </div>
         </div>
         <!-- Input Panel -->
@@ -100,6 +100,7 @@ export default {
             toUserId: null,
             toUserName: '',
             toUserLastname: '',
+            selectedMessage: null,
         }
     },
     methods: {
@@ -135,6 +136,10 @@ export default {
                 this.messageObj.chat_id = null;
                 this.messageObj.content = '';
             }
+        },
+        openContextMenu(message) {
+            this.isShowContextMenu = true;
+            this.selectedMessage = message;
         },
         replyMessage() {
             this.isShowReplyedMessage = true;
@@ -274,11 +279,11 @@ export default {
     .replyed-message-panel {
         width: 90%;
         height: 40px;
-        border-radius: var(--radius);
+        border-radius: 10px;
         border: 2px solid var(--violet);
         background-color: #fff;
         position: absolute;
-        bottom: 15%;
+        bottom: 20%;
         display: flex;
         align-items: center;
         justify-content: start;

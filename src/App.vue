@@ -3,7 +3,12 @@
 </template>
 
 <script>
-  
+import { globalSocketStarted } from '@/plugins/socket.js';
+export default {
+    created: () => {
+        globalSocketStarted();
+    }
+}
 </script>
 
 <style>

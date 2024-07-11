@@ -1,7 +1,7 @@
 <template>
     <div 
     class="wraper-message" 
-    @contextmenu.prevent="$emit('openContextMenu')"
+    @contextmenu.prevent="$emit('openContextMenu', $props.message)"
     >
         <div class="message">
             <div class="message-content__container">
