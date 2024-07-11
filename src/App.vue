@@ -30,6 +30,7 @@
   --profile-save-fg: rgb(119, 172, 84);
   --profile-save-hover: rgb(92, 209, 46);
   --colorful-bg: rgb(54, 161, 78);
+  --violet: rgb(155, 108, 155);
 }
 
 

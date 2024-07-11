@@ -1,6 +1,7 @@
 <template>
     <div 
     class="wraper-message" 
+    @contextmenu.prevent="$emit('openContextMenu')"
     >
         <div class="message">
             <div class="message-content__container">
@@ -39,6 +40,7 @@ export default {
             required: true,
         }
     },
+    emits: ['openContextMenu'],
 }
 </script>
 
