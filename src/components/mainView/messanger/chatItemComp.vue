@@ -43,6 +43,7 @@ export default {
             this.store.chatData.isShowNotice = false;
             this.store.chatData.isShowChat = true;
             this.store.chatData.toUserId = chat.users[0].id;
+            console.log(this.store.chatData.toUserId);
         }
     },
 }

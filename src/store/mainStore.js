@@ -37,7 +37,8 @@ export const useMainStore = defineStore("useMainStore", {
         isShowNotice: true,
         isShowChat: false,
         toUserId: null,
-      }
+      },
+      messages: [],
     };
   },
   getters: {},

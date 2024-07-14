@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import { globalSocketStarted } from '@/plugins/socket.js';
+import { entrySocketStarted } from '@/api/socket/inputApi';
 export default {
     created: () => {
-        globalSocketStarted();
+      entrySocketStarted();
     }
 }
 </script>
