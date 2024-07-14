@@ -31,7 +31,7 @@
             <wraperMessageComp
             @open-context-menu="openContextMenu"
             v-show="isShowChat"
-            v-for="message in arrMessages" 
+            v-for="message in this.store.messages" 
             :message="message"
             :key="message.id"
             ></wraperMessageComp>
@@ -90,7 +90,7 @@ export default {
             },
             isShowContextMenu: false,
             isShowReplyedMessage: false,
-            arrMessages: [],
+            // arrMessages: [],
             isShowNotice: true,
             isShowChat: false,
             chatId: null,
@@ -109,7 +109,7 @@ export default {
         },
         async handlerGetMessages(chatId) {
             const response = await getChatMessagesById(chatId, this.page, this.perPage);
-            this.arrMessages = response.messages;
+            this.store.messages = response.messages;
             this.paginator = response.paginator;
             this.createMessageObj(response.messages[0].fromUserId, response.messages[0].toUserId, chatId);
             this.store.chatData.chatId = chatId;
@@ -129,8 +129,10 @@ export default {
         },
         async sendMessage() {
             if(this.messageObj.content !== ''){
-                await createMessage(this.messageObj);
-                this.handlerGetMessages(this.messageObj.chat_id);
+                this.createMessageObj(+localStorage.getItem('user_id'), this.store.chatData.toUserId, this.store.chatData.chatId);
+                console.log(this.store.chatData);
+                const data = await createMessage(this.messageObj);
+                this.store.messages.push(data?.data);
                 this.messageObj.from_user_id = null;
                 this.messageObj.to_user_id = null;
                 this.messageObj.chat_id = null;
