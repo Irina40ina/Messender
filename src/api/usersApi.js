@@ -16,6 +16,21 @@ export async function getUserById(userId) {
     }
 }
 
+// Получение данных пользователя по токену доступа
+export async function getUserDataMe() {
+    try {
+        const response = await axios.get(hostName + `/users/me`, {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer " + localStorage.getItem('token'),
+            }
+        });
+        return response.data.data;
+    } catch (err) {
+        console.error(`api/usersApi: getUserDataMe => ${err}`)
+    }
+}
+
 
 export async function getUsers(page, perPage) {
     try {

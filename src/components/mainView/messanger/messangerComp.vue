@@ -1,8 +1,10 @@
 <template>
     <div class="messanger-container">
         <messangerChatsComp
+        @open-chat="(e) => handlerOpenChat(e)"
         ></messangerChatsComp>
         <messangerWidgetComp
+        :openned-chat="opennedChat"
         ></messangerWidgetComp>
     </div>
 </template>
@@ -18,7 +20,12 @@ export default {
     },
     data() {
         return {
-            
+            opennedChat: null,
+        }
+    },
+    methods: {
+        handlerOpenChat(e) {
+            this.opennedChat = e;
         }
     },
     
