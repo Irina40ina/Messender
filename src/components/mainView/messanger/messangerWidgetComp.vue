@@ -19,10 +19,10 @@
         v-show="isShowChat"
         >
             <div class="message-user__avatar">
-                <p class="avatar-stub">{{ toUserName.slice(0,1).toUpperCase() + toUserLastname.slice(0,1).toUpperCase() }}</p>
+                <p class="avatar-stub">{{ toUserInitials }}</p>
             </div> 
             <div class="message__users-name-container">
-                <p class="users__name">{{ toUserName + ' ' + toUserLastname }}</p>
+                <p class="users__name">{{ toUserName }}</p>
             </div>
         </div>
 
@@ -69,7 +69,7 @@
 import wraperMessageComp from './wraperMessageComp.vue';
 import { getChatMessagesById } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
-import { watch } from 'vue';
+import { nextTick, watch } from 'vue';
 import { getChatById } from '@/api/chatsApi';
 import { getUserById } from '@/api/usersApi';
 import { createMessage } from '@/api/messagesApi';
@@ -100,7 +100,7 @@ export default {
             perPage: 20,
             toUserId: null,
             toUserName: '',
-            toUserLastname: '',
+            toUserInitials: '',
             selectedMessage: null,
         }
     },
@@ -116,11 +116,16 @@ export default {
             this.$router.push({ name: 'chat', params: { chatId: id } });
         },
         async handlerGetMessages(chatId) {
-            const response = await getChatMessagesById(chatId, this.page, this.perPage);
-            this.store.messages = response.messages;
-            this.paginator = response.paginator;
-            this.isShowChat = true;
-            this.isShowNotice = false;
+            try {
+                
+                const response = await getChatMessagesById(chatId, this.page, this.perPage);
+                this.store.messages = response.messages;
+                this.paginator = response.paginator;
+                this.isShowChat = true;
+                this.isShowNotice = false;
+            } catch (err) {
+                console.error(err)
+            }
         },
         // async renderHeaderById(chatId) {
         //     const dataChat = await getChatById(chatId);
@@ -154,7 +159,6 @@ export default {
         replyMessage() {
             this.isShowReplyedMessage = true;
         }
-        
     },
     created() {
         watch(() => this.$props.opennedChat, async (newValue) => {
@@ -165,12 +169,25 @@ export default {
                 this.toUserLastname = newValue.users[0].lastname;
             }
         }, { deep: true });
+        // watch(() => this.store.chats.length, async (newValue, oldValue) => {
+        //     if(oldValue === 0 && newValue > 0) {
+        //         const { userName, userLastname } = this.store.extractUsernameByChatId(this.$route.params.chatId);
+                // this.toUserName = userName + ' ' + userLastname;
+                // this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
+        //     }
+        // }, { deep: false });
     },
     async mounted() {
-        if(this.$route.params.chatId !== undefined) {
-            await this.handlerGetMessages(this.$route.params.chatId);
-            // this.renderHeaderById(this.$route.params.chatId);
-        } 
+        try {
+            if(this.$route.params.chatId !== undefined) {
+                await this.handlerGetMessages(this.$route.params.chatId);
+                const { userName, userLastname } = await this.store.extractUsernameByChatId(this.$route.params.chatId)
+                this.toUserName = userName + ' ' + userLastname;
+                this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
+            } 
+        } catch (err) {
+            console.error(err)
+        }
 
         // Обработчик нажатия кнопок (Enter)
         const textarea = document.getElementById('input-message');

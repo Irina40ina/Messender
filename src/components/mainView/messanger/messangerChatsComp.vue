@@ -1,7 +1,7 @@
 <template>
     <div class="messanger-container__chats">
         <chatItemComp
-        v-for="chat in arrayChats"
+        v-for="chat in store.chats"
         :chat="chat"
         :key="chat.id"
         @open-chat="(e) => handlerOpenChat(e)"
@@ -19,6 +19,7 @@
 <script>
 import chatItemComp from '@/components/mainView/messanger/chatItemComp.vue'
 import { getChats } from '@/api/chatsApi';
+import { useMainStore } from '@/store/mainStore';
 export default {
     components: {
         chatItemComp,
@@ -26,6 +27,7 @@ export default {
     emits: ['openChat'],
     data() {
         return {
+            store: useMainStore(),
             page: 1,
             perPage: 15,
             arrayChats: [],
@@ -58,7 +60,7 @@ export default {
     },
     async mounted() {
         const response = await getChats(this.page, this.perPage);
-        this.arrayChats = response.data;
+        this.store.chats = response.data;
         this.paginator = response.paginator;
 
         // Observer ============

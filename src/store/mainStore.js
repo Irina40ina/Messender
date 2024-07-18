@@ -41,6 +41,7 @@ export const useMainStore = defineStore("useMainStore", {
         toUserId: null,
       },
       messages: [],
+      chats: [],
     };
   },
   getters: {},
@@ -105,5 +106,30 @@ export const useMainStore = defineStore("useMainStore", {
       };
       return awaitData;
     },
+    // extractUsernameByChatId(id) {
+    //   const searchedChat = this.chats.find((element) => {
+    //     if(element.id == id) {
+    //       return true;
+    //     }
+    //   });
+    //   const userName = searchedChat.users[0].name;
+    //   const userLastname = searchedChat.users[0].lastname;
+    //   return { userName, userLastname };
+    // }
+    extractUsernameByChatId(id) {
+      return new Promise((resolve, reject) => {
+        while(Infinity) {
+          if(this.chats.length > 0) break;
+        }
+        const searchedChat = this.chats.find((element) => {
+          if(element.id == id) {
+            return true;
+          }
+        });
+        const userName = searchedChat.users[0].name;
+        const userLastname = searchedChat.users[0].lastname;
+        resolve({ userName, userLastname });
+      });
+    }
   },
 });
