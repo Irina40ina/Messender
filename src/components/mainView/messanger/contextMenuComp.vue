@@ -1,5 +1,9 @@
 <template>
-    <div class="context-menu-overlay" v-show="isShowContextMenu" @click="$emit('close')">
+    <div 
+    class="context-menu-overlay" 
+    v-show="isShowContextMenu" 
+    @click="$emit('close')"
+    >
         <div class="context-menu" ref="contextMenu">
             <div class="context-menu-item">
                 <p class="text">Редактировать</p>

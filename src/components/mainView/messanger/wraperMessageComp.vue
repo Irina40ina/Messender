@@ -1,7 +1,7 @@
 <template>
     <div 
     class="wraper-message" 
-    @contextmenu.prevent="$emit('openContextMenu', $props.message)"
+    @contextmenu.prevent="openMenu"
     >
         <div class="message">
             <div class="message-content__container">
@@ -41,6 +41,12 @@ export default {
         }
     },
     emits: ['openContextMenu'],
+    methods: {
+        openMenu() {
+            this.$emit('openContextMenu', this.$props.message);
+            console.log(this.$props.message)
+        }
+    }
 }
 </script>
 

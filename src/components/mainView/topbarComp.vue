@@ -6,11 +6,11 @@
         <div class="topbar-user-area">
 
             <div class="topbar-name-container">
-                <h2 class="topbar-user-name">{{  }}</h2>
+                <h2 class="topbar-user-name">{{ userName }}</h2>
             </div>
 
             <div class="topbar-avatar">
-                <p class="avatar-stub">{{  }}</p>
+                <p class="avatar-stub">{{ initials }}</p>
             </div>
             
             <font-awesome-icon 
@@ -27,7 +27,13 @@ export default {
     data() {
         return {
             store: useMainStore(),
+            userName: '',
+            initials: '',
         }
+    },
+    mounted() {
+        this.userName = this.store.user.name + ' ' + this.store.user.lastname;
+        this.initials = [...this.store.user.name][0].toUpperCase() + [...this.store.user.lastname][0].toUpperCase();
     }
 }
 </script>
