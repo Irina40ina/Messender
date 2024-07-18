@@ -29,7 +29,7 @@
         <!-- Content -->
         <div class="message-content">
             <wraperMessageComp
-            @open-context-menu="openContextMenu"
+            @open-context-menu="(e) => openContextMenu(e)"
             v-show="isShowChat"
             v-for="message in this.store.messages" 
             :message="message"
