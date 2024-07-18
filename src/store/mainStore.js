@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import moment from '@/plugins/momentPlugin';
+import moment from "@/plugins/momentPlugin";
 
 export const useMainStore = defineStore("useMainStore", {
   state: () => {
@@ -32,6 +32,8 @@ export const useMainStore = defineStore("useMainStore", {
         name: null,
         phoneNumber: null,
       },
+      user: null,
+
       chatData: {
         chatId: null,
         isShowNotice: true,
@@ -56,48 +58,52 @@ export const useMainStore = defineStore("useMainStore", {
       return filteredObj;
     },
     resetPhoneNumberMask(number) {
-        let sourceNumber = number.split("");
-        let readyValue = [];
-        let excludedChars = "+()- ";
-        sourceNumber.forEach((char) => {
-            if (!excludedChars.includes(char)) {
-            readyValue.push(char);
-            }
-        });
-        return readyValue.join("").slice(1);
+      let sourceNumber = number.split("");
+      let readyValue = [];
+      let excludedChars = "+()- ";
+      sourceNumber.forEach((char) => {
+        if (!excludedChars.includes(char)) {
+          readyValue.push(char);
+        }
+      });
+      return readyValue.join("").slice(1);
     },
     replaceDateTimeSrting(dateTime, template, utcOffset) {
-      if(utcOffset) {
-        return moment(dateTime).utcOffset(utcOffset).format(template ?? 'HH:mm:ss / ll');    
+      if (utcOffset) {
+        return moment(dateTime)
+          .utcOffset(utcOffset)
+          .format(template ?? "HH:mm:ss / ll");
       } else {
-        return moment(dateTime).utcOffset('+03:00').format(template ?? 'HH:mm:ss / ll');    
+        return moment(dateTime)
+          .utcOffset("+03:00")
+          .format(template ?? "HH:mm:ss / ll");
       }
     },
     messageTimeCreatedSrting(time, utcOffset) {
-      if(utcOffset) {
-        return moment(time).utcOffset(utcOffset).format('HH:mm');    
+      if (utcOffset) {
+        return moment(time).utcOffset(utcOffset).format("HH:mm");
       } else {
-        return moment(time).utcOffset('+03:00').format('HH:mm');    
+        return moment(time).utcOffset("+03:00").format("HH:mm");
       }
     },
     editName() {
-      let fullname = '';
-      let firstLetter = '';
-      let secondLetter = '';
-      let initials = '';
-      
-      const awaitData = (callback) =>  {
+      let fullname = "";
+      let firstLetter = "";
+      let secondLetter = "";
+      let initials = "";
+
+      const awaitData = (callback) => {
         fullname = `${this.profileData.name} ${this.profileData.lastname} ${this.profileData.surname}`;
-        if(this.profileData.name !== null) {
-          firstLetter = this.profileData.name.slice(0,1).toUpperCase();
-        } 
-        if(this.profileData.lastname !== null) {
-          secondLetter = this.profileData.lastname.slice(0,1).toUpperCase();
+        if (this.profileData.name !== null) {
+          firstLetter = this.profileData.name.slice(0, 1).toUpperCase();
         }
-        initials = firstLetter + secondLetter + '';
+        if (this.profileData.lastname !== null) {
+          secondLetter = this.profileData.lastname.slice(0, 1).toUpperCase();
+        }
+        initials = firstLetter + secondLetter + "";
         return callback({ fullname, initials });
-      }
+      };
       return awaitData;
-    }
+    },
   },
 });

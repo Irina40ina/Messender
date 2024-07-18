@@ -4,6 +4,7 @@
         v-for="chat in arrayChats"
         :chat="chat"
         :key="chat.id"
+        @open-chat="(e) => handlerOpenChat(e)"
         ></chatItemComp>
         <div
             class="triggerPagination"
@@ -22,6 +23,7 @@ export default {
     components: {
         chatItemComp,
     },
+    emits: ['openChat'],
     data() {
         return {
             page: 1,
@@ -47,6 +49,11 @@ export default {
                 }
                 this.loading = false;
             }
+        }
+    },
+    methods: {
+        handlerOpenChat(e) {
+            this.$emit('openChat', e);
         }
     },
     async mounted() {

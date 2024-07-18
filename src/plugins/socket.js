@@ -1,8 +1,9 @@
 import { io } from "socket.io-client";
+import { useMainStore } from '@/store/mainStore';
 
 function getUserData() {
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('user_id');
+    const userId = useMainStore().user?.id;
     if(!token || !userId) {
         throw 'getUserData() => Не удалось получить токен доступа либо ID пользователя при подключении сокета';
     } 

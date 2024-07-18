@@ -1,25 +1,24 @@
 <template>
     <div 
     class="chat-item"
-    @click="() => handlerGetChatById($props.chat)"
+    @click="handlerOpenChat"
     >
         <div class="chat__header">
             <div class="chat__avatar-container">
                 <div class="users__avatar">
-                    <h1 class="avatar-stub">{{ $props.chat.users[0].name.slice(0,1).toUpperCase() + $props.chat.users[0].lastname.slice(0,1).toUpperCase() }}</h1>
+                    <h1 class="avatar-stub">{{ computeChatInitials }}</h1>
                 </div> 
             </div>
             <div class="users__name-container">
-                <p class="users__name">{{ $props.chat.users[0].name + ' ' + $props.chat.users[0].lastname }}</p>
+                <p class="users__name">{{ computeChatName }}</p>
             </div>
         </div>
         <div class="chat__last-message-container">
-            <p class="text-last-message"> Hello HelloHelloHelloHello Hello HelloHelloHelloHello Hello HelloHelloHelloHello Hello HelloHelloHelloHello </p>
+            <p class="text-last-message"> {{ $props.chat.previewMessage }} </p>
         </div>
         <div class="last-activity-container">
             <p class="last-activity"> 2ч. назад </p>
         </div>
-        
     </div>
 </template>
 
@@ -31,20 +30,31 @@ export default {
             store: useMainStore(),
         }
     },
+    emits: ['openChat'],
     props: {
         chat: {
             type: Object,
             required: true,
         }
     },
-    methods: {
-        handlerGetChatById(chat) {
-            this.store.chatData.chatId = chat.id;
-            this.store.chatData.isShowNotice = false;
-            this.store.chatData.isShowChat = true;
-            this.store.chatData.toUserId = chat.users[0].id;
-            console.log(this.store.chatData.toUserId);
+    computed: {
+        computeChatInitials() {
+            return this.$props.chat.users[0].name.slice(0,1).toUpperCase() + this.$props.chat.users[0].lastname.slice(0,1).toUpperCase();
+        },
+        computeChatName() {
+            return this.$props.chat.users[0].name + ' ' + this.$props.chat.users[0].lastname
         }
+    },
+    methods: {
+        handlerOpenChat() {
+            this.$emit('openChat', this.$props.chat);
+        }
+        // handlerGetChatById(chat) {
+        //     this.store.chatData.chatId = chat.id;
+        //     this.store.chatData.isShowNotice = false;
+        //     this.store.chatData.isShowChat = true;
+        //     this.store.chatData.toUserId = chat.users[0].id;
+        // }
     },
 }
 </script>

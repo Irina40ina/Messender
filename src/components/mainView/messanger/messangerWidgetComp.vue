@@ -103,6 +103,13 @@ export default {
             selectedMessage: null,
         }
     },
+    props: {
+        opennedChat: {
+            type: Object,
+            required: false,
+            default: null,
+        }
+    },
     methods: {
         async renderChat(id) {
             this.$router.push({ name: 'chat', params: { chatId: id } });
@@ -117,65 +124,78 @@ export default {
             this.store.chatData.isShowChat = true;
             this.store.chatData.isShowNotice = false;
         },
-        async renderHeaderById(userId) {
-            const dataUser = await getUserById(userId);
-            this.toUserName = dataUser.data.name;
-            this.toUserLastname = dataUser.data.lastname;
-        },
+        // async renderHeaderById(userId) {
+        //     const dataUser = await getUserById(userId);
+        //     this.toUserName = dataUser.data.name;
+        //     this.toUserLastname = dataUser.data.lastname;
+        // },
         createMessageObj(fromId, toId, chatId) {
             this.messageObj.from_user_id = fromId;
             this.messageObj.to_user_id = toId;
             this.messageObj.chat_id = chatId;
         },
-        async sendMessage() {
-            if(this.messageObj.content !== ''){
-                this.createMessageObj(+localStorage.getItem('user_id'), this.store.chatData.toUserId, this.store.chatData.chatId);
-                console.log(this.store.chatData);
-                const data = await createMessage(this.messageObj);
-                this.store.messages.push(data?.data);
-                this.messageObj.from_user_id = null;
-                this.messageObj.to_user_id = null;
-                this.messageObj.chat_id = null;
-                this.messageObj.content = '';
-            }
-        },
-        openContextMenu(message) {
-            this.isShowContextMenu = true;
-            this.selectedMessage = message;
-        },
-        replyMessage() {
-            this.isShowReplyedMessage = true;
-        }
+        // async sendMessage() {
+        //     if(this.messageObj.content !== ''){
+        //         this.createMessageObj(+localStorage.getItem('user_id'), 10, this.store.chatData.chatId);
+        //         console.log(this.store.chatData);
+        //         const data = await createMessage(this.messageObj);
+        //         this.store.messages.push(data?.data);
+        //         this.messageObj.from_user_id = null;
+        //         this.messageObj.to_user_id = null;
+        //         this.messageObj.chat_id = null;
+        //         this.messageObj.content = '';
+        //     }
+        // },
+        // openContextMenu(message) {
+        //     this.isShowContextMenu = true;
+        //     this.selectedMessage = message;
+        // },
+        // replyMessage() {
+        //     this.isShowReplyedMessage = true;
+        // }
         
     },
-    created() {
-        watch(() => this.store.chatData, (newValue, oldValue) => {
-            this.chatId = newValue.chatId;
-            if(newValue.isShowNotice === false) {
-                this.isShowNotice = false;
-            }
-            if(newValue.isShowChat === true) {
-                this.isShowChat = true;
-                this.renderChat(newValue.chatId);
-                this.renderHeaderById(newValue.toUserId)
-            }
-            // if(newValue.chatId !== oldValue.chatId) {
-            //     this.renderChat(newValue.chatId);
-            // }
-        }, { deep: true });
+
+    // created() {
+    //     watch(() => this.store.chatData, (newValue, oldValue) => {
+    //         this.chatId = newValue.chatId;
+    //         if(newValue.isShowNotice === false) {
+    //             this.isShowNotice = false;
+    //         }
+    //         if(newValue.isShowChat === true) {
+    //             this.isShowChat = true;
+    //             this.renderChat(newValue.chatId);
+    //             this.renderHeaderById(newValue.toUserId)
+    //         }
+    //         // if(newValue.chatId !== oldValue.chatId) {
+    //         //     this.renderChat(newValue.chatId);
+    //         // }
+    //     }, { deep: true });
         
-        // Route params
-        watch(() => this.$route.params, async (newValue) => {
-            // { chatId: 18 }
-            if(this.$route.params.chatId !== undefined) {
-                this.handlerGetMessages(newValue.chatId);
+    //     // Route params
+    //     watch(() => this.$route.params, async (newValue) => {
+    //         // { chatId: 18 }
+    //         if(this.$route.params.chatId !== undefined) {
+    //             this.handlerGetMessages(newValue.chatId);
+    //         }
+    //     })
+    // },
+    created() {
+        watch(() => this.$props.opennedChat, async (newValue) => {
+            if(newValue) {
+                await this.handlerGetMessages(newValue.id);
+                this.renderChat(newValue.id);
+                console.log('watch', this.store.messages);
             }
-        })
+        }, { deep: true });
     },
     async mounted() {
         if(this.$route.params.chatId !== undefined) {
-            this.handlerGetMessages(this.$route.params.chatId);
+            await this.handlerGetMessages(this.$route.params.chatId);
+            console.log(this.store.messages);
         } 
+
+        // Обработчик нажатия кнопок (Enter)
         const textarea = document.getElementById('input-message');
         textarea.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -186,12 +206,13 @@ export default {
                 this.message = '';
             }
         })
+        // Обработчик нажатия кнопок (Escape)
         window.addEventListener('keydown', (e) => {
             if(e.key === 'Escape') {
                 this.$router.push({name: 'messanger'});
                 this.$route.params.chatId = undefined;
                 this.isShowNotice = true;
-                this.isShowChat = false;
+                this.isShowChat = false;                                                                                                   
                 this.isShowReplyedMessage = false;
             }
         })
