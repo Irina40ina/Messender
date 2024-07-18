@@ -70,6 +70,7 @@ import wraperMessageComp from './wraperMessageComp.vue';
 import { getChatMessagesById } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
 import { watch } from 'vue';
+import { getChatById } from '@/api/chatsApi';
 import { getUserById } from '@/api/usersApi';
 import { createMessage } from '@/api/messagesApi';
 import contextMenuComp from '@/components/mainView/messanger/contextMenuComp.vue';
@@ -118,81 +119,57 @@ export default {
             const response = await getChatMessagesById(chatId, this.page, this.perPage);
             this.store.messages = response.messages;
             this.paginator = response.paginator;
-            this.createMessageObj(response.messages[0].fromUserId, response.messages[0].toUserId, chatId);
-            this.store.chatData.chatId = chatId;
-            this.store.chatData.toUserId = response.messages[0].toUserId;
-            this.store.chatData.isShowChat = true;
-            this.store.chatData.isShowNotice = false;
+            this.isShowChat = true;
+            this.isShowNotice = false;
         },
-        // async renderHeaderById(userId) {
-        //     const dataUser = await getUserById(userId);
-        //     this.toUserName = dataUser.data.name;
-        //     this.toUserLastname = dataUser.data.lastname;
+        // async renderHeaderById(chatId) {
+        //     const dataChat = await getChatById(chatId);
+        //     console.log(dataChat)
+        //     // const dataUser = await getUserById(chatId);
+        //     // this.toUserName = data.name;
+        //     // this.toUserLastname = data.lastname;
+        //     toUserName.slice(0,1).toUpperCase() + toUserLastname.slice(0,1).toUpperCase()
+        //     toUserName + ' ' + toUserLastname
         // },
         createMessageObj(fromId, toId, chatId) {
             this.messageObj.from_user_id = fromId;
             this.messageObj.to_user_id = toId;
             this.messageObj.chat_id = chatId;
         },
-        // async sendMessage() {
-        //     if(this.messageObj.content !== ''){
-        //         this.createMessageObj(+localStorage.getItem('user_id'), 10, this.store.chatData.chatId);
-        //         console.log(this.store.chatData);
-        //         const data = await createMessage(this.messageObj);
-        //         this.store.messages.push(data?.data);
-        //         this.messageObj.from_user_id = null;
-        //         this.messageObj.to_user_id = null;
-        //         this.messageObj.chat_id = null;
-        //         this.messageObj.content = '';
-        //     }
-        // },
-        // openContextMenu(message) {
-        //     this.isShowContextMenu = true;
-        //     this.selectedMessage = message;
-        // },
-        // replyMessage() {
-        //     this.isShowReplyedMessage = true;
-        // }
+        async sendMessage() {
+            if(this.messageObj.content !== ''){
+                this.createMessageObj(this.$props.opennedChat.creator, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
+                const data = await createMessage(this.messageObj);
+                this.store.messages.push(data?.data);
+                this.messageObj.from_user_id = null;
+                this.messageObj.to_user_id = null;
+                this.messageObj.chat_id = null;
+                this.messageObj.content = '';
+            }
+        },
+        openContextMenu(message) {
+            this.isShowContextMenu = true;
+            this.selectedMessage = message;
+        },
+        replyMessage() {
+            this.isShowReplyedMessage = true;
+        }
         
     },
-
-    // created() {
-    //     watch(() => this.store.chatData, (newValue, oldValue) => {
-    //         this.chatId = newValue.chatId;
-    //         if(newValue.isShowNotice === false) {
-    //             this.isShowNotice = false;
-    //         }
-    //         if(newValue.isShowChat === true) {
-    //             this.isShowChat = true;
-    //             this.renderChat(newValue.chatId);
-    //             this.renderHeaderById(newValue.toUserId)
-    //         }
-    //         // if(newValue.chatId !== oldValue.chatId) {
-    //         //     this.renderChat(newValue.chatId);
-    //         // }
-    //     }, { deep: true });
-        
-    //     // Route params
-    //     watch(() => this.$route.params, async (newValue) => {
-    //         // { chatId: 18 }
-    //         if(this.$route.params.chatId !== undefined) {
-    //             this.handlerGetMessages(newValue.chatId);
-    //         }
-    //     })
-    // },
     created() {
         watch(() => this.$props.opennedChat, async (newValue) => {
             if(newValue) {
                 await this.handlerGetMessages(newValue.id);
                 this.renderChat(newValue.id);
-                console.log('watch', this.store.messages);
+                this.toUserName = newValue.users[0].name;
+                this.toUserLastname = newValue.users[0].lastname;
             }
         }, { deep: true });
     },
     async mounted() {
         if(this.$route.params.chatId !== undefined) {
             await this.handlerGetMessages(this.$route.params.chatId);
-            console.log(this.store.messages);
+            // this.renderHeaderById(this.$route.params.chatId);
         } 
 
         // Обработчик нажатия кнопок (Enter)

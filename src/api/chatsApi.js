@@ -23,19 +23,19 @@ export async function getChats(page, perPage) {
 }
 
 // Получение чата по Id
-// export async function getChatById(id) {
-//     try {
-//        const response = await axios.get(hostName + `/chats/${id}`, {
-//         headers: {
-//             ...ContentTypeURL,
-//             "Authorization": "Bearer " + localStorage.getItem('token'),
-//         },
-//     }); 
-//         return response.data.data;
-//     } catch (error) {
-//         console.error(`api/chatsApi: getChatsById => ${err}`)
-//     }
-// }
+export async function getChatById(id) {
+    try {
+       const response = await axios.get(hostName + `/chats/${id}`, {
+        headers: {
+            ...ContentTypeURL,
+            "Authorization": "Bearer " + localStorage.getItem('token'),
+        },
+    }); 
+        return response.data.data;
+    } catch (error) {
+        console.error(`api/chatsApi: getChatsById => ${err}`)
+    }
+}
 
 // Создание нового чата
 export async function createNewChat(chatObj) {

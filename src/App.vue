@@ -10,9 +10,9 @@ export default {
   created: async () => {
     {    
       const userDataStorage = localStorage.getItem('user');
-      if(userDataStorage) {
+      if(userDataStorage !== 'undefined') {
         useMainStore().user = JSON.parse(userDataStorage);
-      } else {
+      } else if(userDataStorage === 'undefined') {
         const data = await getUserDataMe();
         localStorage.setItem('user', JSON.stringify(data));
         useMainStore().user = data;

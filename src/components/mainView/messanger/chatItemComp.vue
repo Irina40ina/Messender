@@ -14,10 +14,10 @@
             </div>
         </div>
         <div class="chat__last-message-container">
-            <p class="text-last-message"> {{ $props.chat.previewMessage }} </p>
+            <p class="text-last-message"> {{ computeLastMessage }} </p>
         </div>
         <div class="last-activity-container">
-            <p class="last-activity"> 2ч. назад </p>
+            <p class="last-activity"> 2ч назад </p>
         </div>
     </div>
 </template>
@@ -43,7 +43,10 @@ export default {
         },
         computeChatName() {
             return this.$props.chat.users[0].name + ' ' + this.$props.chat.users[0].lastname
-        }
+        },
+        computeLastMessage() {
+            return this.$props.chat.previewMessage;
+        },
     },
     methods: {
         handlerOpenChat() {
