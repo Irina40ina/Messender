@@ -130,6 +130,14 @@ export const useMainStore = defineStore("useMainStore", {
         const userLastname = searchedChat.users[0].lastname;
         resolve({ userName, userLastname });
       });
-    }
+    },
+    editSelectedMessageView(id, messageObj) {
+      this.messages = this.messages.map((element) => {
+        if(element.id === id) {
+          element = messageObj;
+
+        }
+      })
+      }
   },
 });

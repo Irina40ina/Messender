@@ -44,7 +44,6 @@ export default {
     methods: {
         openMenu() {
             this.$emit('openContextMenu', this.$props.message);
-            console.log(this.$props.message)
         }
     }
 }

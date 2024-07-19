@@ -15,7 +15,23 @@ export async function createMessage(message) {
         });
         return response.data;
     } catch (err) {
-        console.error(`api/massagesApi: createNewChatWithMessage => ${err}`)
+        console.error(`api/massagesApi: createMessage => ${err}`)
+    }
+}
+// Редактирование сообщения
+export async function editMessage(id, message) {
+    try {
+        const response = await axios.put(hostName + `/messages/${id}/update`, {
+            content: message,
+        }, {
+            headers: {
+            ...ContentTypeJSON,
+            "Authorization": "Bearer " + localStorage.getItem('token'),
+            }
+        });
+        return response.data.data;
+    } catch (err) {
+        console.error(`api/massagesApi: editMessage => ${err}`)
     }
 }
 

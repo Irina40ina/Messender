@@ -4,6 +4,7 @@
         :is-show="isShowContextMenu"
         @close="isShowContextMenu = false"
         @show-replyed-message="replyMessage"
+        @edit-message="editSelectedMessage"
         />
         <!-- Блок с уведомлением -->
         <div 
@@ -67,7 +68,7 @@
 
 <script>
 import wraperMessageComp from './wraperMessageComp.vue';
-import { getChatMessagesById } from '@/api/messagesApi';
+import { editMessage, getChatMessagesById } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
 import { nextTick, watch } from 'vue';
 import { getChatById } from '@/api/chatsApi';
@@ -102,6 +103,7 @@ export default {
             toUserName: '',
             toUserInitials: '',
             selectedMessage: null,
+            editMode: false,
         }
     },
     props: {
@@ -127,30 +129,25 @@ export default {
                 console.error(err)
             }
         },
-        // async renderHeaderById(chatId) {
-        //     const dataChat = await getChatById(chatId);
-        //     console.log(dataChat)
-        //     // const dataUser = await getUserById(chatId);
-        //     // this.toUserName = data.name;
-        //     // this.toUserLastname = data.lastname;
-        //     toUserName.slice(0,1).toUpperCase() + toUserLastname.slice(0,1).toUpperCase()
-        //     toUserName + ' ' + toUserLastname
-        // },
+
         createMessageObj(fromId, toId, chatId) {
             this.messageObj.from_user_id = fromId;
             this.messageObj.to_user_id = toId;
             this.messageObj.chat_id = chatId;
         },
         async sendMessage() {
-            if(this.messageObj.content !== ''){
+            if(this.messageObj.content !== '' && this.editMode === false){
                 this.createMessageObj(this.$props.opennedChat.creator, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
                 const data = await createMessage(this.messageObj);
                 this.store.messages.push(data?.data);
+            } else if(this.messageObj.content !== '' && this.editMode === true) {
+                const response = await editMessage(this.selectedMessage.id, this.messageObj.content);
+                this.store.editSelectedMessageView(response.id, response);
+            }
                 this.messageObj.from_user_id = null;
                 this.messageObj.to_user_id = null;
                 this.messageObj.chat_id = null;
                 this.messageObj.content = '';
-            }
         },
         openContextMenu(message) {
             this.isShowContextMenu = true;
@@ -158,6 +155,10 @@ export default {
         },
         replyMessage() {
             this.isShowReplyedMessage = true;
+        },
+        editSelectedMessage() {
+            this.messageObj.content = this.selectedMessage.content;
+            this.editMode = true;
         }
     },
     created() {
@@ -194,10 +195,9 @@ export default {
         textarea.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                if(this.message != ''){
-                    this.sendMessage(this.message);
+                if(this.messageObj.content != ''){
+                    this.sendMessage();
                 }
-                this.message = '';
             }
         })
         // Обработчик нажатия кнопок (Escape)
