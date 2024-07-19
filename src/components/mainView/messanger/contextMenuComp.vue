@@ -5,7 +5,10 @@
     @click="$emit('close')"
     >
         <div class="context-menu" ref="contextMenu">
-            <div class="context-menu-item">
+            <div 
+            class="context-menu-item"
+            @click="$emit('editMessage')"
+            >
                 <p class="text">Редактировать</p>
                 <font-awesome-icon  class="icon edit" :icon="['fas', 'pen-to-square']" />
             </div>
@@ -39,7 +42,7 @@ export default {
             requered: false,
         }
     },
-    emits: ['close', 'showReplyedMessage'],
+    emits: ['close', 'showReplyedMessage', 'editMessage'],
     watch: {
         isShow(newValue) {
             if (newValue === true) {
