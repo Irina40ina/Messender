@@ -31,14 +31,12 @@ export default {
             initials: '',
         }
     },
-    mounted() {
-        try {
-            this.userName = this.store.user.name + ' ' + this.store.user.lastname;
-            this.initials = [...this.store.user.name][0].toUpperCase() + [...this.store.user.lastname][0].toUpperCase();
-        } catch (err) {
-            console.log('ВОТ ЗДЕСЬ ОШИБКА');
-        }
-    }
+    created() {
+        watch(() => this.store.user, async (newValue) => {
+                this.userName = this.store.user.name + ' ' + this.store.user.lastname;
+                this.initials = [...this.store.user.name][0].toUpperCase() + [...this.store.user.lastname][0].toUpperCase();
+            })
+        },
 }
 </script>
 
