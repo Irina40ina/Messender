@@ -105,6 +105,7 @@ export default {
             toUserInitials: '',
             selectedMessage: null,
             editMode: false,
+            opennedChat: null,
         }
     },
     props: {
@@ -137,20 +138,25 @@ export default {
         },
         async sendMessage() {
             // Создание сообщения
-            if (this.messageObj.content !== '' && this.editMode === false) {
-                this.createMessageObj(this.$props.opennedChat.creator, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
-                const data = await createMessage(this.messageObj);
-                this.store.messages.push(data?.data);
+            try {
+                if (this.messageObj.content !== '' && this.editMode === false) {
+                    let currentChat = this.$props.opennedChat ?? this.opennedChat
+                    this.createMessageObj(this.store.user?.id, currentChat.users[0].id, currentChat.id);
+                    const data = await createMessage(this.messageObj);
+                    this.store.messages.push(data?.data);
+                }
+                // Редактирование
+                else if (this.messageObj.content !== '' && this.editMode === true) {
+                    const response = await editMessage(this.selectedMessage.id, this.messageObj.content);
+                    this.store.editSelectedMessageView(response.id, response);
+                }
+                this.messageObj.from_user_id = null;
+                this.messageObj.to_user_id = null;
+                this.messageObj.chat_id = null;
+                this.messageObj.content = '';
+            } catch (err) {
+                console.error('ошибка при отправке сообщения (sendMessage)', err);
             }
-            // Редактирование
-            else if (this.messageObj.content !== '' && this.editMode === true) {
-                const response = await editMessage(this.selectedMessage.id, this.messageObj.content);
-                this.store.editSelectedMessageView(response.id, response);
-            }
-            this.messageObj.from_user_id = null;
-            this.messageObj.to_user_id = null;
-            this.messageObj.chat_id = null;
-            this.messageObj.content = '';
         },
         openContextMenu(message) {
             this.isShowContextMenu = true;
@@ -185,7 +191,8 @@ export default {
         }, { deep: true });
         watch(() => this.store.chats.length, async (newValue, oldValue) => {
             if(oldValue === 0 && newValue > 0 && this.$route.params.chatId !== undefined) {
-                const { userName, userLastname } = this.store.extractUsernameByChatId(this.$route.params.chatId);
+                const { userName, userLastname, chat } = this.store.extractUsernameByChatId(this.$route.params.chatId);
+                this.opennedChat = chat;
                 this.toUserName = userName + ' ' + userLastname;
                 this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
             }

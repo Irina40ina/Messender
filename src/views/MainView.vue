@@ -16,21 +16,33 @@
 import mainContentComp from "@/components/mainView/mainContentComp.vue"
 import navdrawerComp from "@/components/mainView/navdrawerComp.vue"
 import topbarComp from "@/components/mainView/topbarComp.vue"
-import { getProfile } from "@/api/profileApi"
-import { getUserById } from '@/api/usersApi';
+import { getUserDataMe } from '@/api/usersApi';
+import { useMainStore } from "@/store/mainStore";
+import { entrySocketStarted } from "@/api/socket/inputApi";
 export default {
     components: {
         mainContentComp,
         navdrawerComp,
         topbarComp,
     },
-    // async mounted() {
-    //     try {
-    //         await getUserById(1);
-    //     } catch {
-    //         console.error(`views/MainView: mounted[getUserById] => ${err}`);
-    //     }
-    // },
+    created: async () => {
+     try {
+       const userDataStorage = localStorage.getItem('user');
+       const tokenStorage = localStorage.getItem('token');
+       if(userDataStorage) {
+         useMainStore().user = JSON.parse(userDataStorage);
+        } else {
+          if(!tokenStorage) return console.log('Токена доступа нет'); 
+          const data = await getUserDataMe();
+          localStorage.setItem('user', JSON.stringify(data));
+          useMainStore().user = data;
+        }
+      } catch (err) {
+        console.error('App.vue: created', err);
+      }
+    // Инициализация сокет-подключения
+    entrySocketStarted();
+  }
 }
 </script>
 <style scoped>

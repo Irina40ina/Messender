@@ -114,7 +114,7 @@ export const useMainStore = defineStore("useMainStore", {
       });
       const userName = searchedChat.users[0].name;
       const userLastname = searchedChat.users[0].lastname;
-      return { userName, userLastname };
+      return { userName, userLastname, chat: searchedChat };
     },
     // extractUsernameByChatId(id) {
     //   return new Promise((resolve, reject) => {
