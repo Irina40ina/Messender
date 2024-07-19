@@ -55,6 +55,12 @@ export default {
     display: flex;
     align-items: center;
     padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    background-color: #00000000;
+}
+.wraper-message:hover {
+    transition: all 0.3s ease;
+    background-color: #00000021;
 }
 
 .message {

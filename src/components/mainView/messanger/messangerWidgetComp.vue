@@ -46,6 +46,7 @@
                 <p class="replyed-message-text">Ответ на сообщение: {{ selectedMessage?.content }}</p>
             </div>
         </div>
+
         <!-- Input Panel -->
         <div class="input-message-panel">
             <textarea 
@@ -113,20 +114,19 @@ export default {
             default: null,
         }
     },
-    methods: {
+    _methods: {
         async renderChat(id) {
             this.$router.push({ name: 'chat', params: { chatId: id } });
         },
         async handlerGetMessages(chatId) {
             try {
-                
                 const response = await getChatMessagesById(chatId, this.page, this.perPage);
                 this.store.messages = response.messages;
                 this.paginator = response.paginator;
                 this.isShowChat = true;
                 this.isShowNotice = false;
             } catch (err) {
-                console.error(err)
+                console.error(err);
             }
         },
 
@@ -136,18 +136,21 @@ export default {
             this.messageObj.chat_id = chatId;
         },
         async sendMessage() {
-            if(this.messageObj.content !== '' && this.editMode === false){
+            // Создание сообщения
+            if (this.messageObj.content !== '' && this.editMode === false) {
                 this.createMessageObj(this.$props.opennedChat.creator, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
                 const data = await createMessage(this.messageObj);
                 this.store.messages.push(data?.data);
-            } else if(this.messageObj.content !== '' && this.editMode === true) {
+            }
+            // Редактирование
+            else if (this.messageObj.content !== '' && this.editMode === true) {
                 const response = await editMessage(this.selectedMessage.id, this.messageObj.content);
                 this.store.editSelectedMessageView(response.id, response);
             }
-                this.messageObj.from_user_id = null;
-                this.messageObj.to_user_id = null;
-                this.messageObj.chat_id = null;
-                this.messageObj.content = '';
+            this.messageObj.from_user_id = null;
+            this.messageObj.to_user_id = null;
+            this.messageObj.chat_id = null;
+            this.messageObj.content = '';
         },
         openContextMenu(message) {
             this.isShowContextMenu = true;
@@ -157,9 +160,19 @@ export default {
             this.isShowReplyedMessage = true;
         },
         editSelectedMessage() {
-            this.messageObj.content = this.selectedMessage.content;
-            this.editMode = true;
+            if (this.selectedMessage) {
+                this.messageObj.content = this.selectedMessage.content;
+                this.editMode = true;
+            } else {
+                console.error('this.selectedMessage === null');
+            }
         }
+    },
+    get methods() {
+        return this._methods;
+    },
+    set methods(value) {
+        this._methods = value;
     },
     created() {
         watch(() => this.$props.opennedChat, async (newValue) => {
@@ -170,21 +183,21 @@ export default {
                 this.toUserLastname = newValue.users[0].lastname;
             }
         }, { deep: true });
-        // watch(() => this.store.chats.length, async (newValue, oldValue) => {
-        //     if(oldValue === 0 && newValue > 0) {
-        //         const { userName, userLastname } = this.store.extractUsernameByChatId(this.$route.params.chatId);
-                // this.toUserName = userName + ' ' + userLastname;
-                // this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
-        //     }
-        // }, { deep: false });
+        watch(() => this.store.chats.length, async (newValue, oldValue) => {
+            if(oldValue === 0 && newValue > 0 && this.$route.params.chatId !== undefined) {
+                const { userName, userLastname } = this.store.extractUsernameByChatId(this.$route.params.chatId);
+                this.toUserName = userName + ' ' + userLastname;
+                this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
+            }
+        }, { deep: false });
     },
     async mounted() {
         try {
             if(this.$route.params.chatId !== undefined) {
                 await this.handlerGetMessages(this.$route.params.chatId);
-                const { userName, userLastname } = await this.store.extractUsernameByChatId(this.$route.params.chatId)
-                this.toUserName = userName + ' ' + userLastname;
-                this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
+                // const { userName, userLastname } = await this.store.extractUsernameByChatId(this.$route.params.chatId)
+                // this.toUserName = userName + ' ' + userLastname;
+                // this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
             } 
         } catch (err) {
             console.error(err)
