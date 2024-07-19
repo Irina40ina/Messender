@@ -23,6 +23,7 @@
 
 <script>
 import { useMainStore } from '@/store/mainStore';
+import { watch } from 'vue';
 export default {
     data() {
         return {
