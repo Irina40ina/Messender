@@ -8,16 +8,20 @@ import { getUserDataMe } from '@/api/usersApi';
 import { useMainStore } from '@/store/mainStore';
 export default {
   created: async () => {
-    {    
-      const userDataStorage = localStorage.getItem('user');
-      if(userDataStorage) {
-        useMainStore().user = JSON.parse(userDataStorage);
-      } else {
-        const data = await getUserDataMe();
-        localStorage.setItem('user', JSON.stringify(data));
-        useMainStore().user = data;
+     try {
+       const userDataStorage = localStorage.getItem('user');
+       const tokenStorage = localStorage.getItem('token');
+       if(userDataStorage) {
+         useMainStore().user = JSON.parse(userDataStorage);
+        } else {
+          if(!tokenStorage) return console.log('Токена доступа нет'); 
+          const data = await getUserDataMe();
+          localStorage.setItem('user', JSON.stringify(data));
+          useMainStore().user = data;
+        }
+      } catch (err) {
+        console.error('App.vue: created', err);
       }
-    }
     // Инициализация сокет-подключения
     entrySocketStarted();
   }

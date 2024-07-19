@@ -16,6 +16,7 @@
             <font-awesome-icon 
             class="leave-icon"
             icon="fa-arrow-right-from-bracket"
+            @click="logout"
             ></font-awesome-icon>
         </div>    
     </div>
@@ -32,12 +33,20 @@ export default {
             initials: '',
         }
     },
+    methods: {
+        logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            this.$router.push({name: 'auth'})
+        }
+    },
     created() {
         watch(() => this.store.user, async (newValue) => {
                 this.userName = this.store.user.name + ' ' + this.store.user.lastname;
                 this.initials = [...this.store.user.name][0].toUpperCase() + [...this.store.user.lastname][0].toUpperCase();
             })
         },
+
 }
 </script>
 
