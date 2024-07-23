@@ -28,7 +28,10 @@
         </div>
 
         <!-- Content -->
-        <div class="message-content">
+        <div 
+        class="message-content"
+        ref="scrollContainer"
+        >
             <wraperMessageComp
             @open-context-menu="(e) => openContextMenu(e)"
             v-show="isShowChat"
@@ -135,6 +138,10 @@ export default {
             this.messageObj.from_user_id = fromId;
             this.messageObj.to_user_id = toId;
             this.messageObj.chat_id = chatId;
+        },
+        scrolling() {
+            const targetElement = this.$refs.scrollContainer;
+            targetElement.scrollTo({ behavior: 'smooth', block: 'start' });
         },
         async sendMessage() {
             // Создание сообщения
