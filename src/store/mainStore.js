@@ -136,6 +136,7 @@ export const useMainStore = defineStore("useMainStore", {
         if(message && message.id === id) {
           message.content = messageObj.content;
           message.updatedAt = messageObj.updatedAt;
+          message.edited = messageObj.edited;
         }
       });
     },

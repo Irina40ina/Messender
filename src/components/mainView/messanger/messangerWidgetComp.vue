@@ -1,10 +1,18 @@
 <template>
-    <div class="message-widget">
+    <div class="message-widget" ref="messageWidget">
+        <!-------------- LOADING ---------------->
+        <div 
+        class="loading-overlay"
+        v-show="isShowLoadingData"
+        >
+            <font-awesome-icon class="icon" :icon="['fas', 'spinner']" />
+        </div>
         <contextMenuComp
         :is-show="isShowContextMenu"
         @close="isShowContextMenu = false"
         @show-replyed-message="replyMessage"
         @edit-message="editSelectedMessage"
+        @select-messages="handlerSelectMessage"
         />
         <!-- Блок с уведомлением -->
         <div 
@@ -35,9 +43,10 @@
             <wraperMessageComp
             @open-context-menu="(e) => openContextMenu(e)"
             v-show="isShowChat"
-            v-for="message in this.store.messages" 
+            v-for="message in store.messages" 
             :message="message"
             :key="message.id"
+            :is-selected="computeSelectedMessage(message.id)"
             ></wraperMessageComp>
         </div>
         <div 
@@ -99,6 +108,7 @@ export default {
             // arrMessages: [],
             isShowNotice: true,
             isShowChat: false,
+            isShowLoadingData: false,
             chatId: null,
             paginator: null,
             page: 1,
@@ -109,6 +119,7 @@ export default {
             selectedMessage: null,
             editMode: false,
             opennedChat: null,
+            selectedMessagesId: [],
         }
     },
     props: {
@@ -118,12 +129,13 @@ export default {
             default: null,
         }
     },
-    _methods: {
+    methods: {
         async renderChat(id) {
             this.$router.push({ name: 'chat', params: { chatId: id } });
         },
         async handlerGetMessages(chatId) {
             try {
+                this.isShowLoadingData = true;
                 const response = await getChatMessagesById(chatId, this.page, this.perPage);
                 this.store.messages = response.messages;
                 this.paginator = response.paginator;
@@ -131,6 +143,8 @@ export default {
                 this.isShowNotice = false;
             } catch (err) {
                 console.error(err);
+            } finally {
+                this.isShowLoadingData = false;
             }
         },
 
@@ -139,9 +153,13 @@ export default {
             this.messageObj.to_user_id = toId;
             this.messageObj.chat_id = chatId;
         },
-        scrolling() {
+        async scrolling() {
             const targetElement = this.$refs.scrollContainer;
-            targetElement.scrollTo({ behavior: 'smooth', block: 'start' });
+            await nextTick(); 
+            targetElement.scroll({
+                top: targetElement.scrollHeight,
+                behavior: "smooth",
+            });
         },
         async sendMessage() {
             // Создание сообщения
@@ -151,6 +169,7 @@ export default {
                     this.createMessageObj(this.store.user?.id, currentChat.users[0].id, currentChat.id);
                     const data = await createMessage(this.messageObj);
                     this.store.messages.push(data?.data);
+                    this.scrolling();
                 }
                 // Редактирование
                 else if (this.messageObj.content !== '' && this.editMode === true) {
@@ -179,13 +198,22 @@ export default {
             } else {
                 console.error('this.selectedMessage === null');
             }
+        },
+        handlerSelectMessage() {
+            this.selectedMessagesId.push(this.selectedMessage.id);
+            console.log(this.selectedMessagesId)
         }
     },
-    get methods() {
-        return this._methods;
-    },
-    set methods(value) {
-        this._methods = value;
+    computed: {
+        computeSelectedMessage() {
+            return (messageId) => {
+                if(this.selectedMessagesId.includes(messageId)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
     },
     created() {
         watch(() => this.$props.opennedChat, async (newValue) => {
@@ -209,6 +237,7 @@ export default {
         try {
             if(this.$route.params.chatId !== undefined) {
                 await this.handlerGetMessages(this.$route.params.chatId);
+                this.scrolling();
                 // const { userName, userLastname } = await this.store.extractUsernameByChatId(this.$route.params.chatId)
                 // this.toUserName = userName + ' ' + userLastname;
                 // this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
@@ -229,7 +258,7 @@ export default {
         })
         // Обработчик нажатия кнопок (Escape)
         window.addEventListener('keydown', (e) => {
-            if(e.key === 'Escape') {
+            if(e.key === 'Escape' && this.$route.name === 'chat') {
                 this.$router.push({name: 'messanger'});
                 this.$route.params.chatId = undefined;
                 this.isShowNotice = true;
@@ -252,6 +281,34 @@ export default {
         justify-content: center;
         align-items: center;
         background-color: #9fce9f;
+    }
+    @keyframes rotate-circle {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,.1);
+        backdrop-filter: blur(3px);
+        z-index: 5;
+    }
+    .icon {
+        color: #a0e0a0;
+        font-size: 3.25rem;
+        animation-name: rotate-circle;
+        animation-duration: .8s;
+        animation-iteration-count: infinite;
     }
     .notice-container {
         position: absolute;
@@ -316,6 +373,7 @@ export default {
         font-family: var(--font);
     }
     .message-content {
+        position: relative;
         width: 100%;
         height: 80%;
         overflow: auto;

@@ -5,6 +5,13 @@
     @click="$emit('close')"
     >
         <div class="context-menu" ref="contextMenu">
+        <div 
+            class="context-menu-item"
+            @click="$emit('selectMessages')"
+            >
+                <p class="text">Выбрать</p>
+                <font-awesome-icon class="icon select" :icon="['fas', 'square-check']" />
+            </div>
             <div 
             class="context-menu-item"
             @click="$emit('editMessage')"
@@ -42,7 +49,7 @@ export default {
             requered: false,
         }
     },
-    emits: ['close', 'showReplyedMessage', 'editMessage'],
+    emits: ['close', 'showReplyedMessage', 'editMessage', 'selectMessages'],
     watch: {
         isShow(newValue) {
             if (newValue === true) {
@@ -139,6 +146,9 @@ export default {
 }
 .icon {
     width: 10%;
+}
+.icon.select {
+    color: rgb(99, 99, 231);
 }
 .icon.edit {
     color: green;
