@@ -7,12 +7,12 @@
         @open-chat="(e) => handlerOpenChat(e)"
         ></chatItemComp>
         <div
-            class="triggerPagination"
-            ref="triggerPagination"
-            v-show="loading"
-            >
-                <font-awesome-icon class="icon" :icon="['fas', 'spinner']" />
-            </div>
+        class="triggerPagination"
+        ref="triggerPagination"
+        v-show="loading"
+        >
+            <font-awesome-icon class="icon" :icon="['fas', 'spinner']" />
+        </div>
     </div>
 </template>
 
