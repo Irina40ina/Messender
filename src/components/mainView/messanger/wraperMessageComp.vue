@@ -3,6 +3,7 @@
     class="wraper-message" 
     :class="($props.isSelected === true)? 'selected' : ''"
     @contextmenu.prevent="openMenu"
+    @click="selectMessage"
     >
         <div class="message" :class="computePositionMessage">
             <div class="message-content__container">
@@ -55,7 +56,7 @@ export default {
             default: false,
         }
     },
-    emits: ['openContextMenu'],
+    emits: ['openContextMenu', 'selectMessage'],
     computed: {
         computePositionMessage() {
             if(this.store.user.id === this.$props.message.fromUserId) {
@@ -68,6 +69,9 @@ export default {
     methods: {
         openMenu() {
             this.$emit('openContextMenu', this.$props.message);
+        },
+        selectMessage() {
+            this.$emit('selectMessage', this.$props.message);
         }
     }
 }

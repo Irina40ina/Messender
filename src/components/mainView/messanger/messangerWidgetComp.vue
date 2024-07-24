@@ -33,6 +33,18 @@
             <div class="message__users-name-container">
                 <p class="users__name">{{ toUserName }}</p>
             </div>
+
+            <!-- Actions -->
+             <div 
+             class="header-actions"
+             v-show="isShowActionsBtn"
+             >
+                <button class="btn-forward">Переслать</button>
+                <button class="btn-delete">Удалить</button>
+                <div class="count-selected-messages">
+                    <p class="count-selected-messages-text">Выбрано: {{ selectedMessagesId.length }}</p>
+                </div>
+             </div>
         </div>
 
         <!-- Content -->
@@ -47,8 +59,10 @@
             :message="message"
             :key="message.id"
             :is-selected="computeSelectedMessage(message.id)"
+            @select-message="(e) => selectMessage(e)"
             ></wraperMessageComp>
         </div>
+        <!-- Пвнель при ответе на сообщение -->
         <div 
         class="replyed-message-panel"
         v-show="isShowReplyedMessage"
@@ -58,7 +72,20 @@
                 <p class="replyed-message-text">Ответ на сообщение: {{ selectedMessage?.content }}</p>
             </div>
         </div>
-
+        <!-- Панель при редактировании сообщения -->
+        <div 
+        class="edit-message-panel"
+        v-show="editMode"
+        >
+            <div class="edit-message-container">
+                <p class="edit-message-text">Редактирование</p>
+            </div>
+            <div class="cancel-icon-container"
+            @click="cancelEditSelectedMessage">
+                <p>Отменить</p>
+                <font-awesome-icon class="cancel-icon" icon="fa-xmark"/>
+            </div>
+        </div>
         <!-- Input Panel -->
         <div class="input-message-panel">
             <textarea 
@@ -84,8 +111,6 @@ import wraperMessageComp from './wraperMessageComp.vue';
 import { editMessage, getChatMessagesById } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
 import { nextTick, watch } from 'vue';
-import { getChatById } from '@/api/chatsApi';
-import { getUserById } from '@/api/usersApi';
 import { createMessage } from '@/api/messagesApi';
 import contextMenuComp from '@/components/mainView/messanger/contextMenuComp.vue';
 export default {
@@ -109,6 +134,7 @@ export default {
             isShowNotice: true,
             isShowChat: false,
             isShowLoadingData: false,
+            isShowActionsBtn: false,
             chatId: null,
             paginator: null,
             page: 1,
@@ -175,6 +201,7 @@ export default {
                 else if (this.messageObj.content !== '' && this.editMode === true) {
                     const response = await editMessage(this.selectedMessage.id, this.messageObj.content);
                     this.store.editSelectedMessageView(response.id, response);
+                    this.editMode = false;
                 }
                 this.messageObj.from_user_id = null;
                 this.messageObj.to_user_id = null;
@@ -193,15 +220,30 @@ export default {
         },
         editSelectedMessage() {
             if (this.selectedMessage) {
+                this.isShowEditMessagePanel = true;
                 this.messageObj.content = this.selectedMessage.content;
                 this.editMode = true;
             } else {
                 console.error('this.selectedMessage === null');
             }
         },
+        cancelEditSelectedMessage() {
+                this.messageObj.content = '';
+                this.editMode = false;
+        },
         handlerSelectMessage() {
             this.selectedMessagesId.push(this.selectedMessage.id);
-            console.log(this.selectedMessagesId)
+            this.isShowActionsBtn = true;
+        },
+        selectMessage(message) {
+            if(this.selectedMessagesId.length > 0) {
+                if(this.selectedMessagesId.includes(message.id)) {
+                    this.selectedMessagesId = this.selectedMessagesId.filter((el) => el !== message.id);
+                } else {
+                    this.selectedMessage = message;
+                    this.handlerSelectMessage();
+                }
+            }
         }
     },
     computed: {
@@ -220,18 +262,24 @@ export default {
             if(newValue) {
                 await this.handlerGetMessages(newValue.id);
                 this.renderChat(newValue.id);
-                this.toUserName = newValue.users[0].name;
-                this.toUserLastname = newValue.users[0].lastname;
+                this.toUserName = newValue.users[0].name + ' ' + newValue.users[0].lastname;
+                this.toUserInitials = newValue.users[0].name.slice(0,1).toUpperCase() + newValue.users[0].lastname.slice(0,1).toUpperCase();
             }
         }, { deep: true });
         watch(() => this.store.chats.length, async (newValue, oldValue) => {
             if(oldValue === 0 && newValue > 0 && this.$route.params.chatId !== undefined) {
+                console.log(this.$route.params.chatId)
                 const { userName, userLastname, chat } = this.store.extractUsernameByChatId(this.$route.params.chatId);
                 this.opennedChat = chat;
                 this.toUserName = userName + ' ' + userLastname;
                 this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
             }
         }, { deep: false });
+        watch(() => this.selectedMessagesId, (newValue) => {
+            if(newValue.length === 0) {
+                this.isShowActionsBtn = false;
+            } 
+        })
     },
     async mounted() {
         try {
@@ -331,6 +379,7 @@ export default {
         padding: 1.5rem;
     }
     .message-header {
+        position: relative;
         width: 100%;
         height: 5%;
         background-color: var(--color-bg-main);
@@ -372,6 +421,46 @@ export default {
         font-size: 16px;
         font-family: var(--font);
     }
+    .header-actions {
+        position: absolute;
+        right: 0;
+        height: 100%;
+        width: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+    }
+    .btn-forward {
+        width: 200px;
+        font-family: var(--font);
+        outline: rgba(0,0,0,0);
+        border: 1px solid var(--primary-fg);
+        cursor: pointer; 
+        margin-right: 1rem;   
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: all .6s ease;
+    }
+    .btn-delete {
+        width: 200px;
+        font-family: var(--font);
+        outline: rgba(0,0,0,0);
+        border: 1px solid var(--primary-fg);
+        cursor: pointer; 
+        margin-right: 1rem;   
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: all .6s ease;
+        
+    }
+    .count-selected-messages {
+        width: 200px;
+    }
+    .count-selected-messages-text {
+        text-align: center;
+        font-family: var(--font);
+    }
     .message-content {
         position: relative;
         width: 100%;
@@ -382,7 +471,7 @@ export default {
         width: 90%;
         height: 40px;
         border-radius: 10px;
-        border: 2px solid var(--violet);
+        border: 1px solid var(--violet);
         background-color: #fff;
         position: absolute;
         bottom: 20%;
@@ -405,6 +494,34 @@ export default {
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+    }
+    .edit-message-panel {
+        width: 90%;
+        height: 30px;
+        border-radius: 10px;
+        border: 1px solid var(--violet);
+        background-color: #fff;
+        position: absolute;
+        bottom: 20%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        z-index: 900;
+    }
+    .edit-message-container {
+        width: 90%;
+    }
+    .cancel-icon-container {
+        width: 10%;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        cursor: pointer;
+    }
+    .cancel-icon {
+        margin-left: .3rem;
+        color: red;
     }
     .input-message-panel {
         min-height: 15%;
