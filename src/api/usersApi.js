@@ -32,7 +32,7 @@ export async function getUserDataMe() {
 }
 
 
-export async function getUsers(page, perPage) {
+export async function getUsers(page, perPage, fullname = '') {
     try {
        const obj = await axios.get(hostName + '/users', {
         headers: {
@@ -42,6 +42,7 @@ export async function getUsers(page, perPage) {
         params: {
             page: page,
             per_page: perPage,
+            fullname,
         }
     }); 
     let data = obj.data.data.users;

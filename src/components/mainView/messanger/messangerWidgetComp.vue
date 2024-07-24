@@ -118,6 +118,7 @@ export default {
         wraperMessageComp,
         contextMenuComp,
     },
+
     data() {
         return {
             store: useMainStore(),
@@ -260,10 +261,24 @@ export default {
     created() {
         watch(() => this.$props.opennedChat, async (newValue) => {
             if(newValue) {
-                await this.handlerGetMessages(newValue.id);
-                this.renderChat(newValue.id);
-                this.toUserName = newValue.users[0].name + ' ' + newValue.users[0].lastname;
-                this.toUserInitials = newValue.users[0].name.slice(0,1).toUpperCase() + newValue.users[0].lastname.slice(0,1).toUpperCase();
+                try {
+                    await this.handlerGetMessages(newValue.id);
+                    this.renderChat(newValue.id);
+                    this.toUserName = newValue.users[0].name + ' ' + newValue.users[0].lastname;
+                    this.toUserInitials = newValue.users[0].name.slice(0,1).toUpperCase() + newValue.users[0].lastname.slice(0,1).toUpperCase();
+                } catch (err) {
+                    console.error('components/messanger/messangerWidgetComp: created -> watch');
+                } finally {
+                    this.selectedMessage = null;
+                    this.editMode = false;
+                    this.messageObj = {
+                        from_user_id: null,
+                        to_user_id: null,
+                        chat_id: null,
+                        content: '',
+                        forwarded_ids: null,
+                    }
+                }
             }
         }, { deep: true });
         watch(() => this.store.chats.length, async (newValue, oldValue) => {
@@ -279,7 +294,7 @@ export default {
             if(newValue.length === 0) {
                 this.isShowActionsBtn = false;
             } 
-        })
+        });
     },
     async mounted() {
         try {
@@ -314,7 +329,8 @@ export default {
                 this.isShowReplyedMessage = false;
             }
         })
-    }
+    },
+
 }
 
 </script>
@@ -507,7 +523,7 @@ export default {
         align-items: center;
         justify-content: space-between;
         padding: 1rem;
-        z-index: 900;
+        z-index: 1;
     }
     .edit-message-container {
         width: 90%;

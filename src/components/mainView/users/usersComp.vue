@@ -7,8 +7,10 @@
                 class="search-input" 
                 type="text"
                 placeholder="Поиск..."
+                v-model="searchField"
+                
                 >
-                <button class="search-btn">
+                <button class="search-btn" @click="handlerSearchUser">
                     <font-awesome-icon style="color: var(--primary-fg)" :icon="['fas', 'magnifying-glass']" />
                 </button>
             </div>
@@ -47,10 +49,11 @@ export default {
     data() {
         return {
             page: 1,
-            perPage: 3, 
+            perPage: 10, 
             arrayUsers: [],
             paginator: null,
             loading: true,
+            searchField: '',
         }
     },
     watch: {
@@ -65,6 +68,18 @@ export default {
                 else if(this.paginator.hasNext === false) {
                     this.loading = false;
                 }
+            }
+        }
+    },
+    methods: {
+        async handlerSearchUser() {
+            try {
+                this.page = 1;
+                const { data, paginator } = await getUsers(this.page, this.perPage, this.searchField);
+                this.arrayUsers = data;
+                this.paginator = paginator;
+            } catch (err) {
+                console.error('./components/users/usersComp.vue: handlerSearchUser', err);                
             }
         }
     },
