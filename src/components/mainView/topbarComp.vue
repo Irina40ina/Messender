@@ -6,11 +6,11 @@
         <div class="topbar-user-area">
 
             <div class="topbar-name-container">
-                <h2 class="topbar-user-name">{{ userName }}</h2>
+                <h2 class="topbar-user-name">{{ computeUserName }}</h2>
             </div>
 
             <div class="topbar-avatar">
-                <p class="avatar-stub">{{ initials }}</p>
+                <p class="avatar-stub">{{ computeInitials }}</p>
             </div>
             
             <font-awesome-icon 
@@ -24,13 +24,10 @@
 
 <script>
 import { useMainStore } from '@/store/mainStore';
-import { watch } from 'vue';
 export default {
     data() {
         return {
             store: useMainStore(),
-            userName: '',
-            initials: '',
         }
     },
     methods: {
@@ -40,13 +37,14 @@ export default {
             this.$router.push({name: 'auth'})
         }
     },
-    created() {
-        watch(() => this.store.user, async (newValue) => {
-                this.userName = this.store.user.name + ' ' + this.store.user.lastname;
-                this.initials = [...this.store.user.name][0].toUpperCase() + [...this.store.user.lastname][0].toUpperCase();
-            })
+    computed: {
+        computeUserName() {
+            return this.store.user.name + ' ' + this.store.user.lastname;
         },
-
+        computeInitials() {
+            return [...this.store.user.name][0].toUpperCase() + [...this.store.user.lastname][0].toUpperCase();
+        }
+    }
 }
 </script>
 
