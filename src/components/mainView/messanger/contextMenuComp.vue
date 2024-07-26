@@ -19,7 +19,10 @@
                 <p class="text">Редактировать</p>
                 <font-awesome-icon  class="icon edit" :icon="['fas', 'pen-to-square']" />
             </div>
-            <div class="context-menu-item">
+            <div 
+            class="context-menu-item"
+            @click="$emit('deleteMessage')"
+            >
                 <p class="text">Удалить</p>
                 <font-awesome-icon class="icon delete" :icon="['fas', 'trash']" />
             </div>
@@ -49,7 +52,7 @@ export default {
             requered: false,
         }
     },
-    emits: ['close', 'showReplyedMessage', 'editMessage', 'selectMessages'],
+    emits: ['close', 'showReplyedMessage', 'editMessage', 'selectMessages', 'deleteMessage'],
     watch: {
         isShow(newValue) {
             if (newValue === true) {
