@@ -56,6 +56,8 @@
         class="message-content"
         ref="scrollContainer"
         >
+             <!-- Trigger pagination -->
+            <div class="triggerPagination" ref="triggerPagination"></div>
             <wraperMessageComp
             @open-context-menu="(e) => openContextMenu(e)"
             v-show="isShowChat"
@@ -122,7 +124,6 @@ export default {
         wraperMessageComp,
         contextMenuComp,
     },
-
     data() {
         return {
             store: useMainStore(),
@@ -143,7 +144,7 @@ export default {
             chatId: null,
             paginator: null,
             page: 1,
-            perPage: 20,
+            perPage: 15,
             toUserId: null,
             toUserName: '',
             toUserInitials: '',
@@ -165,12 +166,12 @@ export default {
         async renderChat(id) {
             this.$router.push({ name: 'chat', params: { chatId: id } });
         },
-        async scrolling() {
+        async scrolling(top = undefined) {
             const targetElement = this.$refs.scrollContainer;
             await nextTick(); 
             targetElement.scroll({
-                top: targetElement.scrollHeight,
-                behavior: "smooth",
+                top: top ?? targetElement.scrollHeight,
+                // behavior: null,
             });
         },
         async handlerGetMessages(chatId) {
@@ -333,7 +334,27 @@ export default {
             } 
         } catch (err) {
             console.error(err)
-        }
+        } 
+
+        // Observer ============
+        const options = {
+            rootMargin: "0px",
+            threshold: 1.0,
+        };
+        const callback = async (entries) => {
+            if(entries[0].isIntersecting === true) {
+                const currentPosScroll = this.$refs.scrollContainer?.scrollHeight;
+                this.page = this.page + 1;
+                const response = await getChatMessagesById(this.$route.params.chatId, this.page, this.perPage);
+                this.store.messages = [...response.messages, ...this.store.messages];
+                this.paginator = response.paginator;
+                await nextTick();
+                this.scrolling(this.$refs.scrollContainer?.scrollHeight - currentPosScroll);
+            }
+        };
+        const observer = new IntersectionObserver(callback, options);
+        observer.observe(this.$refs.triggerPagination);
+        // ============
 
         // Обработчик нажатия кнопок (Enter)
         const textarea = document.getElementById('input-message');
@@ -509,6 +530,14 @@ export default {
         width: 100%;
         height: 80%;
         overflow: auto;
+    }
+    .triggerPagination {
+        width: 100%;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(0, 0, 0);
     }
     .replyed-message-panel {
         width: 90%;

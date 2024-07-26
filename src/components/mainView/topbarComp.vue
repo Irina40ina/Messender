@@ -39,10 +39,10 @@ export default {
     },
     computed: {
         computeUserName() {
-            return this.store.user.name + ' ' + this.store.user.lastname;
+            return this.store.user?.name + ' ' + this.store.user?.lastname;
         },
         computeInitials() {
-            return [...this.store.user.name][0].toUpperCase() + [...this.store.user.lastname][0].toUpperCase();
+            return [...this.store.user?.name][0].toUpperCase() + [...this.store.user?.lastname][0].toUpperCase();
         }
     }
 }

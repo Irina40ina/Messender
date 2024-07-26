@@ -141,7 +141,17 @@ export const useMainStore = defineStore("useMainStore", {
       });
     },
 
-    // Удаление сообщений из массива
+    // // Удаление сообщений из массива
+    // deleteSelectedMessages(arrayMessagesId) {
+    //   this.messages = this.messages.filter((el)=> {
+    //     if(arrayMessagesId.includes(el.id)) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   })
+    // },
+
     deleteSelectedMessages(arrayMessagesId) {
       let arrayIndex = [];
       this.messages.forEach((el, index)=> {
