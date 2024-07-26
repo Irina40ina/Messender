@@ -17,7 +17,7 @@
             <p class="text-last-message"> {{ computeLastMessage }} </p>
         </div>
         <div class="last-activity-container">
-            <p class="last-activity"> 2ч назад </p>
+            <p class="last-activity"> {{ computeLastActivity }} </p>
         </div>
     </div>
 </template>
@@ -45,8 +45,12 @@ export default {
             return this.$props.chat.users[0].name + ' ' + this.$props.chat.users[0].lastname
         },
         computeLastMessage() {
-            return this.$props.chat.previewMessage;
+            console.log(this.$props.chat)
+            return this.$props.chat.previewMessage.content;
         },
+        computeLastActivity() {
+            return this.store.replaceDateTimeSrting(this.$props.chat.previewMessage.createdAt, "HH:mm/DD MMMM ")
+        }
     },
     methods: {
         handlerOpenChat() {

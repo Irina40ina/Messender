@@ -13,6 +13,7 @@
         @show-replyed-message="replyMessage"
         @edit-message="editSelectedMessage"
         @select-messages="handlerSelectMessage"
+        @delete-message="deleteMessage"
         />
         <!-- Блок с уведомлением -->
         <div 
@@ -40,7 +41,10 @@
              v-show="isShowActionsBtn"
              >
                 <button class="btn-forward">Переслать</button>
-                <button class="btn-delete">Удалить</button>
+                <button 
+                class="btn-delete"
+                @click="deleteSeveralMessages"
+                >Удалить</button>
                 <div class="count-selected-messages">
                     <p class="count-selected-messages-text">Выбрано: {{ selectedMessagesId.length }}</p>
                 </div>
@@ -111,7 +115,7 @@ import wraperMessageComp from './wraperMessageComp.vue';
 import { editMessage, getChatMessagesById } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
 import { nextTick, watch } from 'vue';
-import { createMessage } from '@/api/messagesApi';
+import { createMessage, deleteMessagesById } from '@/api/messagesApi';
 import contextMenuComp from '@/components/mainView/messanger/contextMenuComp.vue';
 export default {
     components: {
@@ -147,6 +151,7 @@ export default {
             editMode: false,
             opennedChat: null,
             selectedMessagesId: [],
+            deletedMessagesId: [],
         }
     },
     props: {
@@ -160,6 +165,14 @@ export default {
         async renderChat(id) {
             this.$router.push({ name: 'chat', params: { chatId: id } });
         },
+        async scrolling() {
+            const targetElement = this.$refs.scrollContainer;
+            await nextTick(); 
+            targetElement.scroll({
+                top: targetElement.scrollHeight,
+                behavior: "smooth",
+            });
+        },
         async handlerGetMessages(chatId) {
             try {
                 this.isShowLoadingData = true;
@@ -171,6 +184,7 @@ export default {
             } catch (err) {
                 console.error(err);
             } finally {
+                this.scrolling();
                 this.isShowLoadingData = false;
             }
         },
@@ -179,14 +193,6 @@ export default {
             this.messageObj.from_user_id = fromId;
             this.messageObj.to_user_id = toId;
             this.messageObj.chat_id = chatId;
-        },
-        async scrolling() {
-            const targetElement = this.$refs.scrollContainer;
-            await nextTick(); 
-            targetElement.scroll({
-                top: targetElement.scrollHeight,
-                behavior: "smooth",
-            });
         },
         async sendMessage() {
             // Создание сообщения
@@ -245,6 +251,36 @@ export default {
                     this.handlerSelectMessage();
                 }
             }
+        },
+        async deleteMessage() {
+            try {
+                if(this.deletedMessagesId.length === 0) {
+                    this.deletedMessagesId.push(this.selectedMessage.id);
+                }
+                const response = await deleteMessagesById(this.deletedMessagesId, this.selectedMessage.chatId);
+                if(response === null) {
+                    this.store.deleteSelectedMessages(this.deletedMessagesId);
+                }
+            } catch (error) {
+                console.error('deleteMessage', err);
+            } finally {
+                this.deletedMessagesId = [];
+            }
+        },
+        deleteSeveralMessages() {
+            this.deletedMessagesId = this.selectedMessagesId;
+            this.deleteMessage();
+        },
+        offModeEdit() {
+            this.selectedMessage = null;
+                this.editMode = false;
+                this.messageObj = {
+                    from_user_id: null,
+                    to_user_id: null,
+                    chat_id: null,
+                    content: '',
+                    forwarded_ids: null,
+                }
         }
     },
     computed: {
@@ -269,21 +305,12 @@ export default {
                 } catch (err) {
                     console.error('components/messanger/messangerWidgetComp: created -> watch');
                 } finally {
-                    this.selectedMessage = null;
-                    this.editMode = false;
-                    this.messageObj = {
-                        from_user_id: null,
-                        to_user_id: null,
-                        chat_id: null,
-                        content: '',
-                        forwarded_ids: null,
-                    }
+                    this.offModeEdit();
                 }
             }
         }, { deep: true });
         watch(() => this.store.chats.length, async (newValue, oldValue) => {
             if(oldValue === 0 && newValue > 0 && this.$route.params.chatId !== undefined) {
-                console.log(this.$route.params.chatId)
                 const { userName, userLastname, chat } = this.store.extractUsernameByChatId(this.$route.params.chatId);
                 this.opennedChat = chat;
                 this.toUserName = userName + ' ' + userLastname;
@@ -300,7 +327,6 @@ export default {
         try {
             if(this.$route.params.chatId !== undefined) {
                 await this.handlerGetMessages(this.$route.params.chatId);
-                this.scrolling();
                 // const { userName, userLastname } = await this.store.extractUsernameByChatId(this.$route.params.chatId)
                 // this.toUserName = userName + ' ' + userLastname;
                 // this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
@@ -327,6 +353,7 @@ export default {
                 this.isShowNotice = true;
                 this.isShowChat = false;                                                                                                   
                 this.isShowReplyedMessage = false;
+                this.offModeEdit();
             }
         })
     },
@@ -490,7 +517,7 @@ export default {
         border: 1px solid var(--violet);
         background-color: #fff;
         position: absolute;
-        bottom: 20%;
+        bottom: 16%;
         display: flex;
         align-items: center;
         justify-content: start;
@@ -518,7 +545,7 @@ export default {
         border: 1px solid var(--violet);
         background-color: #fff;
         position: absolute;
-        bottom: 20%;
+        bottom: 16%;
         display: flex;
         align-items: center;
         justify-content: space-between;

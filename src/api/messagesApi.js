@@ -54,3 +54,21 @@ export async function getChatMessagesById(chat_id, page, perPage) {
         console.error(`api/messagesApi: getChatMessagesById => ${err}`)
     }
 }
+// Удаление сообщений
+export async function deleteMessagesById(array, chatId) {
+    try {
+       const response = await axios.delete(hostName + `/messages/delete`, {
+        params: {
+            ids: array,
+            chat_id: chatId,
+        },
+        headers: {
+            ...ContentTypeURL,
+            "Authorization": "Bearer " + localStorage.getItem('token'),
+        },
+    }); 
+        return response.data.data;
+    } catch (error) {
+        console.error(`api/messagesApi: deleteMessagesById => ${err}`)
+    }
+}

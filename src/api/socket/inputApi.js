@@ -65,6 +65,9 @@ function messagesSocketStarted(socket) {
         // Принять обновленное сообщение
         socket.on('message:update', (message) => {
             // const message = message;
+            const store = useMainStore();
+            store.editSelectedMessageView(message.id, message);
+            
         });
         // Принять ID удаляенного сообщения
         socket.on('message:delete', (messageId) => {

@@ -140,6 +140,31 @@ export const useMainStore = defineStore("useMainStore", {
         }
       });
     },
+
+    // Удаление сообщений из массива
+    deleteSelectedMessages(arrayMessagesId) {
+      let arrayIndex = [];
+      this.messages.forEach((el, index)=> {
+        if(arrayMessagesId.includes(el.id)) {
+          arrayIndex.push(index);
+        }
+      })
+      this.messages = this.removeElementsByIndices(this.messages, arrayIndex);
+    },
+    // Сортировка индексов удаляемых сообщений
+    removeElementsByIndices(arr, indices) {
+      // Сортируем индексы в порядке убывания
+      indices.sort((a, b) => b - a);
+    
+      // Удаляем элементы по индексам
+      for (const index of indices) {
+        if (index >= 0 && index < arr.length) {
+          arr.splice(index, 1);
+        }
+      }
+      
+      return arr;
+    }
   },  
 
 });
