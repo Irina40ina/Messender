@@ -183,7 +183,7 @@ export default {
                 this.isShowChat = true;
                 this.isShowNotice = false;
             } catch (err) {
-                console.error(err);
+                console.error(`components/mainView/messangerWidgetComp: handlerGetMessages => ${err}`)
             } finally {
                 this.scrolling();
                 this.isShowLoadingData = false;
@@ -216,7 +216,7 @@ export default {
                 this.messageObj.chat_id = null;
                 this.messageObj.content = '';
             } catch (err) {
-                console.error('ошибка при отправке сообщения (sendMessage)', err);
+                console.error(`components/mainView/messangerWidgetComp: sendMessage => ${err}`)
             }
         },
         openContextMenu(message) {
@@ -263,7 +263,7 @@ export default {
                     this.store.deleteSelectedMessages(this.deletedMessagesId);
                 }
             } catch (error) {
-                console.error('deleteMessage', err);
+                console.error(`components/mainView/messangerWidgetComp: deleteMessage => ${err}`)
             } finally {
                 this.deletedMessagesId = [];
             }
@@ -304,7 +304,7 @@ export default {
                     this.toUserName = newValue.users[0].name + ' ' + newValue.users[0].lastname;
                     this.toUserInitials = newValue.users[0].name.slice(0,1).toUpperCase() + newValue.users[0].lastname.slice(0,1).toUpperCase();
                 } catch (err) {
-                    console.error('components/messanger/messangerWidgetComp: created -> watch');
+                    console.error('components/messanger/messangerWidgetComp: created -> watch => ${err}');
                 } finally {
                     this.offModeEdit();
                 }
@@ -333,7 +333,7 @@ export default {
                 // this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
             } 
         } catch (err) {
-            console.error(err)
+            console.error('components/messanger/messangerWidgetComp: mounted => ${err}');
         } 
 
         // Observer ============
