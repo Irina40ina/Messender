@@ -8,7 +8,6 @@
                 type="text"
                 placeholder="Поиск..."
                 v-model="searchField"
-                
                 >
                 <button class="search-btn" @click="handlerSearchUser">
                     <font-awesome-icon style="color: var(--primary-fg)" :icon="['fas', 'magnifying-glass']" />
@@ -72,6 +71,17 @@ export default {
         }
     },
     methods: {
+        debounce(func, delay) {
+            let timeout;
+            return function (...arg) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, arg), delay);
+            }
+        },
+        searchUser() {
+            this.debounce(this.handlerSearchUser, 2000)
+        },
         async handlerSearchUser() {
             try {
                 this.page = 1;
