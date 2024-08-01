@@ -57,7 +57,11 @@
         ref="scrollContainer"
         >
              <!-- Trigger pagination -->
-            <div class="triggerPagination" ref="triggerPagination"></div>
+            <div 
+            class="triggerPagination" 
+            ref="triggerPagination"
+            v-show="!!$route.params.chatId"
+            ></div>
             <wraperMessageComp
             @open-context-menu="(e) => openContextMenu(e)"
             v-show="isShowChat"
@@ -259,10 +263,13 @@ export default {
                     this.deletedMessagesId.push(this.selectedMessage.id);
                 }
                 const response = await deleteMessagesById(this.deletedMessagesId, this.selectedMessage.chatId);
-                if(response === null) {
+                if(response.meta.status === 'success') {
                     this.store.deleteSelectedMessages(this.deletedMessagesId);
+                    if(this.deletedMessagesId.includes(this.$props.opennedChat.previewMessage.id)){
+                        this.store.updatePreviewMessage(this.$props.opennedChat.id, response.data.lastMessage);
+                    }
                 }
-            } catch (error) {
+            } catch (err) {
                 console.error(`components/mainView/messangerWidgetComp: deleteMessage => ${err}`)
             } finally {
                 this.deletedMessagesId = [];
@@ -274,14 +281,14 @@ export default {
         },
         offModeEdit() {
             this.selectedMessage = null;
-                this.editMode = false;
-                this.messageObj = {
-                    from_user_id: null,
-                    to_user_id: null,
-                    chat_id: null,
-                    content: '',
-                    forwarded_ids: null,
-                }
+            this.editMode = false;
+            this.messageObj = {
+                from_user_id: null,
+                to_user_id: null,
+                chat_id: null,
+                content: '',
+                forwarded_ids: null,
+            }
         }
     },
     computed: {
@@ -299,6 +306,7 @@ export default {
         watch(() => this.$props.opennedChat, async (newValue) => {
             if(newValue) {
                 try {
+                    console.log('WORK get messages');
                     await this.handlerGetMessages(newValue.id);
                     this.renderChat(newValue.id);
                     this.toUserName = newValue.users[0].name + ' ' + newValue.users[0].lastname;
@@ -342,7 +350,7 @@ export default {
             threshold: 1.0,
         };
         const callback = async (entries) => {
-            if(entries[0].isIntersecting === true) {
+            if(entries[0].isIntersecting === true && this.$route.params.chatId) {
                 const currentPosScroll = this.$refs.scrollContainer?.scrollHeight;
                 this.page = this.page + 1;
                 const response = await getChatMessagesById(this.$route.params.chatId, this.page, this.perPage);

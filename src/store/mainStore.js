@@ -40,6 +40,7 @@ export const useMainStore = defineStore("useMainStore", {
         isShowChat: false,
         toUserId: null,
       },
+      previewMessage: '',
       messages: [],
       chats: [],
     };
@@ -174,7 +175,15 @@ export const useMainStore = defineStore("useMainStore", {
       }
       
       return arr;
+    },
+    updatePreviewMessage(chatId, lastMessage) {
+      if(lastMessage) {
+        this.chats.forEach((el) => {
+          if(el.id == chatId) {
+            el.previewMessage = lastMessage;
+          }
+        }) 
+      };
     }
   },  
-
 });

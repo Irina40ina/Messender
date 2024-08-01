@@ -45,7 +45,7 @@ export default {
             return this.$props.chat.users[0].name + ' ' + this.$props.chat.users[0].lastname
         },
         computeLastMessage() {
-            console.log(this.$props.chat)
+            
             return this.$props.chat.previewMessage.content;
         },
         computeLastActivity() {

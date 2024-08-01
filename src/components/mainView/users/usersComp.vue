@@ -73,14 +73,10 @@ export default {
     methods: {
         debounce(func, delay) {
             let timeout;
-            return function (...arg) {
-                const context = this;
+            return (...arg) => {
                 clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(context, arg), delay);
+                timeout = setTimeout(() => func.apply(this, arg), delay);
             }
-        },
-        searchUser() {
-            this.debounce(this.handlerSearchUser, 2000)
         },
         async handlerSearchUser() {
             try {
@@ -94,22 +90,34 @@ export default {
         }
     },
     async mounted() {
-        const response = await getUsers(this.page, this.perPage);
-        this.arrayUsers = response.data;
-        this.paginator = response.paginator;
-
+        // const searchInput = this.$refs.searchInput;
+        // searchInput.addEventListener('input', this.debounce(() => {
+        //     console.log(this.searchField);
+        // }, 200))
+        try {
+            const response = await getUsers(this.page, this.perPage);
+            this.arrayUsers = response.data;
+            this.paginator = response.paginator;
+        } catch (err) {
+            console.error('./components/users/usersComp.vue: mounted => getUsers => ', err);        
+        }
+        
         // Observer ============
-        const options = {
-            rootMargin: "0px",
-            threshold: 1.0,
-        };
-        const callback = (entries) => {
-            if(entries[0].isIntersecting === true) {
+        try {
+            const options = {
+                rootMargin: "0px",
+                threshold: 1.0,
+            };
+            const callback = (entries) => {
+                if(entries[0].isIntersecting === true) {
                 this.page = this.page + 1;
             }
-        };
-        const observer = new IntersectionObserver(callback, options);
-        observer.observe(this.$refs.triggerPagination);
+            }
+            const observer = new IntersectionObserver(callback, options);
+            observer.observe(this.$refs.triggerPagination);  
+        } catch (err) {
+            console.error('./components/users/usersComp.vue: mounted => Observer', err);
+        }
         // ============
     }
 }

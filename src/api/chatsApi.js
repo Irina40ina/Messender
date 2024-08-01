@@ -17,7 +17,7 @@ export async function getChats(page, perPage) {
     }); 
     const { data: { meta: { paginator }, data } } = response;
     return { data, paginator };
-    } catch (error) {
+    } catch (err) {
         console.error(`api/chatsApi: getChats => ${err}`)
     }
 }
@@ -32,7 +32,7 @@ export async function getChatById(id) {
         },
     }); 
         return response.data.data;
-    } catch (error) {
+    } catch (err) {
         console.error(`api/chatsApi: getChatsById => ${err}`)
     }
 }

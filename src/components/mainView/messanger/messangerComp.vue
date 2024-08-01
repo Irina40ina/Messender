@@ -10,9 +10,10 @@
 </template>
 
 <script>
-import messangerChatsComp from "@/components/mainView/messanger/messangerChatsComp.vue"
+import messangerChatsComp from "@/components/mainView/messanger/messangerChatsComp.vue";
 import messangerWidgetComp from "@/components/mainView/messanger/messangerWidgetComp.vue"
-
+import { useMainStore } from '@/store/mainStore';
+import { watch } from 'vue';
 export default {
     components: {
         messangerChatsComp,
@@ -20,15 +21,28 @@ export default {
     },
     data() {
         return {
+            store: useMainStore(),
             opennedChat: null,
+            store: useMainStore(),
         }
     },
+    
     methods: {
         handlerOpenChat(e) {
             this.opennedChat = e;
         }
     },
-    
+    created() {
+        watch(() => this.store.chats.length, (newValue, oldValue) => {
+            if (newValue > 0 && oldValue <= 0 && this.$route.params.chatId !== undefined) {
+                this.store.chats.forEach((el) => {
+                    if (el.id == this.$route.params.chatId) {
+                        this.handlerOpenChat(el);
+                    }
+                });
+            }
+        });
+    },
 }
 </script>
 

@@ -50,7 +50,7 @@ export async function getChatMessagesById(chat_id, page, perPage) {
     }); 
         const { data: { data: { messages }, meta: { paginator } } } = response;
         return { messages, paginator };
-    } catch (error) {
+    } catch (err) {
         console.error(`api/messagesApi: getChatMessagesById => ${err}`)
     }
 }
@@ -58,17 +58,18 @@ export async function getChatMessagesById(chat_id, page, perPage) {
 export async function deleteMessagesById(array, chatId) {
     try {
        const response = await axios.delete(hostName + `/messages/delete`, {
-        params: {
-            ids: array,
-            chat_id: chatId,
-        },
-        headers: {
-            ...ContentTypeURL,
-            "Authorization": "Bearer " + localStorage.getItem('token'),
-        },
-    }); 
-        return response.data.data;
-    } catch (error) {
+            params: {
+                ids: array,
+                chat_id: chatId,
+            },
+            headers: {
+                ...ContentTypeURL,
+                "Authorization": "Bearer " + localStorage.getItem('token'),
+            },
+        }); 
+        const { data, meta } = response.data; 
+        return { data, meta };
+    } catch (err) {
         console.error(`api/messagesApi: deleteMessagesById => ${err}`)
     }
 }
