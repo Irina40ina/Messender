@@ -54,8 +54,8 @@ export default {
         }
     },
     methods: {
-        handlerOpenChat(e) {
-            this.$emit('openChat', e);
+        handlerOpenChat(chatData) {
+            this.$emit('openChat', chatData);
         }
     },
     async mounted() {

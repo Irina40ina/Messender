@@ -39,10 +39,20 @@ export default {
     },
     computed: {
         computeUserName() {
-            return this.store.user?.name + ' ' + this.store.user?.lastname;
+            try {
+                return this.store.user?.name + ' ' + this.store.user?.lastname;
+            } catch (err) {
+                console.error('components/mainView/topbarComp: computed[computeUserName]', err);
+            }
         },
         computeInitials() {
-            return [...this.store.user?.name][0].toUpperCase() + [...this.store.user?.lastname][0].toUpperCase();
+            try {
+                if(this.store.user) {
+                    return [...this.store.user?.name][0].toUpperCase() + [...this.store.user?.lastname][0].toUpperCase();
+                }
+            } catch (err) {
+                console.error('components/mainView/topbarComp: computed[computeInitials]', err);
+            }
         }
     }
 }

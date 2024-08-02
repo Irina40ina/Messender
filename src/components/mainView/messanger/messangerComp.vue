@@ -4,7 +4,9 @@
         @open-chat="(e) => handlerOpenChat(e)"
         ></messangerChatsComp>
         <messangerWidgetComp
+        @open-chat-forwading="handlerOpenChatForwading"
         :openned-chat="opennedChat"
+        :forwading-mode="forwadingMode"
         ></messangerWidgetComp>
     </div>
 </template>
@@ -24,12 +26,17 @@ export default {
             store: useMainStore(),
             opennedChat: null,
             store: useMainStore(),
+            forwadingMode: false,
         }
     },
     
     methods: {
-        handlerOpenChat(e) {
-            this.opennedChat = e;
+        handlerOpenChat(chatData) {
+            this.opennedChat = chatData;
+        },
+        handlerOpenChatForwading(chatData) {
+            this.forwadingMode = true;
+            this.opennedChat = chatData;
         }
     },
     created() {

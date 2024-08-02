@@ -1,5 +1,17 @@
 <template>
     <div class="message-widget" ref="messageWidget">
+        
+        <primaryDialogComp 
+        :is-show="selectForwardingChat"
+        >
+            <div class="chats-forwading-container">
+                <h1 class="chats-forwading-header">Выберите чат</h1>
+                <messangerChatsComp
+                @open-chat="(e) => handlerOpenChatForwading(e)"
+                ></messangerChatsComp>
+            </div>
+           
+        </primaryDialogComp>
         <!-------------- LOADING ---------------->
         <div 
         class="loading-overlay"
@@ -14,6 +26,7 @@
         @edit-message="editSelectedMessage"
         @select-messages="handlerSelectMessage"
         @delete-message="deleteMessage"
+        @forward-message="forwardMessage"
         />
         <!-- Блок с уведомлением -->
         <div 
@@ -40,7 +53,7 @@
              class="header-actions"
              v-show="isShowActionsBtn"
              >
-                <button class="btn-forward">Переслать</button>
+                <button class="btn-forward" @click="forwardMessage">Переслать</button>
                 <button 
                 class="btn-delete"
                 @click="deleteSeveralMessages"
@@ -82,6 +95,16 @@
                 <p class="replyed-message-text">Ответ на сообщение: {{ selectedMessage?.content }}</p>
             </div>
         </div>
+
+        <div 
+        class="forwarding-message-panel"
+        v-show="$props.forwadingMode"
+        >
+            <div class="forwarding-message-container">
+                <p class="forwarding-message-text">Переслать сообщения: {{ selectedMessagesId.length }}</p>
+            </div>
+        </div>
+
         <!-- Панель при редактировании сообщения -->
         <div 
         class="edit-message-panel"
@@ -123,10 +146,14 @@ import { useMainStore } from '@/store/mainStore';
 import { nextTick, watch } from 'vue';
 import { createMessage, deleteMessagesById } from '@/api/messagesApi';
 import contextMenuComp from '@/components/mainView/messanger/contextMenuComp.vue';
+import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
+import messangerChatsComp from '@/components/mainView/messanger/messangerChatsComp.vue';
 export default {
     components: {
         wraperMessageComp,
         contextMenuComp,
+        primaryDialogComp,
+        messangerChatsComp,
     },
     data() {
         return {
@@ -157,13 +184,20 @@ export default {
             opennedChat: null,
             selectedMessagesId: [],
             deletedMessagesId: [],
+            selectForwardingChat: false,
         }
     },
+    emits: ['openChatForwading'],
     props: {
         opennedChat: {
             type: Object,
             required: false,
             default: null,
+        },
+        forwadingMode: {
+            type: Boolean,
+            default: false,
+            required: false,
         }
     },
     methods: {
@@ -289,6 +323,22 @@ export default {
                 content: '',
                 forwarded_ids: null,
             }
+        },
+        forwardMessage() {
+            try {
+               this.selectForwardingChat = true; 
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: forwardMessage => `, err);
+            }
+        },
+        handlerOpenChatForwading(chatData) {
+            try {
+                this.$emit('openChatForwading', chatData)
+                this.selectForwardingChat = false;
+                // this.$router.push({name: 'chat', params: {chatId: e.id}});
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: handlerOpenChatForwading => `, err);
+            }   
         }
     },
     computed: {
@@ -306,7 +356,6 @@ export default {
         watch(() => this.$props.opennedChat, async (newValue) => {
             if(newValue) {
                 try {
-                    console.log('WORK get messages');
                     await this.handlerGetMessages(newValue.id);
                     this.renderChat(newValue.id);
                     this.toUserName = newValue.users[0].name + ' ' + newValue.users[0].lastname;
@@ -376,6 +425,9 @@ export default {
         })
         // Обработчик нажатия кнопок (Escape)
         window.addEventListener('keydown', (e) => {
+            if(this.selectForwardingChat === true) {
+                return this.selectForwardingChat = false;
+            }
             if(e.key === 'Escape' && this.$route.name === 'chat') {
                 this.$router.push({name: 'messanger'});
                 this.$route.params.chatId = undefined;
@@ -384,7 +436,7 @@ export default {
                 this.isShowReplyedMessage = false;
                 this.offModeEdit();
             }
-        })
+        });
     },
 
 }
@@ -407,7 +459,18 @@ export default {
             transform: rotate(360deg);
         }
     }
-
+    .chats-forwading-container {
+        width: 600px;
+    }
+    .chats-forwading-container .messanger-container__chats {
+        width: 100%;
+    }
+    .chats-forwading-header {
+        text-align: center;
+        color: var(--primary-fg);
+        font-family: var(--font);
+        font-size: 1.6rem;
+    }
     .loading-overlay {
         position: absolute;
         top: 0;
@@ -421,7 +484,7 @@ export default {
         height: 100%;
         background-color: rgba(0,0,0,.1);
         backdrop-filter: blur(3px);
-        z-index: 5;
+        z-index: 905;
     }
     .icon {
         color: #a0e0a0;
@@ -570,6 +633,29 @@ export default {
         width: 90%;
     }
     .replyed-message-text {
+        font-family: var(--font);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .forwarding-message-container {
+        width: 90%;
+    }
+    .forwarding-message-panel {
+        width: 90%;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid var(--violet);
+        background-color: #fff;
+        position: absolute;
+        bottom: 16%;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        padding: 0.1rem 1rem;
+        z-index: 900;
+    }
+    .forwarding-message-text {
         font-family: var(--font);
         white-space: nowrap;
         text-overflow: ellipsis;

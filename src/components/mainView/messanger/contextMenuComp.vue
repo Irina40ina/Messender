@@ -26,7 +26,10 @@
                 <p class="text">Удалить</p>
                 <font-awesome-icon class="icon delete" :icon="['fas', 'trash']" />
             </div>
-            <div class="context-menu-item">
+            <div 
+            class="context-menu-item"
+            @click="$emit('forwardMessage')"
+            >
                 <p class="text">Переслать</p>
                 <font-awesome-icon  class="icon forward" :icon="['fas', 'share']" />
             </div>
@@ -52,7 +55,7 @@ export default {
             requered: false,
         }
     },
-    emits: ['close', 'showReplyedMessage', 'editMessage', 'selectMessages', 'deleteMessage'],
+    emits: ['close', 'showReplyedMessage', 'editMessage', 'selectMessages', 'deleteMessage', 'forwardMessage'],
     watch: {
         isShow(newValue) {
             if (newValue === true) {
