@@ -69,7 +69,6 @@ const routes = [
         name: "chat",
         meta: { requiredAuth: true },
       },
-
     ],
   },
   {

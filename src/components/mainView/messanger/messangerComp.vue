@@ -4,6 +4,7 @@
         @open-chat="(e) => handlerOpenChat(e)"
         ></messangerChatsComp>
         <messangerWidgetComp
+        @open-chat-forwading="handlerOpenChatForwading"
         :openned-chat="opennedChat"
         :forwarding-mode="forwardingMode"
         @disable-forwarding-mode="forwardingMode = false"
@@ -30,6 +31,7 @@ export default {
             forwardingMode: false,
         }
     },
+    
     methods: {
         handlerOpenChat(chatData) {
             try {
@@ -54,7 +56,7 @@ export default {
             }
         });
     },
-    
+
 }
 </script>
 

@@ -498,7 +498,6 @@ export default {
         } catch (err) {
             console.error(`components/messanger/messangerWidgetComp: mounted -> Observer => ${err}`);
         }
-        // ============
 
         // Обработчик нажатия кнопок (Enter)
         try {

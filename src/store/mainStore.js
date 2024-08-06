@@ -40,6 +40,7 @@ export const useMainStore = defineStore("useMainStore", {
         isShowChat: false,
         toUserId: null,
       },
+      previewMessage: '',
       messages: [],
       chats: [],
     };
@@ -211,5 +212,4 @@ export const useMainStore = defineStore("useMainStore", {
       }
     }
   },  
-
 });

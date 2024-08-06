@@ -112,7 +112,6 @@ export default {
         } catch (err) {
             console.error(`./components/users/usersComp.vue: mounted -> getUsers => ${err}`);
         }
-
         // Observer ============
         try {
             const options = {
