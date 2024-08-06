@@ -45,32 +45,44 @@ export default {
     },
     computed: {
         computeNameSelect() {
-            if(this.selectionMode == 'date') {
-                return 'Выберите время'
-            } else if(this.selectionMode == 'time') {
-                return 'Выберите дату'
+            try {
+                if(this.selectionMode == 'date') {
+                    return 'Выберите время'
+                } else if(this.selectionMode == 'time') {
+                    return 'Выберите дату'
+                }
+            } catch (err) {
+                console.error(`./components/UI/dateTimePickerComp.vue: computeNameSelect => ${err}`);
             }
         }
     },
     methods: {
         toggleMode() {
-            if(this.selectionMode === 'date') {
-                this.selectionMode = 'time';
-                gsap.to('.date-picker', { duration: .2, left: '-100%' });
-                gsap.to('.time-picker', { duration: .2, right: 0 });
-            } else if(this.selectionMode === 'time') {
-                this.selectionMode = 'date';
-                gsap.to('.time-picker', { duration: .2, right: '-100%' });
-                gsap.to('.date-picker', { duration: .2, left: 0 });
+            try {
+                if(this.selectionMode === 'date') {
+                    this.selectionMode = 'time';
+                    gsap.to('.date-picker', { duration: .2, left: '-100%' });
+                    gsap.to('.time-picker', { duration: .2, right: 0 });
+                } else if(this.selectionMode === 'time') {
+                    this.selectionMode = 'date';
+                    gsap.to('.time-picker', { duration: .2, right: '-100%' });
+                    gsap.to('.date-picker', { duration: .2, left: 0 });
+                }
+            } catch (err) {
+                console.error(`./components/UI/dateTimePickerComp.vue: toggleMode => ${err}`);
             }
         },
         selectDateTime() {
-            const currentDate = new Date(this.selectedDate);
-            const [hours, min, sec] = this.selectedTime.split(":");
-            currentDate.setHours(hours);
-            currentDate.setMinutes(min);
-            currentDate.setSeconds(sec);
-            this.$emit('selectDateTime', currentDate);
+            try {
+                const currentDate = new Date(this.selectedDate);
+                const [hours, min, sec] = this.selectedTime.split(":");
+                currentDate.setHours(hours);
+                currentDate.setMinutes(min);
+                currentDate.setSeconds(sec);
+                this.$emit('selectDateTime', currentDate);
+            } catch (err) {
+                console.error(`./components/UI/dateTimePickerComp.vue: selectDateTime => ${err}`);
+            }
         },
     }
 }

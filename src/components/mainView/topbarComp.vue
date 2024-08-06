@@ -32,17 +32,29 @@ export default {
     },
     methods: {
         logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            this.$router.push({name: 'auth'})
+            try {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                this.$router.push({name: 'auth'})
+            } catch (err) {
+                
+            }
         }
     },
     computed: {
         computeUserName() {
-            return this.store.user?.name + ' ' + this.store.user?.lastname;
+            try {
+                return this.store.user?.name + ' ' + this.store.user?.lastname;
+            } catch (err) {
+                console.error(`components/mainView/topbarComp: computeUserName => ${err}`)
+            }
         },
         computeInitials() {
-            return [...this.store.user?.name][0].toUpperCase() + [...this.store.user?.lastname][0].toUpperCase();
+            try {
+                return [...this.store.user?.name][0].toUpperCase() + [...this.store.user?.lastname][0].toUpperCase();
+            } catch (err) {
+                console.error(`components/mainView/topbarComp: computeInitials => ${err}`)
+            }
         }
     }
 }

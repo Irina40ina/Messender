@@ -43,50 +43,66 @@ export default {
     emits: ['confirmTextData', 'openDateTimePicker'],
     watch: {
         computedValue(newValue, oldValue) {
-            if(newValue === 'Не указано') {
-                this.class = 'none';
-            } else {
-                this.class = '';
+            try {
+                if(newValue === 'Не указано') {
+                    this.class = 'none';
+                } else {
+                    this.class = '';
+                }
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/itemChunkComp: watch -> computedValue => ${err}`) 
             }
         },
     },
     computed: {
         computeValue() {
-            if(this.$props.item.id === 'gender') {
-                if(this.$props.item.value == 0){
-                    this.computedValue = 'М';
-                    return 'М';
-                } 
-                if(this.$props.item.value == 1){
-                    this.computedValue = 'Ж';
-                    return 'Ж';
+            try {
+                if(this.$props.item.id === 'gender') {
+                    if(this.$props.item.value == 0){
+                        this.computedValue = 'М';
+                        return 'М';
+                    } 
+                    if(this.$props.item.value == 1){
+                        this.computedValue = 'Ж';
+                        return 'Ж';
+                    }
+                    if(this.$props.item.value == 2){
+                        this.computedValue = 'Другое';
+                        return 'Другое';
+                    } 
+                    this.computedValue = 'Не указано';
+                    return 'Не указано';
                 }
-                if(this.$props.item.value == 2){
-                    this.computedValue = 'Другое';
-                    return 'Другое';
-                } 
-                this.computedValue = 'Не указано';
-                return 'Не указано';
-            }
-            if(this.$props.item.value == null){
-                this.computedValue = 'Не указано';
-                return 'Не указано'
-            } else {
-                this.computedValue = this.$props.item.value;
-                return this.$props.item.value;
+                if(this.$props.item.value == null){
+                    this.computedValue = 'Не указано';
+                    return 'Не указано'
+                } else {
+                    this.computedValue = this.$props.item.value;
+                    return this.$props.item.value;
+                }
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/itemChunkComp: computed -> computeValue => ${err}`)
             }
         },
         
     },
     methods: {
         openEditField() {
-            if(this.$props.item.id === 'birth-at'){
-                return this.$emit('openDateTimePicker');
+            try {
+                if(this.$props.item.id === 'birth-at'){
+                    return this.$emit('openDateTimePicker');
+                }
+                gsap.to(`#edit-field__${this.$props.item.id}`, { duration: .3, right: 0 });
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/itemChunkComp: openEditField => ${err}`)
             }
-            gsap.to(`#edit-field__${this.$props.item.id}`, { duration: .3, right: 0 });
         },
         closeEditField() {
-            gsap.to(`#edit-field__${this.$props.item.id}`, { duration: .3, right: '-100%' });
+            try {
+                gsap.to(`#edit-field__${this.$props.item.id}`, { duration: .3, right: '-100%' });
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/itemChunkComp: closeEditField => ${err}`)
+            }
         }
     },
 }

@@ -65,19 +65,16 @@ export default {
     emits: ['close'],
     methods: {
         async handlerCreateNewChat() {
-            this.messageObj.from_user_id = this.myId;
-            this.messageObj.to_user_id = this.$props.user.id;
-            this.messageObj.chat_id = null;
-            this.messageObj.content = this.messageText;
-            await createMessage(this.messageObj);
-            this.$emit('close');
-
-// Создание чата
-        //     this.chatObj.creator = this.myId;
-        //     this.chatObj.companion_id = this.$props.user.id;
-        //     this.chatObj.preview_message = this.messageText;
-        //     await createNewChat(this.chatObj);
-        //     this.$emit('close');
+            try {
+                this.messageObj.from_user_id = this.myId;
+                this.messageObj.to_user_id = this.$props.user.id;
+                this.messageObj.chat_id = null;
+                this.messageObj.content = this.messageText;
+                await createMessage(this.messageObj);
+                this.$emit('close');
+            } catch (err) {
+                console.error(`components/mainView/users/inviteChatComp: handlerCreateNewChat => ${err}`)
+            }
         }
     }
 }

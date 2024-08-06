@@ -45,7 +45,11 @@ export default {
     emits: ['dataSubmit', 'isShow'],
     methods: {
         dataSubmit() {
-            this.$emit('dataSubmit', { email: this.email, password: this.password })
+            try {
+                this.$emit('dataSubmit', { email: this.email, password: this.password })      
+            } catch (err) {
+                console.error(`components/authView/authFormComp.vue: dataSubmit  => ${err}`)
+            }
         },
         async handlerLogin() {
             try {

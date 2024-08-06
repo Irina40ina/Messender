@@ -48,7 +48,7 @@ export async function getUsers(page, perPage, fullname = '') {
     let data = obj.data.data.users;
     let paginator = obj.data.meta.paginator;
     return { data, paginator };
-    } catch (error) {
+    } catch (err) {
         console.error(`api/usersApi: getUsers => ${err}`)
     }
 }

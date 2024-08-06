@@ -37,44 +37,60 @@ export default {
     },
     watch: {
         async page(newPage, oldPage) {
-            if(newPage !== oldPage) {
-                if(this.paginator.hasNext === true) {
-                    const response = await getChats(this.page, this.perPage);
-                    this.arrayChats = [...this.arrayChats, ...response.data];
-                    this.paginator = response.paginator;
+            try {
+                if(newPage !== oldPage) {
                     if(this.paginator.hasNext === true) {
-                        this.loading = true;
-                    } 
-                    else if(this.paginator.hasNext === false) {
-                        this.loading = false;
+                        const response = await getChats(this.page, this.perPage);
+                        this.arrayChats = [...this.arrayChats, ...response.data];
+                        this.paginator = response.paginator;
+                        if(this.paginator.hasNext === true) {
+                            this.loading = true;
+                        } 
+                        else if(this.paginator.hasNext === false) {
+                            this.loading = false;
+                        }
                     }
+                    this.loading = false;
                 }
-                this.loading = false;
+            } catch (err) {
+                console.error(`components/messanger/messangerChatsComp: watch -> page => ${err}`)
             }
         }
     },
     methods: {
         handlerOpenChat(e) {
-            this.$emit('openChat', e);
+            try {
+                this.$emit('openChat', e);
+            } catch (err) {
+                console.error(`components/messanger/messangerChatsComp: handlerOpenChat => ${err}`)                
+            }
         }
     },
     async mounted() {
-        const response = await getChats(this.page, this.perPage);
-        this.store.chats = response.data;
-        this.paginator = response.paginator;
-
+        try {
+            const response = await getChats(this.page, this.perPage);
+            this.store.chats = response.data;
+            this.paginator = response.paginator;
+        } catch (err) {
+            console.error(`components/messanger/messangerChatsComp: mounted -> getChats => ${err}`) 
+        }
+        
         // Observer ============
-        const options = {
-            rootMargin: "0px",
-            threshold: 1.0,
-        };
-        const callback = (entries) => {
-            if(entries[0].isIntersecting === true) {
-                this.page = this.page + 1;
-            }
-        };
-        const observer = new IntersectionObserver(callback, options);
-        observer.observe(this.$refs.triggerPagination);
+        try {
+            const options = {
+                rootMargin: "0px",
+                threshold: 1.0,
+            };
+            const callback = (entries) => {
+                if(entries[0].isIntersecting === true) {
+                    this.page = this.page + 1;
+                }
+            };
+            const observer = new IntersectionObserver(callback, options);
+            observer.observe(this.$refs.triggerPagination);
+        } catch (err) {
+            console.error(`components/messanger/messangerChatsComp: mounted -> Observer => ${err}`)
+        }
         // ============
     }
 }

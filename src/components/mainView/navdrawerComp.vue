@@ -47,24 +47,32 @@ import gsap from 'gsap';
 export default {
     methods: {
         expandNavdrawer(e) {
-            const navDrawer = e.target;
-            gsap.to(navDrawer, { duration: 0.2, width: '350px' })
-                .then(() => {
-                    gsap.to('.item__icon-block', { duration: 0.3, width: '20%' })
-                    gsap.to('.item__title-block', { duration: 0.3, width: '80%' })
-                })
-                .then(() => {
-                    gsap.to('.item__icon-block', { duration: 1.2, borderRight: '2px solid rgba(80, 80, 80, .5)'})
-                })
+            try {
+                const navDrawer = e.target;
+                gsap.to(navDrawer, { duration: 0.2, width: '350px' })
+                    .then(() => {
+                        gsap.to('.item__icon-block', { duration: 0.3, width: '20%' })
+                        gsap.to('.item__title-block', { duration: 0.3, width: '80%' })
+                    })
+                    .then(() => {
+                        gsap.to('.item__icon-block', { duration: 1.2, borderRight: '2px solid rgba(80, 80, 80, .5)'})
+                    })
+            } catch (err) {
+                console.error(`components/mainView/navdrawerComp: expandNavdrawer => ${err}`)
+            }
         },
         collapseNavdrawer(e) {
-            const navDrawer = e.target;
-            gsap.to('.item__icon-block', { duration: 0.3, width: '100%' })
-            gsap.to('.item__title-block', { duration: 0.3, width: '0%', })
-            gsap.to(navDrawer, { duration: 0.2, width: '80px' })
-            .then(() => {
-                gsap.to('.item__icon-block', { duration: 1.2, borderRight: '2px solid rgba(80, 80, 80, 0)'})
-            })
+            try {
+                const navDrawer = e.target;
+                gsap.to('.item__icon-block', { duration: 0.3, width: '100%' })
+                gsap.to('.item__title-block', { duration: 0.3, width: '0%', })
+                gsap.to(navDrawer, { duration: 0.2, width: '80px' })
+                .then(() => {
+                    gsap.to('.item__icon-block', { duration: 1.2, borderRight: '2px solid rgba(80, 80, 80, 0)'})
+                })
+            } catch (err) {
+                console.error(`components/mainView/navdrawerComp: collapseNavdrawer => ${err}`)
+            }
         }
     },
 

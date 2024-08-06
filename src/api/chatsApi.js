@@ -32,7 +32,7 @@ export async function getChatById(id) {
         },
     }); 
         return response.data.data;
-    } catch (error) {
+    } catch (err) {
         console.error(`api/chatsApi: getChatsById => ${err}`)
     }
 }

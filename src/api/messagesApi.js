@@ -18,6 +18,25 @@ export async function createMessage(message) {
         console.error(`api/massagesApi: createMessage => ${err}`)
     }
 }
+// Пересылка сообщения
+export async function forwardMessage(message) {
+    try {
+        const response = await axios.post(hostName + '/messages/create', {
+            ...message,
+        }, {
+            params: {
+                forwarding: true,
+            },
+            headers: {
+            ...ContentTypeJSON,
+            "Authorization": "Bearer " + localStorage.getItem('token'),
+            }
+        });
+        return response.data;
+    } catch (err) {
+        console.error(`api/massagesApi: createMessage => ${err}`)
+    }
+}
 // Редактирование сообщения
 export async function editMessage(id, message) {
     try {
@@ -50,7 +69,7 @@ export async function getChatMessagesById(chat_id, page, perPage) {
     }); 
         const { data: { data: { messages }, meta: { paginator } } } = response;
         return { messages, paginator };
-    } catch (error) {
+    } catch (err) {
         console.error(`api/messagesApi: getChatMessagesById => ${err}`)
     }
 }
@@ -68,7 +87,7 @@ export async function deleteMessagesById(array, chatId) {
         },
     }); 
         return response.data.data;
-    } catch (error) {
+    } catch (err) {
         console.error(`api/messagesApi: deleteMessagesById => ${err}`)
     }
 }

@@ -66,15 +66,22 @@ export default {
     },
     methods: {
         async handlerInviteChat(user) {
-            this.isShowInviteChat = true;
-            this.selectedInviteUser = user;
+            try {
+                this.isShowInviteChat = true;
+                this.selectedInviteUser = user;
+            } catch (err) {
+                console.error(`./components/users/usersListComp.vue: handlerInviteChat => ${err}`);
+            }
         }
     },
     async mounted() {
-        this.users = this.$props.arrayUsers;
-        // console.log(this.users, this.$props.arrayUsers)
-        const response = await getProfile();
-        this.myId = response.userId;
+        try {
+            this.users = this.$props.arrayUsers;
+            const response = await getProfile();
+            this.myId = response.userId;
+        } catch (err) {
+            console.error(`./components/users/usersListComp.vue: mounted => ${err}`);
+        }
     }
 }
 </script>

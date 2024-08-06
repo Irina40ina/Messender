@@ -38,7 +38,7 @@ export default {
           useMainStore().user = data;
         }
       } catch (err) {
-        console.error('App.vue: created', err);
+        console.error(`/views/MainView.vue: created => ${err}`);
       }
     // Инициализация сокет-подключения
     entrySocketStarted();
