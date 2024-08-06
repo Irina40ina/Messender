@@ -83,9 +83,17 @@
             :key="message.id"
             :is-selected="computeSelectedMessage(message.id)"
             @select-message="(e) => selectMessage(e)"
-            ></wraperMessageComp>
+            >
+            <forwardingContainerComp
+            v-for="message in store.messages" 
+            :message="message"
+            :key="message.id"
+            >
+            </forwardingContainerComp>
+        
+            </wraperMessageComp>
         </div>
-        <!-- Пвнель при ответе на сообщение -->
+        <!-- Панель при ответе на сообщение -->
         <div 
         class="replyed-message-panel"
         v-show="isShowReplyedMessage"
@@ -95,10 +103,10 @@
                 <p class="replyed-message-text">Ответ на сообщение: {{ selectedMessage?.content }}</p>
             </div>
         </div>
-
+        <!-- Панель при пересылке сообщений -->
         <div 
         class="forwarding-message-panel"
-        v-show="$props.forwadingMode"
+        v-show="$props.forwardingMode"
         >
             <div class="forwarding-message-container">
                 <p class="forwarding-message-text">Переслать сообщения: {{ selectedMessagesId.length }}</p>
@@ -130,7 +138,12 @@
                 :value="messageObj.content"
             ></textarea>
             <font-awesome-icon 
-            class="btn-send-message" 
+            class="icon-loading" 
+            :icon="['fas', 'spinner']" 
+            v-show="isLoading"
+            />
+            <font-awesome-icon 
+            class="btn-send-message" :style="{display: isLoading ? 'none' : 'block'}"
             v-show="isShowChat"
             :icon="['fas', 'paper-plane']" 
             @click="sendMessage"
@@ -141,19 +154,21 @@
 
 <script>
 import wraperMessageComp from './wraperMessageComp.vue';
-import { editMessage, getChatMessagesById } from '@/api/messagesApi';
+import { editMessage, getChatMessagesById, forwardMessage } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
 import { nextTick, watch } from 'vue';
 import { createMessage, deleteMessagesById } from '@/api/messagesApi';
 import contextMenuComp from '@/components/mainView/messanger/contextMenuComp.vue';
 import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
 import messangerChatsComp from '@/components/mainView/messanger/messangerChatsComp.vue';
+import forwardingContainerComp from './forwardingContainerComp.vue';
 export default {
     components: {
         wraperMessageComp,
         contextMenuComp,
         primaryDialogComp,
         messangerChatsComp,
+        forwardingContainerComp,
     },
     data() {
         return {
@@ -172,6 +187,7 @@ export default {
             isShowChat: false,
             isShowLoadingData: false,
             isShowActionsBtn: false,
+            isLoading: false,
             chatId: null,
             paginator: null,
             page: 1,
@@ -187,14 +203,14 @@ export default {
             selectForwardingChat: false,
         }
     },
-    emits: ['openChatForwading'],
+    emits: ['openChatForwading', 'disableForwardingMode'],
     props: {
         opennedChat: {
             type: Object,
             required: false,
             default: null,
         },
-        forwadingMode: {
+        forwardingMode: {
             type: Boolean,
             default: false,
             required: false,
@@ -202,15 +218,23 @@ export default {
     },
     methods: {
         async renderChat(id) {
-            this.$router.push({ name: 'chat', params: { chatId: id } });
+            try {
+                this.$router.push({ name: 'chat', params: { chatId: id } });
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: renderChat => ${err}`);
+            }
         },
         async scrolling(top = undefined) {
-            const targetElement = this.$refs.scrollContainer;
-            await nextTick(); 
-            targetElement.scroll({
-                top: top ?? targetElement.scrollHeight,
-                // behavior: null,
-            });
+            try {
+                const targetElement = this.$refs.scrollContainer;
+                await nextTick(); 
+                targetElement.scroll({
+                    top: top ?? targetElement.scrollHeight,
+                    // behavior: null,
+                });
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: scrolling => ${err}`);
+            }
         },
         async handlerGetMessages(chatId) {
             try {
@@ -229,25 +253,40 @@ export default {
         },
 
         createMessageObj(fromId, toId, chatId) {
-            this.messageObj.from_user_id = fromId;
-            this.messageObj.to_user_id = toId;
-            this.messageObj.chat_id = chatId;
+            try {
+                this.messageObj.from_user_id = fromId;
+                this.messageObj.to_user_id = toId;
+                this.messageObj.chat_id = chatId;
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: createMessageObj => ${err}`);
+            }
         },
         async sendMessage() {
+            this.isLoading = true;
             // Создание сообщения
             try {
                 if (this.messageObj.content !== '' && this.editMode === false) {
-                    let currentChat = this.$props.opennedChat ?? this.opennedChat
+                    let currentChat = this.$props.opennedChat ?? this.opennedChat;
+                    this.messageObj.from_user_id = this.store.user?.id;
                     this.createMessageObj(this.store.user?.id, currentChat.users[0].id, currentChat.id);
                     const data = await createMessage(this.messageObj);
                     this.store.messages.push(data?.data);
+                    console.log(data?.data)
                     this.scrolling();
                 }
                 // Редактирование
-                else if (this.messageObj.content !== '' && this.editMode === true) {
+                if (this.messageObj.content !== '' && this.editMode === true) {
                     const response = await editMessage(this.selectedMessage.id, this.messageObj.content);
                     this.store.editSelectedMessageView(response.id, response);
                     this.editMode = false;
+                }
+                // Пересылка сообщения
+                if (this.$props.forwardingMode === true) {
+                    this.createMessageObj(this.store.user?.id, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
+                    this.messageObj.forwarded_ids = this.selectedMessagesId;        
+                    const response = await forwardMessage(this.messageObj);
+                    this.store.messages.push(response?.data);
+                    this.$emit('disableForwardingMode');
                 }
                 this.messageObj.from_user_id = null;
                 this.messageObj.to_user_id = null;
@@ -255,40 +294,64 @@ export default {
                 this.messageObj.content = '';
             } catch (err) {
                 console.error(`components/mainView/messangerWidgetComp: sendMessage => ${err}`)
+            } finally {
+                this.isLoading = false;
             }
         },
         openContextMenu(message) {
-            this.isShowContextMenu = true;
-            this.selectedMessage = message;
+            try {
+                this.isShowContextMenu = true;
+                this.selectedMessage = message;
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: openContextMenu => ${err}`);
+            }
         },
         replyMessage() {
-            this.isShowReplyedMessage = true;
+            try {
+                this.isShowReplyedMessage = true;
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: replyMessage => ${err}`);
+            }
         },
         editSelectedMessage() {
-            if (this.selectedMessage) {
-                this.isShowEditMessagePanel = true;
-                this.messageObj.content = this.selectedMessage.content;
-                this.editMode = true;
-            } else {
-                console.error('this.selectedMessage === null');
+            try {
+                if (this.selectedMessage) {
+                    this.isShowEditMessagePanel = true;
+                    this.messageObj.content = this.selectedMessage.content;
+                    this.editMode = true;
+                } 
+            } catch (error) {
+                console.error(`components/mainView/messangerWidgetComp: editSelectedMessage => ${err}`);
             }
         },
         cancelEditSelectedMessage() {
+            try {
                 this.messageObj.content = '';
                 this.editMode = false;
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: cancelEditSelectedMessage => ${err}`);
+            }
         },
         handlerSelectMessage() {
-            this.selectedMessagesId.push(this.selectedMessage.id);
-            this.isShowActionsBtn = true;
+            try {
+                this.selectedMessagesId.push(this.selectedMessage.id);
+                this.isShowActionsBtn = true;
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: handlerSelectMessage => ${err}`);
+            }
         },
         selectMessage(message) {
-            if(this.selectedMessagesId.length > 0) {
-                if(this.selectedMessagesId.includes(message.id)) {
-                    this.selectedMessagesId = this.selectedMessagesId.filter((el) => el !== message.id);
-                } else {
-                    this.selectedMessage = message;
-                    this.handlerSelectMessage();
+            try {
+                if(this.selectedMessagesId.length > 0) {
+                    if(this.selectedMessagesId.includes(message.id)) {
+                        this.selectedMessagesId = this.selectedMessagesId.filter((el) => el !== message.id);
+                    } else {
+                        this.selectedMessage = message;
+                        this.handlerSelectMessage();
+                    }
                 }
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: selectMessage => ${err}`);
             }
         },
         async deleteMessage() {
@@ -310,25 +373,33 @@ export default {
             }
         },
         deleteSeveralMessages() {
-            this.deletedMessagesId = this.selectedMessagesId;
-            this.deleteMessage();
+            try {
+                this.deletedMessagesId = this.selectedMessagesId;
+                this.deleteMessage();
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: deleteSeveralMessages => ${err}`);
+            }
         },
         offModeEdit() {
-            this.selectedMessage = null;
-            this.editMode = false;
-            this.messageObj = {
-                from_user_id: null,
-                to_user_id: null,
-                chat_id: null,
-                content: '',
-                forwarded_ids: null,
+            try {
+                this.selectedMessage = null;
+                this.editMode = false;
+                this.messageObj = {
+                    from_user_id: null,
+                    to_user_id: null,
+                    chat_id: null,
+                    content: '',
+                    forwarded_ids: null,
+                }
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: offModeEdit => ${err}`);
             }
         },
         forwardMessage() {
             try {
                this.selectForwardingChat = true; 
             } catch (err) {
-                console.error(`components/mainView/messangerWidgetComp: forwardMessage => `, err);
+                console.error(`components/mainView/messangerWidgetComp: forwardMessage => ${err}`);
             }
         },
         handlerOpenChatForwading(chatData) {
@@ -337,18 +408,22 @@ export default {
                 this.selectForwardingChat = false;
                 // this.$router.push({name: 'chat', params: {chatId: e.id}});
             } catch (err) {
-                console.error(`components/mainView/messangerWidgetComp: handlerOpenChatForwading => `, err);
-            }   
+                console.error(`components/mainView/messangerWidgetComp: handlerOpenChatForwading => ${err}`);
+            }
         }
     },
     computed: {
         computeSelectedMessage() {
-            return (messageId) => {
-                if(this.selectedMessagesId.includes(messageId)) {
-                    return true;
-                } else {
-                    return false;
+            try {
+                return (messageId) => {
+                    if(this.selectedMessagesId.includes(messageId)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: computeSelectedMessage => ${err}`);
             }
         }
     },
@@ -361,7 +436,7 @@ export default {
                     this.toUserName = newValue.users[0].name + ' ' + newValue.users[0].lastname;
                     this.toUserInitials = newValue.users[0].name.slice(0,1).toUpperCase() + newValue.users[0].lastname.slice(0,1).toUpperCase();
                 } catch (err) {
-                    console.error('components/messanger/messangerWidgetComp: created -> watch => ${err}');
+                    console.error(`components/messanger/messangerWidgetComp: watch -> this.$props.opennedChat => ${err}`);
                 } finally {
                     this.offModeEdit();
                 }
@@ -369,16 +444,24 @@ export default {
         }, { deep: true });
         watch(() => this.store.chats.length, async (newValue, oldValue) => {
             if(oldValue === 0 && newValue > 0 && this.$route.params.chatId !== undefined) {
-                const { userName, userLastname, chat } = this.store.extractUsernameByChatId(this.$route.params.chatId);
-                this.opennedChat = chat;
-                this.toUserName = userName + ' ' + userLastname;
-                this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
+                try {
+                    const { userName, userLastname, chat } = this.store.extractUsernameByChatId(this.$route.params.chatId);
+                    this.opennedChat = chat;
+                    this.toUserName = userName + ' ' + userLastname;
+                    this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
+                } catch (err) {
+                    console.error(`components/messanger/messangerWidgetComp: watch -> this.store.chats.length => ${err}`);
+                }
             }
         }, { deep: false });
         watch(() => this.selectedMessagesId, (newValue) => {
-            if(newValue.length === 0) {
-                this.isShowActionsBtn = false;
-            } 
+            try {
+                if(newValue.length === 0) {
+                    this.isShowActionsBtn = false;
+                } 
+            } catch (err) {
+                console.error(`components/messanger/messangerWidgetComp: watch -> this.selectedMessagesId => ${err}`);
+            }
         });
     },
     async mounted() {
@@ -390,53 +473,64 @@ export default {
                 // this.toUserInitials = userName.slice(0,1).toUpperCase() + userLastname.slice(0,1).toUpperCase();
             } 
         } catch (err) {
-            console.error('components/messanger/messangerWidgetComp: mounted => ${err}');
+            console.error(`components/messanger/messangerWidgetComp: mounted -> handlerGetMessages => ${err}`);
         } 
 
         // Observer ============
-        const options = {
-            rootMargin: "0px",
-            threshold: 1.0,
-        };
-        const callback = async (entries) => {
-            if(entries[0].isIntersecting === true && this.$route.params.chatId) {
-                const currentPosScroll = this.$refs.scrollContainer?.scrollHeight;
-                this.page = this.page + 1;
-                const response = await getChatMessagesById(this.$route.params.chatId, this.page, this.perPage);
-                this.store.messages = [...response.messages, ...this.store.messages];
-                this.paginator = response.paginator;
-                await nextTick();
-                this.scrolling(this.$refs.scrollContainer?.scrollHeight - currentPosScroll);
-            }
-        };
-        const observer = new IntersectionObserver(callback, options);
-        observer.observe(this.$refs.triggerPagination);
-        // ============
+        try {
+            const options = {
+                rootMargin: "0px",
+                threshold: 1.0,
+            };
+            const callback = async (entries) => {
+                if(entries[0].isIntersecting === true && this.$route.params.chatId && this.paginator.hasNext === true) {
+                    const currentPosScroll = this.$refs.scrollContainer?.scrollHeight;
+                    this.page = this.page + 1;
+                    const response = await getChatMessagesById(this.$route.params.chatId, this.page, this.perPage);
+                    this.store.messages = [...response.messages, ...this.store.messages];
+                    this.paginator = response.paginator;
+                    await nextTick();
+                    this.scrolling(this.$refs.scrollContainer?.scrollHeight - currentPosScroll);
+                }
+            };
+            const observer = new IntersectionObserver(callback, options);
+            observer.observe(this.$refs.triggerPagination);
+        } catch (err) {
+            console.error(`components/messanger/messangerWidgetComp: mounted -> Observer => ${err}`);
+        }
 
         // Обработчик нажатия кнопок (Enter)
-        const textarea = document.getElementById('input-message');
-        textarea.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                if(this.messageObj.content != ''){
-                    this.sendMessage();
+        try {
+            const textarea = document.getElementById('input-message');
+            textarea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if(this.messageObj.content != ''){
+                        this.sendMessage();
+                    }
                 }
-            }
-        })
+            })
+        } catch (err) {
+            console.error(`components/messanger/messangerWidgetComp: mounted -> keydownEnter => ${err}`);
+        }
         // Обработчик нажатия кнопок (Escape)
-        window.addEventListener('keydown', (e) => {
-            if(this.selectForwardingChat === true) {
-                return this.selectForwardingChat = false;
-            }
-            if(e.key === 'Escape' && this.$route.name === 'chat') {
-                this.$router.push({name: 'messanger'});
-                this.$route.params.chatId = undefined;
-                this.isShowNotice = true;
-                this.isShowChat = false;                                                                                                   
-                this.isShowReplyedMessage = false;
-                this.offModeEdit();
-            }
-        });
+        try {
+            window.addEventListener('keydown', (e) => {
+                if(this.selectForwardingChat === true) {
+                    return this.selectForwardingChat = false;
+                }
+                if(e.key === 'Escape' && this.$route.name === 'chat') {
+                    this.$router.push({name: 'messanger'});
+                    this.$route.params.chatId = undefined;
+                    this.isShowNotice = true;
+                    this.isShowChat = false;                                                                                                   
+                    this.isShowReplyedMessage = false;
+                    this.offModeEdit();
+                }
+            });
+        } catch (err) {
+            console.error(`components/messanger/messangerWidgetComp: mounted -> keydownEscape => ${err}`);
+        }
     },
 
 }
@@ -608,7 +702,7 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: rgb(0, 0, 0);
+        background-color: rgb(0, 0, 0, 0);
     }
     .replyed-message-panel {
         width: 90%;
@@ -707,6 +801,23 @@ export default {
         resize: none;
         padding: 0.5rem 4rem 0.5rem 1rem;
         box-shadow: var(--shadow);
+    }
+    .icon-loading {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        right: 6%;
+        bottom: 18%;
+        color: var(--primary-fg);
+        font-size: 1.25rem;
+        animation-name: rotate-circle;
+        animation-duration: .8s;
+        animation-iteration-count: infinite;
+    }
+    @keyframes rotate-circle {
+        100% {
+            transform: rotate(360deg);
+        }
     }
     .btn-send-message {
         position: absolute;

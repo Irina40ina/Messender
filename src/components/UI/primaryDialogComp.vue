@@ -30,17 +30,21 @@ export default {
     watch: {
         isShow: {
             handler(newValue) {
-                if(newValue === true) {
-                    this.isShowDialog = true;
-                    gsap.to('.primary-dialog__overlay', { duration: 0.3, opacity: 1 });
-                    gsap.to('.primary-dialog__content', { duration: 0.4, scale: 1 });
-                    
-                } else {
-                    gsap.to('.primary-dialog__overlay', { duration: 0.3, opacity: 0 })
-                    gsap.to('.primary-dialog__content', { duration: 0.4, scale: 0 })
-                        .then(() => {
-                            this.isShowDialog = false;
-                        })
+                try {
+                    if(newValue === true) {
+                        this.isShowDialog = true;
+                        gsap.to('.primary-dialog__overlay', { duration: 0.3, opacity: 1 });
+                        gsap.to('.primary-dialog__content', { duration: 0.4, scale: 1 });
+                        
+                    } else {
+                        gsap.to('.primary-dialog__overlay', { duration: 0.3, opacity: 0 })
+                        gsap.to('.primary-dialog__content', { duration: 0.4, scale: 0 })
+                            .then(() => {
+                                this.isShowDialog = false;
+                            })
+                    }
+                } catch (err) {
+                    console.error(`./components/UI/primaryDialogComp.vue: watch -> handler => ${err}`);
                 }
             }
         }

@@ -63,28 +63,44 @@ export default {
     },
     methods: {
         confirm() {
-            if(this.$props.item.id === 'phone-number') {
-                const readyNumber = useMainStore().resetPhoneNumberMask(this.textInput);
-                this.$emit('confirmTextData', readyNumber);
+            try {
+                if(this.$props.item.id === 'phone-number') {
+                    const readyNumber = useMainStore().resetPhoneNumberMask(this.textInput);
+                    this.$emit('confirmTextData', readyNumber);
+                    this.$emit('close');
+                    return this.textInput = '';
+                }
+                this.$emit('confirmTextData', this.textInput);
+                this.textInput = '';
                 this.$emit('close');
-                return this.textInput = '';
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/editTextFormComp: confirm => ${err}`)
             }
-            this.$emit('confirmTextData', this.textInput);
-            this.textInput = '';
-            this.$emit('close');
         },
         reset() {
-            animationFadeText(this.textInput, (result) => {
-                this.textInput = result;
-            });
+            try {
+                animationFadeText(this.textInput, (result) => {
+                    this.textInput = result;
+                });
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/editTextFormComp: reset => ${err}`)
+            }
         },
         close() {
-            this.$emit('close');
+            try {
+                this.$emit('close');
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/editTextFormComp: close => ${err}`)
+            }
         },
     },
     mounted() {
-        if(this.$props.item.id === 'phone-number') {
-            Inputmask({ mask: '+7 (999) 999-99-99' }).mask(this.$refs.editFieldInput);
+        try {
+            if(this.$props.item.id === 'phone-number') {
+                Inputmask({ mask: '+7 (999) 999-99-99' }).mask(this.$refs.editFieldInput);
+            }
+        } catch (err) {
+            console.error(`components/mainView/profile/profileChunk/editTextFormComp: mounted => ${err}`)
         }
     }
 }

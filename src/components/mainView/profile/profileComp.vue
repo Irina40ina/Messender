@@ -146,56 +146,80 @@ export default {
     },
     methods: {
         selectDateTime(currentDate) {
-            this.isShowDateTimePicker = false;
-            this.store.profileEditData.birthAt = currentDate;
+            try {
+                this.isShowDateTimePicker = false;
+                this.store.profileEditData.birthAt = currentDate;
+            } catch (err) {
+                console.error(`components/mainView/profile/profileComp: selectDateTime => ${err}`)
+            }
         },
         async singleProfileUpdateVeiw() {
-            const response = await singleProfileUpdate();
-            this.store.profileData = response; 
+            try {
+                const response = await singleProfileUpdate();
+                this.store.profileData = response; 
+            } catch (err) {
+                console.error(`components/mainView/profile/profileComp: singleProfileUpdateVeiw => ${err}`)
+            }
         },
         async multipleProfileUpdateVeiw() {
-            const response = await multipleProfileUpdate();
-            this.store.profileData = response; 
+            try {
+                const response = await multipleProfileUpdate();
+                this.store.profileData = response; 
+            } catch (err) {
+                console.error(`components/mainView/profile/profileComp: multipleProfileUpdateVeiw => ${err}`)
+            }
         },
         confirmEditData() {
-            if(this.changeData.isChanged === true) {
-                // PATCH-запрос  (изменение одного поля)
-                if(this.changeData.multiple === false) {
-                singleProfileUpdate();
-                this.singleProfileUpdateVeiw();
-                } 
-                // PUT-запрос  (изменение нескольких полей)
-                else if(this.changeData.multiple === true) {
-                    multipleProfileUpdate();
-                    this.multipleProfileUpdateVeiw();
+            try {
+                if(this.changeData.isChanged === true) {
+                    // PATCH-запрос  (изменение одного поля)
+                    if(this.changeData.multiple === false) {
+                    singleProfileUpdate();
+                    this.singleProfileUpdateVeiw();
+                    } 
+                    // PUT-запрос  (изменение нескольких полей)
+                    else if(this.changeData.multiple === true) {
+                        multipleProfileUpdate();
+                        this.multipleProfileUpdateVeiw();
+                    }
                 }
+            } catch (err) {
+                console.error(`components/mainView/profile/profileComp: confirmEditData => ${err}`)
             }
         },
     },
     created() {
         watch(() => this.store.profileEditData, (newValue) => {
-            const values = Object.values(newValue);
-            let countFields = 0;
-            values.forEach((el) => {
-                if(el !== null) {
-                    countFields++;
-                    this.changeData.isChanged = true;
+            try {
+                const values = Object.values(newValue);
+                let countFields = 0;
+                values.forEach((el) => {
+                    if(el !== null) {
+                        countFields++;
+                        this.changeData.isChanged = true;
+                    }
+                })
+                if(countFields > 1) {
+                    this.changeData.multiple = true;
                 }
-            })
-            if(countFields > 1) {
-                this.changeData.multiple = true;
+                this.changeData.countFields = countFields;
+            } catch (err) {
+                console.error(`components/mainView/profile/profileComp: created-> watch -> this.store.profileEditData => ${err}`)
             }
-            this.changeData.countFields = countFields;
         }, { deep: true })
     },
     async mounted() {
-        const awaitProfileData = this.store.editName();
-        const response = await getProfile();
-        this.store.profileData = response;
-        awaitProfileData(({ fullname, initials }) => {
-           this.fullname = fullname;
-           this.initials = initials;
-        });
+        try {
+            const awaitProfileData = this.store.editName();
+            const response = await getProfile();
+            this.store.profileData = response;
+            awaitProfileData(({ fullname, initials }) => {
+               this.fullname = fullname;
+               this.initials = initials;
+            });
+        } catch (err) {
+            console.error(`components/mainView/profile/profileComp: mounted => ${err}`)
+        }
     }
 }
 </script>

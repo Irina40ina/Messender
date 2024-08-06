@@ -31,24 +31,25 @@ export default {
     watch: {
         isShow: {
             handler(newValue) {
-                if(newValue === true) {
-                    this.isShowContextMenu = true;
-                    gsap.to('.context-menu__overlay', { duration: 0.3, opacity: 1 });
-                    gsap.to('.context-menu__content', { duration: 0.4, scale: 1 });
-                    
-                } else {
-                    gsap.to('.context-menu__overlay', { duration: 0.3, opacity: 0 });
-                    gsap.to('.context-menu__content', { duration: 0.4, scale: 0 });
-                        .then(() => {
-                            this.isShowContextMenu = false;
-                        })
+                try {
+                    if(newValue === true) {
+                        this.isShowDialog = true;
+                        gsap.to('.primary-dialog__overlay', { duration: 0.3, opacity: 1 });
+                        gsap.to('.primary-dialog__content', { duration: 0.4, scale: 1 });
+                        
+                    } else {
+                        gsap.to('.primary-dialog__overlay', { duration: 0.3, opacity: 0 })
+                        gsap.to('.primary-dialog__content', { duration: 0.4, scale: 0 })
+                            .then(() => {
+                                this.isShowDialog = false;
+                            })
+                    }
+                } catch (err) {
+                    console.error(`./components/UI/contextMenuComp.vue: watch -> handler => ${err}`);
                 }
             }
         }
     },
-    mounted() {
-        
-    }
 }
 </script>
 

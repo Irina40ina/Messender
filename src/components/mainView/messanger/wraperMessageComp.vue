@@ -59,19 +59,31 @@ export default {
     emits: ['openContextMenu', 'selectMessage'],
     computed: {
         computePositionMessage() {
-            if(this.store.user.id === this.$props.message.fromUserId) {
-                return 'me';
-            } else {
-                return '';
+            try {
+                if(this.store.user.id === this.$props.message.fromUserId) {
+                    return 'me';
+                } else {
+                    return '';
+                }
+            } catch (err) {
+                console.error(`components/mainView/wraperMessageComp: computePositionMessage => ${err}`)
             }
         }
     },
     methods: {
         openMenu() {
-            this.$emit('openContextMenu', this.$props.message);
+            try {
+                this.$emit('openContextMenu', this.$props.message);
+            } catch (err) {
+                console.error(`components/mainView/wraperMessageComp: openMenu => ${err}`)
+            }
         },
         selectMessage() {
-            this.$emit('selectMessage', this.$props.message);
+            try {
+                this.$emit('selectMessage', this.$props.message);
+            } catch (err) {
+                console.error(`components/mainView/wraperMessageComp: selectMessage => ${err}`)
+            }
         }
     }
 }

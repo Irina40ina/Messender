@@ -32,9 +32,13 @@ export default {
     },
     methods: {
         logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            this.$router.push({name: 'auth'})
+            try {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                this.$router.push({name: 'auth'})
+            } catch (err) {
+                
+            }
         }
     },
     computed: {
@@ -42,16 +46,14 @@ export default {
             try {
                 return this.store.user?.name + ' ' + this.store.user?.lastname;
             } catch (err) {
-                console.error('components/mainView/topbarComp: computed[computeUserName]', err);
+                console.error(`components/mainView/topbarComp: computeUserName => ${err}`)
             }
         },
         computeInitials() {
             try {
-                if(this.store.user) {
-                    return [...this.store.user?.name][0].toUpperCase() + [...this.store.user?.lastname][0].toUpperCase();
-                }
+                return [...this.store.user?.name][0].toUpperCase() + [...this.store.user?.lastname][0].toUpperCase();
             } catch (err) {
-                console.error('components/mainView/topbarComp: computed[computeInitials]', err);
+                console.error(`components/mainView/topbarComp: computeInitials => ${err}`)
             }
         }
     }

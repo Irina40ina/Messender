@@ -39,22 +39,41 @@ export default {
     },
     computed: {
         computeChatInitials() {
-            return this.$props.chat.users[0].name.slice(0,1).toUpperCase() + this.$props.chat.users[0].lastname.slice(0,1).toUpperCase();
+            try {
+                return this.$props.chat.users[0].name.slice(0,1).toUpperCase() + this.$props.chat.users[0].lastname.slice(0,1).toUpperCase();
+            } catch (err) {
+                console.error(`components/messanger/chatItemComp: computeChatInitials => ${err}`)
+            }
         },
         computeChatName() {
-            return this.$props.chat.users[0].name + ' ' + this.$props.chat.users[0].lastname
+            try {
+                return this.$props.chat.users[0].name + ' ' + this.$props.chat.users[0].lastname
+            } catch (err) {
+                console.error(`components/messanger/chatItemComp: computeChatName => ${err}`)
+            }
         },
         computeLastMessage() {
-            
-            return this.$props.chat.previewMessage.content;
+            try {
+                return this.$props.chat.previewMessage.content;
+            } catch (err) {
+                console.error(`components/messanger/chatItemComp: computeLastMessage => ${err}`)
+            }
         },
         computeLastActivity() {
-            return this.store.replaceDateTimeSrting(this.$props.chat.previewMessage.createdAt, "HH:mm/DD MMMM ")
+            try {
+                return this.store.replaceDateTimeSrting(this.$props.chat.previewMessage.createdAt, "HH:mm/DD MMMM ")
+            } catch (err) {
+                console.error(`components/messanger/chatItemComp: computeLastActivity => ${err}`)
+            }
         }
     },
     methods: {
         handlerOpenChat() {
-            this.$emit('openChat', this.$props.chat);
+            try {
+                this.$emit('openChat', this.$props.chat);
+            } catch (err) {
+                console.error(`components/messanger/chatItemComp: handlerOpenChat => ${err}`)
+            }
         }
         // handlerGetChatById(chat) {
         //     this.store.chatData.chatId = chat.id;

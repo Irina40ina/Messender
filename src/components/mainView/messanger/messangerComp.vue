@@ -6,7 +6,9 @@
         <messangerWidgetComp
         @open-chat-forwading="handlerOpenChatForwading"
         :openned-chat="opennedChat"
-        :forwading-mode="forwadingMode"
+        :forwarding-mode="forwardingMode"
+        @disable-forwarding-mode="forwardingMode = false"
+        @open-chat-forwading="handlerOpenChatForwading"
         ></messangerWidgetComp>
     </div>
 </template>
@@ -16,6 +18,7 @@ import messangerChatsComp from "@/components/mainView/messanger/messangerChatsCo
 import messangerWidgetComp from "@/components/mainView/messanger/messangerWidgetComp.vue"
 import { useMainStore } from '@/store/mainStore';
 import { watch } from 'vue';
+
 export default {
     components: {
         messangerChatsComp,
@@ -25,17 +28,20 @@ export default {
         return {
             store: useMainStore(),
             opennedChat: null,
-            store: useMainStore(),
-            forwadingMode: false,
+            forwardingMode: false,
         }
     },
     
     methods: {
         handlerOpenChat(chatData) {
-            this.opennedChat = chatData;
+            try {
+                this.opennedChat = chatData;
+            } catch (err) {
+                console.error(`components/messanger/messangerComp: handlerOpenChat => ${err}`)
+            }
         },
         handlerOpenChatForwading(chatData) {
-            this.forwadingMode = true;
+            this.forwardingMode = true;
             this.opennedChat = chatData;
         }
     },
@@ -50,6 +56,7 @@ export default {
             }
         });
     },
+
 }
 </script>
 

@@ -18,6 +18,25 @@ export async function createMessage(message) {
         console.error(`api/massagesApi: createMessage => ${err}`)
     }
 }
+// Пересылка сообщения
+export async function forwardMessage(message) {
+    try {
+        const response = await axios.post(hostName + '/messages/create', {
+            ...message,
+        }, {
+            params: {
+                forwarding: true,
+            },
+            headers: {
+            ...ContentTypeJSON,
+            "Authorization": "Bearer " + localStorage.getItem('token'),
+            }
+        });
+        return response.data;
+    } catch (err) {
+        console.error(`api/massagesApi: createMessage => ${err}`)
+    }
+}
 // Редактирование сообщения
 export async function editMessage(id, message) {
     try {
@@ -58,17 +77,16 @@ export async function getChatMessagesById(chat_id, page, perPage) {
 export async function deleteMessagesById(array, chatId) {
     try {
        const response = await axios.delete(hostName + `/messages/delete`, {
-            params: {
-                ids: array,
-                chat_id: chatId,
-            },
-            headers: {
-                ...ContentTypeURL,
-                "Authorization": "Bearer " + localStorage.getItem('token'),
-            },
-        }); 
-        const { data, meta } = response.data; 
-        return { data, meta };
+        params: {
+            ids: array,
+            chat_id: chatId,
+        },
+        headers: {
+            ...ContentTypeURL,
+            "Authorization": "Bearer " + localStorage.getItem('token'),
+        },
+    }); 
+        return response.data.data;
     } catch (err) {
         console.error(`api/messagesApi: deleteMessagesById => ${err}`)
     }

@@ -58,11 +58,15 @@ export default {
     emits: ['close', 'showReplyedMessage', 'editMessage', 'selectMessages', 'deleteMessage', 'forwardMessage'],
     watch: {
         isShow(newValue) {
-            if (newValue === true) {
-                this.isShowContextMenu = true;
-                this.initContextMenu();
-            } else {
-                this.isShowContextMenu = false;
+            try {
+                if (newValue === true) {
+                    this.isShowContextMenu = true;
+                    this.initContextMenu();
+                } else {
+                    this.isShowContextMenu = false;
+                }
+            } catch (err) {
+                console.error(`components/messanger/contextMenuComp: watch -> isShow => ${err}`)
             }
         }
     },
@@ -77,33 +81,41 @@ export default {
     },
     methods: {
         async initContextMenu() {
-            await nextTick();
-            const { width, height } = this.$refs.contextMenu.getBoundingClientRect();
-            const widthMenu = Math.ceil(width);
-            const heightMenu = Math.ceil(height);
-            const vw = window.innerWidth;                           // Ширина окна
-            const vh = window.innerHeight;                          // Высота окна
-            let resultLeft = this.posCursor.x;                      // Итоговая позиция кон.мен с лева
-            let resultTop = this.posCursor.y;                       // Итоговая позиция кон.мен с права
-            let offsetRight = vw - (this.posCursor.x + widthMenu);  // Переполнение экрана кон.мен. с правой границы 
-            let offsetBottom = vh - (this.posCursor.y + heightMenu);// Переполнение экрана кон.мен. с нижней границы 
-            if (offsetRight < 0) {
-                resultLeft = (vw - widthMenu) - 18;
+            try {
+                await nextTick();
+                const { width, height } = this.$refs.contextMenu.getBoundingClientRect();
+                const widthMenu = Math.ceil(width);
+                const heightMenu = Math.ceil(height);
+                const vw = window.innerWidth;                           // Ширина окна
+                const vh = window.innerHeight;                          // Высота окна
+                let resultLeft = this.posCursor.x;                      // Итоговая позиция кон.мен с лева
+                let resultTop = this.posCursor.y;                       // Итоговая позиция кон.мен с права
+                let offsetRight = vw - (this.posCursor.x + widthMenu);  // Переполнение экрана кон.мен. с правой границы 
+                let offsetBottom = vh - (this.posCursor.y + heightMenu);// Переполнение экрана кон.мен. с нижней границы 
+                if (offsetRight < 0) {
+                    resultLeft = (vw - widthMenu) - 18;
+                }
+                if(offsetBottom < 0) {
+                    resultTop = (vh - heightMenu) - 18;
+                }
+                // Итоговая Устновка позиции контекстного меню 
+                this.$refs.contextMenu.style.left = resultLeft + 'px';
+                this.$refs.contextMenu.style.top = resultTop + 'px';
+            } catch (err) {
+                console.error(`components/messanger/contextMenuComp: initContextMenu => ${err}`)
             }
-            if(offsetBottom < 0) {
-                resultTop = (vh - heightMenu) - 18;
-            }
-            // Итоговая Устновка позиции контекстного меню 
-            this.$refs.contextMenu.style.left = resultLeft + 'px';
-            this.$refs.contextMenu.style.top = resultTop + 'px';
         }
     },
     mounted() {
-        document.addEventListener('mousemove', (event) => {
-            const { pageX, pageY } = event;
-            this.posCursor.x = pageX;
-            this.posCursor.y = pageY;
-        });
+        try {
+            document.addEventListener('mousemove', (event) => {
+                const { pageX, pageY } = event;
+                this.posCursor.x = pageX;
+                this.posCursor.y = pageY;
+            });
+        } catch (err) {
+            console.error(`components/messanger/contextMenuComp: mounted => ${err}`)
+        }
     }
 }
 </script>

@@ -113,8 +113,12 @@ export default {
     emits: ['selectTime'],
     methods: {
         resetChanges() {
-            this.selectedHour = '00';
-            this.selectedMinute = '00';
+            try {
+                this.selectedHour = '00';
+                this.selectedMinute = '00';
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: resetChanges => ${err}`);
+            }
         },
         selectTime() {
             try {
@@ -128,151 +132,188 @@ export default {
         },
         // Обработчик ввода часов
         selectHour(event) {
-            let value = +event.target.value;
-            if(value <= 0) {
-                return this.selectedHour = '00';
+            try {
+                let value = +event.target.value;
+                if(value <= 0) {
+                    return this.selectedHour = '00';
+                }
+                if(value < 10) {
+                    return this.selectedHour = `0${value}`;
+                }
+                if(value > 23) {
+                    return this.selectedHour = '23';
+                }
+                return this.selectedHour = value + '';
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: selectHour => ${err}`);
             }
-            if(value < 10) {
-                return this.selectedHour = `0${value}`;
-            }
-            if(value > 23) {
-                return this.selectedHour = '23';
-            }
-            return this.selectedHour = value + '';
         },
         // Выбрать на один час больше
         hourUp() {
-            if (this.selectedHour) {
-                let entry = +this.selectedHour;
-                entry++;
-                if (entry > 23) {
-                    return this.selectedHour = '00';
+            try {
+                if (this.selectedHour) {
+                    let entry = +this.selectedHour;
+                    entry++;
+                    if (entry > 23) {
+                        return this.selectedHour = '00';
+                    }
+                    if (entry < 10) {
+                        this.selectedHour = '0' + entry;
+                    }
+                    else if (entry >= 10) {
+                        this.selectedHour = entry + '';
+                    }
                 }
-                if (entry < 10) {
-                    this.selectedHour = '0' + entry;
-                }
-                else if (entry >= 10) {
-                    this.selectedHour = entry + '';
-                }
-
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: hourUp => ${err}`);
             }
         },
         // Выбрать на один час меньше
         hourDown() {
-            if (this.selectedHour) {
-                let entry = +this.selectedHour;
-                entry--;
-                if (entry === 0) {
-                    return this.selectedHour = '00';
+            try {
+                if (this.selectedHour) {
+                    let entry = +this.selectedHour;
+                    entry--;
+                    if (entry === 0) {
+                        return this.selectedHour = '00';
+                    }
+                    if (entry < 0) {
+                        return this.selectedHour = '23';
+                    }
+                    if (entry < 10) {
+                        this.selectedHour = '0' + entry;
+                    }
+                    else if (entry >= 10) {
+                        this.selectedHour = entry + '';
+                    }
                 }
-                if (entry < 0) {
-                    return this.selectedHour = '23';
-                }
-                if (entry < 10) {
-                    this.selectedHour = '0' + entry;
-                }
-                else if (entry >= 10) {
-                    this.selectedHour = entry + '';
-                }
-
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: hourDown => ${err}`);
             }
         },
         // Обработчик ввода минут
         selectMinutes(event) {
-            let value = +event.target.value;
-            if(value <= 0) {
-                return this.selectedMinute = '00';
+            try {
+                let value = +event.target.value;
+                if(value <= 0) {
+                    return this.selectedMinute = '00';
+                }
+                if(value < 10) {
+                    return this.selectedMinute = `0${value}`;
+                }
+                if(value > 59) {
+                    return this.selectedMinute = '59';
+                }
+                return this.selectedMinute = value + '';
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: selectMinutes => ${err}`);
             }
-            if(value < 10) {
-                return this.selectedMinute = `0${value}`;
-            }
-            if(value > 59) {
-                return this.selectedMinute = '59';
-            }
-            return this.selectedMinute = value + '';
         },
 
         // Выбрать на одну минуту больше
         minuteUp() {
-            if (this.selectedMinute) {
-                let entry = +this.selectedMinute;
-                entry++;
-                if (entry > 59) {
-                    return this.selectedMinute = '00';
+            try {
+                if (this.selectedMinute) {
+                    let entry = +this.selectedMinute;
+                    entry++;
+                    if (entry > 59) {
+                        return this.selectedMinute = '00';
+                    }
+                    if (entry < 10) {
+                        this.selectedMinute = '0' + entry;
+                    }
+                    else if (entry >= 10) {
+                        this.selectedMinute = entry + '';
+                    }
                 }
-                if (entry < 10) {
-                    this.selectedMinute = '0' + entry;
-                }
-                else if (entry >= 10) {
-                    this.selectedMinute = entry + '';
-                }
-
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: minuteUp => ${err}`);
             }
         },
         // Выбрать на одну минуту меньше
         minuteDown() {
-            if (this.selectedMinute) {
-                let entry = +this.selectedMinute;
-                entry--;
-                if (entry === 0) {
-                    return this.selectedMinute = '00';
+            try {
+                if (this.selectedMinute) {
+                    let entry = +this.selectedMinute;
+                    entry--;
+                    if (entry === 0) {
+                        return this.selectedMinute = '00';
+                    }
+                    if(entry < 0) {
+                        return this.selectedMinute = '59';
+                    }
+                    if (entry < 10) {
+                        this.selectedMinute = '0' + entry;
+                    }
+                    else if (entry >= 10) {
+                        this.selectedMinute = entry + '';
+                    }
                 }
-                if(entry < 0) {
-                    return this.selectedMinute = '59';
-                }
-                if (entry < 10) {
-                    this.selectedMinute = '0' + entry;
-                }
-                else if (entry >= 10) {
-                    this.selectedMinute = entry + '';
-                }
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: minuteDown => ${err}`);
             }
         }
     },
     watch: {
         selectedMinute(newValue) {
-            let checkedMinutes = newValue;
-            if(checkedMinutes === '') checkedMinutes = '00';
-            this.$emit('selectTime', `${this.selectedHour}:${checkedMinutes}:00`);
+            try {
+                let checkedMinutes = newValue;
+                if(checkedMinutes === '') checkedMinutes = '00';
+                this.$emit('selectTime', `${this.selectedHour}:${checkedMinutes}:00`);
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: watch -> selectedMinute => ${err}`);
+            }
         },
         selectedHour(newValue) {
-            let checkedhours = newValue;
-            if(checkedhours === '') checkedhours = '00';
-            this.$emit('selectTime', `${checkedhours}:${this.selectedMinute}:00`);
+            try {
+                let checkedhours = newValue;
+                if(checkedhours === '') checkedhours = '00';
+                this.$emit('selectTime', `${checkedhours}:${this.selectedMinute}:00`);
+            } catch (err) {
+                console.error(`./components/UI/timePickerComp.vue: watch -> selectedHour => ${err}`);
+            }
         },
         isOpenTimePicker: {
             handler(newValue) {
-                if(newValue === true) this.$refs.hourInput.focus();
+                try {
+                    if(newValue === true) this.$refs.hourInput.focus();
+                } catch (err) {
+                    console.error(`./components/UI/timePickerComp.vue: watch -> isOpenTimePicker => ${err}`);
+                }
             },
             deep: true,
         }
 
     },
     mounted() {
-        document.addEventListener('keydown', (e) => {
-            if(this.$refs.hourInput === document.activeElement) {
-                if(e.key === 'ArrowUp') {
-                    this.hourUp();
+        try {
+            document.addEventListener('keydown', (e) => {
+                if(this.$refs.hourInput === document.activeElement) {
+                    if(e.key === 'ArrowUp') {
+                        this.hourUp();
+                    }
+                    if(e.key === 'ArrowDown') {
+                        this.hourDown();
+                    }
+                    if(e.key === 'ArrowRight') {
+                        this.$refs.minutesInput.focus();
+                    }
                 }
-                if(e.key === 'ArrowDown') {
-                    this.hourDown();
+                if(this.$refs.minutesInput === document.activeElement) {
+                    if(e.key === 'ArrowUp') {
+                        this.minuteUp();
+                    }
+                    if(e.key === 'ArrowDown') {
+                        this.minuteDown();
+                    }          
+                    if(e.key === 'ArrowLeft') {
+                        this.$refs.hourInput.focus();
+                    }  
                 }
-                if(e.key === 'ArrowRight') {
-                    this.$refs.minutesInput.focus();
-                }
-            }
-            if(this.$refs.minutesInput === document.activeElement) {
-                if(e.key === 'ArrowUp') {
-                    this.minuteUp();
-                }
-                if(e.key === 'ArrowDown') {
-                    this.minuteDown();
-                }          
-                if(e.key === 'ArrowLeft') {
-                    this.$refs.hourInput.focus();
-                }  
-            }
-        })
+            })
+        } catch (err) {
+            console.error(`./components/UI/timePickerComp.vue: mounted -> keydown => ${err}`);
+        }
     }
 }
 </script>

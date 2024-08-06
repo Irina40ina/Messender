@@ -85,26 +85,46 @@ export default {
     },
     emits: ['selectGender', 'close'],
     created() {
-        this.filledSelectedGender();
+        try {
+            this.filledSelectedGender();
+        } catch (err) {
+            console.error(`components/mainView/profile/profileChunk/editRadioFormComp: created => ${err}`)
+        }
     },
     methods: {
         confirm() {
-          this.$emit('selectGender');
-          this.$emit('close');
+            try {
+                this.$emit('selectGender');
+                this.$emit('close');
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/editRadioFormComp: created => ${err}`)
+            }
         },
         reset() {
-            this.selectedGender = null;
-            this.filledSelectedGender();
+            try {
+                this.selectedGender = null;
+                this.filledSelectedGender();
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/editRadioFormComp: reset => ${err}`)
+            }
         },
         filledSelectedGender(){
-            if(this.$props.item.value !== null){
-                this.selectedGender = this.$props.item.value;
-            } else if(this.$props.item.value === null) {
-                return this.selectedGender;
+            try {
+                if(this.$props.item.value !== null){
+                    this.selectedGender = this.$props.item.value;
+                } else if(this.$props.item.value === null) {
+                    return this.selectedGender;
+                }
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/editRadioFormComp: filledSelectedGender => ${err}`)
             }
         },
         close() {
-            this.$emit('close');
+            try {
+                this.$emit('close');
+            } catch (err) {
+                console.error(`components/mainView/profile/profileChunk/editRadioFormComp: close => ${err}`)
+            }
         },
     }
 }

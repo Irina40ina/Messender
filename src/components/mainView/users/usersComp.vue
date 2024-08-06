@@ -8,6 +8,7 @@
                 type="text"
                 placeholder="Поиск..."
                 v-model="searchField"
+                @input="searchUser"
                 >
                 <button class="search-btn" @click="handlerSearchUser">
                     <font-awesome-icon style="color: var(--primary-fg)" :icon="['fas', 'magnifying-glass']" />
@@ -72,36 +73,45 @@ export default {
     },
     methods: {
         debounce(func, delay) {
-            let timeout;
-            return (...arg) => {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, arg), delay);
+            try {
+                let timeout;
+                return function (...arg) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, arg), delay);
+                }
+            } catch (err) {
+                console.error(`./components/users/usersComp.vue: debounce, ${err}`);
+            }
+            
+        },
+        searchUser() {
+            try {
+                this.debounce(this.handlerSearchUser, 2000)
+            } catch (err) {
+                console.error(`./components/users/usersComp.vue: searchUser, ${err}`);
             }
         },
         async handlerSearchUser() {
             try {
                 this.page = 1;
                 const { data, paginator } = await getUsers(this.page, this.perPage, this.searchField);
+                console.log('поиск выполнен');
                 this.arrayUsers = data;
                 this.paginator = paginator;
             } catch (err) {
-                console.error('./components/users/usersComp.vue: handlerSearchUser', err);                
+                console.error(`./components/users/usersComp.vue: handlerSearchUser, ${err}`);                
             }
         }
     },
     async mounted() {
-        // const searchInput = this.$refs.searchInput;
-        // searchInput.addEventListener('input', this.debounce(() => {
-        //     console.log(this.searchField);
-        // }, 200))
         try {
             const response = await getUsers(this.page, this.perPage);
             this.arrayUsers = response.data;
             this.paginator = response.paginator;
         } catch (err) {
-            console.error('./components/users/usersComp.vue: mounted => getUsers => ', err);        
+            console.error(`./components/users/usersComp.vue: mounted -> getUsers => ${err}`);
         }
-        
         // Observer ============
         try {
             const options = {
@@ -110,13 +120,13 @@ export default {
             };
             const callback = (entries) => {
                 if(entries[0].isIntersecting === true) {
-                this.page = this.page + 1;
-            }
-            }
+                    this.page = this.page + 1;
+                }
+            };
             const observer = new IntersectionObserver(callback, options);
-            observer.observe(this.$refs.triggerPagination);  
+            observer.observe(this.$refs.triggerPagination);
         } catch (err) {
-            console.error('./components/users/usersComp.vue: mounted => Observer', err);
+            console.error(`./components/users/usersComp.vue: mounted -> Observer => ${err}`);
         }
         // ============
     }
