@@ -5,36 +5,33 @@
     > 
         <h1 class="auth-form__title">Авторизация</h1>
         <div class="input-block">
+            <!-- E-mail -->
             <inputComp  
+            style="width: 100%"
             :type="'email'" 
             :placeholder= "'Введите email'"
             v-model="email"
             ></inputComp>
+
+            <!-- Password -->
             <inputComp 
-            type="password" 
+            style="width: 100%"
+            type="password"
             placeholder="Введите пароль"
             v-model="password"
             ></inputComp>
         </div>
         
         <div class="action-block">
-            <btnComp 
-            style="margin-left: 2rem;"
-            @click="$router.push({ name: 'logup' })"
-            >
-                Регистрация
-            </btnComp>
-            <btnComp
-            style="margin-right: 2rem;"
-            @click="handlerLogin"
-            >
-            Войти</btnComp>
+            <btnComp @click="$router.push({ name: 'logup' })">Регистрация</btnComp>
+            <btnComp @click="handlerLogin">Войти</btnComp>
         </div>
         
     </form>
 </template>
 <script>
 import { login } from "@/api/authApi.js"
+import { isValidEmail, isValidPassword } from '@/utils/validation';
 export default {
     data() {
         return {
@@ -53,12 +50,13 @@ export default {
         },
         async handlerLogin() {
             try {
-                if(this.email !== '' && this.password !== '') { 
-                    await login(this.email, this.password);
-                    this.$router.push({ name: 'main' });
-                } else {
-                    return;
-                }
+                console.log(isValidPassword(this.password));
+                // if(this.email !== '' && this.password !== '') { 
+                //     await login(this.email, this.password);
+                //     this.$router.push({ name: 'main' });
+                // } else {
+                //     return;
+                // }
             } catch (err) {
                 console.error(`components/authView/authFormComp.vue: handlerLogin  => ${err}`)
             }
@@ -68,18 +66,21 @@ export default {
 }
 </script>
 <style scoped>
-    .auth-form {
+.auth-form {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     background-color: var(--color-bg-main);
+    border-radius: 5px;
+    padding: 2rem 5rem;
 }
 .auth-form__title {
-    color: var(--color-fg-main);
+    color: var(--primary-fg);
     text-align: center;
+    margin-bottom: auto;
 }
 .input-block {
     width: 100%;
@@ -87,6 +88,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-bottom: auto;
 }
 .action-block {
     width: 100%;

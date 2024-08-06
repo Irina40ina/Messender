@@ -15,7 +15,6 @@
                 <p class="content-item">
                     {{message.content}}
                 </p>
-
             </li>
         </ul>
     </div>

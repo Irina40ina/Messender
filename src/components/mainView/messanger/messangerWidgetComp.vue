@@ -83,15 +83,7 @@
             :key="message.id"
             :is-selected="computeSelectedMessage(message.id)"
             @select-message="(e) => selectMessage(e)"
-            >
-            <forwardingContainerComp
-            v-for="message in store.messages" 
-            :message="message"
-            :key="message.id"
-            >
-            </forwardingContainerComp>
-        
-            </wraperMessageComp>
+            ></wraperMessageComp>
         </div>
         <!-- Панель при ответе на сообщение -->
         <div 
@@ -161,14 +153,13 @@ import { createMessage, deleteMessagesById } from '@/api/messagesApi';
 import contextMenuComp from '@/components/mainView/messanger/contextMenuComp.vue';
 import primaryDialogComp from '@/components/UI/primaryDialogComp.vue';
 import messangerChatsComp from '@/components/mainView/messanger/messangerChatsComp.vue';
-import forwardingContainerComp from './forwardingContainerComp.vue';
+
 export default {
     components: {
         wraperMessageComp,
         contextMenuComp,
         primaryDialogComp,
         messangerChatsComp,
-        forwardingContainerComp,
     },
     data() {
         return {
@@ -281,7 +272,7 @@ export default {
                     this.editMode = false;
                 }
                 // Пересылка сообщения
-                if (this.$props.forwardingMode === true) {
+                if (this.messageObj.content !== '' && this.$props.forwardingMode === true) {
                     this.createMessageObj(this.store.user?.id, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
                     this.messageObj.forwarded_ids = this.selectedMessagesId;        
                     const response = await forwardMessage(this.messageObj);

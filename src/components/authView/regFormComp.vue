@@ -32,17 +32,8 @@
         </div>
         
         <div class="action-block">
-            <btnComp
-            style="margin-left: 2rem;"
-            @click="handlerLogup" 
-            >
-                Зарегистрироваться
-            </btnComp>
-            <btnComp
-            style="margin-right: 2rem;"
-            @click="$router.push({ name: 'login' })"
-            >
-            Войти</btnComp>
+            <btnComp @click="$router.push({ name: 'login' })">Назад</btnComp>
+            <btnComp @click="handlerLogup">Подтвердить</btnComp>
         </div>
     </form>
 </template>
@@ -98,21 +89,29 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     background-color: var(--color-bg-main);
     z-index: 10;
+    padding: 2rem 5rem;
 }
 .input-block {
-    width: 80%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: auto;
 }
 .auth-form__title {
+    margin-bottom: auto;
     color: var(--primary-fg);
     font-family: var(--font);
+    text-align: center;
 }
 .input-block__item {
-    width: 100%;
+    width: 100% !important;
+}
+.action-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 </style>

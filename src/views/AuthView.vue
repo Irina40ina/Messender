@@ -49,6 +49,7 @@ export default {
     justify-content: center;
     align-items: center;
     box-shadow: var(--shadow);
+    border-radius: 5px;
 }
 
 </style>

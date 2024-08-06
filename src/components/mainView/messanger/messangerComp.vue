@@ -8,7 +8,6 @@
         :openned-chat="opennedChat"
         :forwarding-mode="forwardingMode"
         @disable-forwarding-mode="forwardingMode = false"
-        @open-chat-forwading="handlerOpenChatForwading"
         ></messangerWidgetComp>
     </div>
 </template>

@@ -6,6 +6,13 @@
     @click="selectMessage"
     >
         <div class="message" :class="computePositionMessage">
+            <forwardingContainerComp
+                :message="message"
+                :key="message.id"
+                >
+                </forwardingContainerComp>
+            
+
             <div class="message-content__container">
                <p class="message-content">{{ $props.message.content }}</p>
             </div> 

@@ -21,12 +21,18 @@ export default {
 }
 </script>
 <style scoped>
-    .input {
-        width: 80%;
-        padding: .5rem 1rem;
-        margin: .7rem;
-        outline: rgba(255, 255, 255, 0);
-        border: 1px solid var(--primary-fg);
-        border-radius: var(--radius);
-    }
+.input {
+    width: 80%;
+    padding: .5rem 1rem;
+    margin: .7rem;
+    outline: rgba(255, 255, 255, 0);
+    border: 1px solid var(--primary-fg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: all .3s ease;
+}
+.input:focus {
+    box-shadow: none;
+    transition: all .3s ease;
+}
 </style>
