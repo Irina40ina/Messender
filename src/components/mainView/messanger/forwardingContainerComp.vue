@@ -1,7 +1,7 @@
 <template>
     <div class="forwarding-container">
         <ul 
-        v-if="message?.forwardedMessages && message.forwardedMessages.length > 0" 
+        v-if="$props.message?.forwardedMessages && $props.message.forwardedMessages.length > 0" 
         class="forwarded-list" 
         >
             <li 

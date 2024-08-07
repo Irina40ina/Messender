@@ -25,10 +25,20 @@
             ></inputComp>
             <inputComp
             class="input-block__item"
-            type="password" 
+            :type="computeTypePassword" 
             placeholder="Введите пароль"
             v-model="password"
+            @focus="isShowPasswordCheck = false"
             ></inputComp>
+            <inputComp
+            class="input-block__item"
+            :type="computeTypePasswordCheck" 
+            placeholder="Введите пароль ещё раз"
+            v-model="passwordCheck"
+            @focus="isShowPassword = false"
+            ></inputComp>
+            <font-awesome-icon class="icon-pw1" :icon="['fas', 'eye']" @click="showPassword" />
+            <font-awesome-icon class="icon-pw2" :icon="['fas', 'eye']" @click="showPasswordCheck" />
         </div>
         
         <div class="action-block">
@@ -39,6 +49,7 @@
 </template>
 <script>
 import { logup } from "@/api/authApi"
+import { isValidEmail, isValidPassword, checkText } from '@/utils/validation';
 export default {
     data() {
         return {
@@ -46,31 +57,47 @@ export default {
             lastName: '',
             email: '',
             password: '',
+            passwordCheck: '',
+            isShowPassword: false,
+            isShowPasswordCheck: false,
         }
     },
-    methods: {
-        validateEmail(email) {
+    computed: {
+        computeTypePassword() {
             try {
-                return String(email)
-                    .toLowerCase()
-                    .match(
-                        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-                    );
+                if(this.isShowPassword === false) {
+                    return 'password'
+                } else if(this.isShowPassword === true) {
+                    return 'text'
+                }
             } catch (err) {
-                console.error(`components/authView/regFormComp.vue: validateEmail  => ${err}`)
+                console.error(`components/authView/authFormComp.vue: computeTypePassword  => ${err}`)
             }
         },
+        computeTypePasswordCheck() {
+            try {
+                if(this.isShowPasswordCheck === false) {
+                    return 'password'
+                } else if(this.isShowPasswordCheck === true) {
+                    return 'text'
+                }
+            } catch (err) {
+                console.error(`components/authView/authFormComp.vue: computeTypePassword  => ${err}`)
+            }
+        },
+    },
+    methods: {
         async handlerLogup() {
             try {
-                const isValidEmail = this.validateEmail(this.email)
                 if(
                     this.firstName !== '' && 
+                    this.checkText(this.firstName) === true &&
                     this.lastName !== '' && 
-                    this.email !== '' && 
-                    this.password !== '' && 
-                    isValidEmail !== null) {
+                    this.checkText(this.lastName) === true &&
+                    isValidEmail(this.email) === true && 
+                    isValidPassword(this.password, this.passwordCheck) === true) {
                         await logup(this.firstName, this.lastName, this.email, this.password); 
-                } 
+                    } 
                 else {
                     console.log('ELSE');
                     return;
@@ -78,6 +105,28 @@ export default {
             } catch (err) {
                 console.error(`components/authView/regFormComp.vue: handlerLogup  => ${err}`)
             }              
+        },
+        showPassword() {
+            try {
+                if(this.isShowPassword === false) {
+                    this.isShowPassword = true;
+                } else if(this.isShowPassword === true) {
+                    this.isShowPassword = false;
+                }
+            } catch (err) {
+                console.error(`components/authView/regFormComp.vue: showPassword  => ${err}`)
+            }
+        },
+        showPasswordCheck() {
+            try {
+                if(this.isShowPasswordCheck === false) {
+                    this.isShowPasswordCheck = true;
+                } else if(this.isShowPasswordCheck === true) {
+                    this.isShowPasswordCheck = false;
+                }
+            } catch (err) {
+                console.error(`components/authView/regFormComp.vue: showPassword  => ${err}`)
+            }
         }
     },
 }
@@ -95,6 +144,7 @@ export default {
     padding: 2rem 5rem;
 }
 .input-block {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -113,5 +163,23 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+.icon-pw1 {
+    width: 20px;
+    height: 20px;
+    color: grey;
+    position: absolute;
+    top: 67%;
+    right: 2%;
+    cursor: pointer;
+}
+.icon-pw2 {
+    width: 20px;
+    height: 20px;
+    color: grey;
+    position: absolute;
+    top: 87%;
+    right: 2%;
+    cursor: pointer;
 }
 </style>

@@ -16,10 +16,11 @@
             <!-- Password -->
             <inputComp 
             style="width: 100%"
-            type="password"
+            :type="computeTypePassword"
             placeholder="Введите пароль"
             v-model="password"
             ></inputComp>
+            <font-awesome-icon class="icon-pw" :icon="['fas', 'eye']" @click="showPassword" />
         </div>
         
         <div class="action-block">
@@ -37,9 +38,23 @@ export default {
         return {
             email: '',
             password: '',
+            isShowPassword: false,
         }
     },
     emits: ['dataSubmit', 'isShow'],
+    computed: {
+        computeTypePassword() {
+            try {
+                if(this.isShowPassword === false) {
+                    return 'password'
+                } else if(this.isShowPassword === true) {
+                    return 'text'
+                }
+            } catch (err) {
+                console.error(`components/authView/authFormComp.vue: computeTypePassword  => ${err}`)
+            }
+        }
+    },
     methods: {
         dataSubmit() {
             try {
@@ -50,19 +65,45 @@ export default {
         },
         async handlerLogin() {
             try {
-                console.log(isValidPassword(this.password));
-                // if(this.email !== '' && this.password !== '') { 
-                //     await login(this.email, this.password);
-                //     this.$router.push({ name: 'main' });
-                // } else {
-                //     return;
-                // }
+                if(isValidEmail(this.email) === true && isValidPassword(this.password) === true) {
+                    console.log(isValidEmail(this.email), isValidPassword(this.password)) 
+                    await login(this.email, this.password);
+                    this.$router.push({ name: 'main' });
+                } else {
+                    this.$router.push({ name: 'logup' });
+                }
             } catch (err) {
                 console.error(`components/authView/authFormComp.vue: handlerLogin  => ${err}`)
             }
+        },
+        showPassword() {
+            try {
+                if(this.isShowPassword === false) {
+                    this.isShowPassword = true
+                } else if(this.isShowPassword === true) {
+                    this.isShowPassword = false
+                }
+            } catch (err) {
+                console.error(`components/authView/authFormComp.vue: showPassword  => ${err}`)
+            }
         }
     },
-    
+    mounted() {
+        window.addEventListener('keydown', async (e) => {
+            if(e.key === 'Enter') {
+                try {
+                if(isValidEmail(this.email) === true && isValidPassword(this.password) === true) { 
+                    await login(this.email, this.password);
+                    this.$router.push({ name: 'main' });
+                } else {
+                    this.$router.push({ name: 'logup' });
+                }
+            } catch (err) {
+                console.error(`components/authView/authFormComp.vue: mounted -> keydownEnter  => ${err}`)
+            }
+            }
+        })
+    }
 }
 </script>
 <style scoped>
@@ -82,13 +123,24 @@ export default {
     text-align: center;
     margin-bottom: auto;
 }
+
 .input-block {
     width: 100%;
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     margin-bottom: auto;
+}
+.icon-pw {
+    width: 20px;
+    height: 20px;
+    color: grey;
+    position: absolute;
+    top: 66%;
+    right: 2%;
+    cursor: pointer;
 }
 .action-block {
     width: 100%;

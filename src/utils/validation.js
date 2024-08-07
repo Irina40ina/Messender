@@ -13,20 +13,42 @@ export function isValidEmail(email) {
     }
 }
 
-export function isValidPassword(password) {
+export function isValidPassword(password, passwordCheck, mode) {
     try {
         let isValid = true;
         if(password) {
-            password = password.trim(password);
-            if(password.length < 6) {
-                isValid = false;
+            let passwordArr = [...password].filter((l) => l !== ' ')
+            let editedPassword = passwordArr.join('');
+            if(mode === 'logIn') {
+                isValid = true;
+            } else if(mode === 'logUp') {
+                if(editedPassword.length < 6 || editedPassword !== passwordCheck) {
+                    isValid = false;
+                }
             }
-        } else {
-            isValid = false;
-        }
-        return isValid;
+            }
+        
+        return {value: isValid, password: editedPassword};
     } catch (err) {
         console.error('/src/utils/validation.js: isValidPassword => ', err);
         throw err;
+    }
+}
+
+export function checkText(text, excludeSymbols) {
+    try {
+        let isValid = true;
+        let invalidSymbols = "!@#$%^&*()_-=+|{}[]/?.>,<'`\"~";
+        if(excludeSymbols) {
+            invalidSymbols = [...invalidSymbols].filter((el)=> ![...excludeSymbols].includes(el)).join('');
+        }
+        [...text].forEach((el) => {
+            if(invalidSymbols.includes(el)) {
+                isValid = false;
+            }
+        })
+        return isValid;
+    } catch (err) {
+        console.error('/src/utils/validation.js: checkText => ', err);
     }
 }
