@@ -4,7 +4,7 @@
     :type="$props.type"
     :placeholder="$props.placeholder"
     @input="(event) => $emit('update:modelValue', event.target.value)"
-    >
+    > 
 </template>
 <script>
 export default {
