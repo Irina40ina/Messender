@@ -49,7 +49,7 @@
 </template>
 <script>
 import { logup } from "@/api/authApi"
-import { isValidEmail, isValidPassword, checkText } from '@/utils/validation';
+import { isValidEmail, isValidPassword, hasSpecSymbols } from '@/utils/validation';
 export default {
     data() {
         return {
@@ -91,13 +91,17 @@ export default {
             try {
                 if(
                     this.firstName !== '' && 
-                    this.checkText(this.firstName) === true &&
+                    hasSpecSymbols(this.firstName) === true &&
                     this.lastName !== '' && 
-                    this.checkText(this.lastName) === true &&
+                    hasSpecSymbols(this.lastName) === true &&
                     isValidEmail(this.email) === true && 
-                    isValidPassword(this.password, this.passwordCheck) === true) {
-                        await logup(this.firstName, this.lastName, this.email, this.password); 
-                    } 
+                    isValidPassword(this.password) === true && 
+                    isValidPassword(this.passwordCheck) === true &&
+                    this.password === this.passwordCheck
+                ) {
+                    console.log('Запрос на сервер');
+                    // await logup(this.firstName, this.lastName, this.email, this.password); 
+                } 
                 else {
                     console.log('ELSE');
                     return;

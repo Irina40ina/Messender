@@ -256,7 +256,7 @@ export default {
             this.isLoading = true;
             // Создание сообщения
             try {
-                if (this.messageObj.content !== '' && this.editMode === false) {
+                if (!this.messageObj.content && this.editMode === false && this.$props.forwardingMode === false) {
                     let currentChat = this.$props.opennedChat ?? this.opennedChat;
                     this.messageObj.from_user_id = this.store.user?.id;
                     this.createMessageObj(this.store.user?.id, currentChat.users[0].id, currentChat.id);
@@ -264,12 +264,16 @@ export default {
                     this.store.messages.push(data?.data);
                     console.log(data?.data)
                     this.scrolling();
+                    this.resetMessageObj();
+                    return;
                 }
                 // Редактирование
                 if (this.messageObj.content !== '' && this.editMode === true) {
                     const response = await editMessage(this.selectedMessage.id, this.messageObj.content);
                     this.store.editSelectedMessageView(response.id, response);
                     this.editMode = false;
+                    this.resetMessageObj();
+                    return;
                 }
                 // Пересылка сообщения
                 if (this.messageObj.content !== '' && this.$props.forwardingMode === true) {
@@ -278,15 +282,25 @@ export default {
                     const response = await forwardMessage(this.messageObj);
                     this.store.messages.push(response?.data);
                     this.$emit('disableForwardingMode');
+                    this.resetMessageObj();
+                    return;
                 }
+                
+            } catch (err) {
+                console.error(`components/mainView/messangerWidgetComp: sendMessage => ${err}`)
+            } finally {
+                this.isLoading = false;
+            }
+        },
+        resetMessageObj() {
+            try {
                 this.messageObj.from_user_id = null;
                 this.messageObj.to_user_id = null;
                 this.messageObj.chat_id = null;
                 this.messageObj.content = '';
             } catch (err) {
-                console.error(`components/mainView/messangerWidgetComp: sendMessage => ${err}`)
-            } finally {
-                this.isLoading = false;
+                console.error(`components/mainView/messangerWidgetComp: sendMessage => ${err}`);
+                throw err;
             }
         },
         openContextMenu(message) {

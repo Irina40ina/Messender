@@ -6,12 +6,7 @@
     @click="selectMessage"
     >
         <div class="message" :class="computePositionMessage">
-            <forwardingContainerComp
-                :message="message"
-                :key="message.id"
-                >
-                </forwardingContainerComp>
-            
+            <forwardingContainerComp :message="message"></forwardingContainerComp>
 
             <div class="message-content__container">
                <p class="message-content">{{ $props.message.content }}</p>
@@ -33,19 +28,12 @@
 
 <script>
 import { useMainStore } from '@/store/mainStore';
+import forwardingContainerComp from './forwardingContainerComp.vue';
 import { watch } from 'vue';
-/* 
-    "id": null,
-    "fromUserId": null,
-    "toUserId": null,
-    "chatId": null,
-    "content": null,
-    "createdAt": null,
-    "updatedAt": null,
-    "deletedAt": null,
-    "isForwarding": null,
-*/
 export default {
+    components: {
+        forwardingContainerComp,
+    },
     data() {
         return {
             store: useMainStore(),

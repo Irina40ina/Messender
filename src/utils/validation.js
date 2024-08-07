@@ -5,6 +5,8 @@ export function isValidEmail(email) {
         let isValid = true;
         if(email && typeof email === 'string') {
            isValid = patternEmail.test(email);
+        } else {
+            isValid = false;
         }
         return isValid;
     } catch (err) {
@@ -13,29 +15,28 @@ export function isValidEmail(email) {
     }
 }
 
-export function isValidPassword(password, passwordCheck, mode) {
+export function isValidPassword(password) {
     try {
         let isValid = true;
         if(password) {
-            let passwordArr = [...password].filter((l) => l !== ' ')
-            let editedPassword = passwordArr.join('');
-            if(mode === 'logIn') {
-                isValid = true;
-            } else if(mode === 'logUp') {
-                if(editedPassword.length < 6 || editedPassword !== passwordCheck) {
-                    isValid = false;
-                }
+            let passwordArr = password.split(' ');
+            if(passwordArr.length > 1) {
+                isValid = false;
             }
+            if(password.length < 6) {
+                isValid = false;
             }
-        
-        return {value: isValid, password: editedPassword};
+        } else {
+            isValid = false;
+        }
+        return isValid;
     } catch (err) {
         console.error('/src/utils/validation.js: isValidPassword => ', err);
         throw err;
     }
 }
 
-export function checkText(text, excludeSymbols) {
+export function hasSpecSymbols(text, excludeSymbols) {
     try {
         let isValid = true;
         let invalidSymbols = "!@#$%^&*()_-=+|{}[]/?.>,<'`\"~";
@@ -49,6 +50,6 @@ export function checkText(text, excludeSymbols) {
         })
         return isValid;
     } catch (err) {
-        console.error('/src/utils/validation.js: checkText => ', err);
+        console.error('/src/utils/validation.js: hasTextSymbols => ', err);
     }
 }

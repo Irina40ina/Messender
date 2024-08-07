@@ -1,7 +1,7 @@
 <template>
     <div class="forwarding-container">
         <ul 
-        v-if="$props.message?.forwardedMessages && $props.message.forwardedMessages.length > 0" 
+        v-if="$props.message?.forwardedMessages?.length > 0" 
         class="forwarded-list" 
         >
             <li 
@@ -13,6 +13,7 @@
                 :message="message"
                 /> 
                 <p class="content-item">
+                    <p>{{ message.fromUser.name + ' ' + message.fromUser.lastname }}</p>
                     {{message.content}}
                 </p>
             </li>
@@ -21,7 +22,7 @@
 </template>
 
 <script>
-import forwardingContainerComp from './forwardingContainerComp.vue';
+import forwardingContainerComp from '@/components/mainView/messanger/forwardingContainerComp.vue';
 export default {
     components: {
         forwardingContainerComp,

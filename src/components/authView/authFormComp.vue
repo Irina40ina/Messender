@@ -4,22 +4,27 @@
     @submit.prevent
     > 
         <h1 class="auth-form__title">Авторизация</h1>
-        <div class="input-block">
+        <div class="input-block" >
             <!-- E-mail -->
-            <inputComp  
-            style="width: 100%"
-            :type="'email'" 
-            :placeholder= "'Введите email'"
-            v-model="email"
-            ></inputComp>
-
+            <div class="input-group">
+                <inputComp  
+                style="width: 100%"
+                :type="'email'" 
+                :placeholder= "'Введите email'"
+                v-model.trim="email"
+                ></inputComp>
+                <span style="position: absolute; left: 0; bottom: -.7rem;">TEEXT ERROR</span>
+            </div>
             <!-- Password -->
-            <inputComp 
-            style="width: 100%"
-            :type="computeTypePassword"
-            placeholder="Введите пароль"
-            v-model="password"
-            ></inputComp>
+            <div class="input-group">
+                <inputComp 
+                style="width: 100%"
+                :type="computeTypePassword"
+                placeholder="Введите пароль"
+                v-model.trim="password"
+                ></inputComp>
+                <span style="position: absolute; left: 0; bottom: -.7rem;">TEEXT ERROR</span>
+            </div>
             <font-awesome-icon class="icon-pw" :icon="['fas', 'eye']" @click="showPassword" />
         </div>
         
@@ -65,12 +70,17 @@ export default {
         },
         async handlerLogin() {
             try {
-                if(isValidEmail(this.email) === true && isValidPassword(this.password) === true) {
-                    console.log(isValidEmail(this.email), isValidPassword(this.password)) 
+                const resultValidationEmail = isValidEmail(this.email);
+                const resultValidationPassword = isValidPassword(this.password);
+                if(resultValidationEmail === true && resultValidationPassword === true) {
                     await login(this.email, this.password);
                     this.$router.push({ name: 'main' });
-                } else {
-                    this.$router.push({ name: 'logup' });
+                } 
+                if(resultValidationEmail === false) {
+                    console.log('Введите верный Email')
+                }
+                if(resultValidationPassword === false) {
+                    console.log('Введите верный пароль')
                 }
             } catch (err) {
                 console.error(`components/authView/authFormComp.vue: handlerLogin  => ${err}`)
@@ -132,6 +142,13 @@ export default {
     justify-content: center;
     align-items: center;
     margin-bottom: auto;
+}
+.input-group {
+    padding: 1rem 0;
+    position: relative;
+    min-width: 100%;
+    width: max-content;
+    height: max-content;
 }
 .icon-pw {
     width: 20px;

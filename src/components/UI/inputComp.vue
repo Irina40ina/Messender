@@ -24,7 +24,6 @@ export default {
 .input {
     width: 80%;
     padding: .5rem 1rem;
-    margin: .7rem;
     outline: rgba(255, 255, 255, 0);
     border: 1px solid var(--primary-fg);
     border-radius: var(--radius);
