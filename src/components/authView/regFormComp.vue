@@ -5,38 +5,53 @@
     >
         <h1 class="auth-form__title">Регистрация</h1>
         <div class="input-block">
-            <inputComp
-            class="input-block__item"
-            :type="'text'"
-            :placeholder= "'Введите Имя'"
-            v-model="firstName"
-            ></inputComp>
-            <inputComp
-            class="input-block__item"
-            :type="'text'" 
-            :placeholder= "'Введите Фамилию'"
-            v-model="lastName"
-            ></inputComp>
-            <inputComp
-            class="input-block__item"
-            :type="'email'" 
-            :placeholder= "'Введите email'"
-            v-model="email"
-            ></inputComp>
-            <inputComp
-            class="input-block__item"
-            :type="computeTypePassword" 
-            placeholder="Введите пароль"
-            v-model="password"
-            @focus="isShowPasswordCheck = false"
-            ></inputComp>
-            <inputComp
-            class="input-block__item"
-            :type="computeTypePasswordCheck" 
-            placeholder="Введите пароль ещё раз"
-            v-model="passwordCheck"
-            @focus="isShowPassword = false"
-            ></inputComp>
+            <div class="input-group">
+               <inputComp
+                class="input-block__item"
+                :type="'text'"
+                :placeholder= "'Введите Имя'"
+                v-model="firstName"
+                ></inputComp> 
+                <span class="errorText">TEEXT ERROR</span>
+            </div>
+            <div class="input-group">
+                <inputComp
+                class="input-block__item"
+                :type="'text'" 
+                :placeholder= "'Введите Фамилию'"
+                v-model="lastName"
+                ></inputComp>
+                <span class="errorText">TEEXT ERROR</span>
+            </div>
+            <div class="input-group">
+                <inputComp
+                class="input-block__item"
+                :type="'email'" 
+                :placeholder= "'Введите email'"
+                v-model="email"
+                ></inputComp>
+                <span class="errorText">TEEXT ERROR</span>
+            </div>
+            <div class="input-group">
+                <inputComp
+                class="input-block__item"
+                :type="computeTypePassword" 
+                placeholder="Введите пароль"
+                v-model="password"
+                @focus="isShowPasswordCheck = false"
+                ></inputComp>
+                <span class="errorText">TEEXT ERROR</span>
+            </div>
+            <div class="input-group">
+                <inputComp
+                class="input-block__item"
+                :type="computeTypePasswordCheck" 
+                placeholder="Введите пароль ещё раз"
+                v-model="passwordCheck"
+                @focus="isShowPassword = false"
+                ></inputComp>
+                <span class="errorText">TEEXT ERROR</span>
+            </div>
             <font-awesome-icon class="icon-pw1" :icon="['fas', 'eye']" @click="showPassword" />
             <font-awesome-icon class="icon-pw2" :icon="['fas', 'eye']" @click="showPasswordCheck" />
         </div>
@@ -153,6 +168,13 @@ export default {
     flex-direction: column;
     align-items: center;
     margin-bottom: auto;
+}
+.input-group {
+    padding: 1rem 0;
+    position: relative;
+    min-width: 100%;
+    width: max-content;
+    height: max-content;
 }
 .auth-form__title {
     margin-bottom: auto;

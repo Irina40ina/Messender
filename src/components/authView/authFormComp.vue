@@ -13,7 +13,7 @@
                 :placeholder= "'Введите email'"
                 v-model.trim="email"
                 ></inputComp>
-                <span style="position: absolute; left: 0; bottom: -.7rem;">TEEXT ERROR</span>
+                <span class="errorText" :style="{display: isEmailError ? 'block' : 'none'}">Email не верный</span>
             </div>
             <!-- Password -->
             <div class="input-group">
@@ -23,7 +23,7 @@
                 placeholder="Введите пароль"
                 v-model.trim="password"
                 ></inputComp>
-                <span style="position: absolute; left: 0; bottom: -.7rem;">TEEXT ERROR</span>
+                <span class="errorText">Пароль не верный</span>
             </div>
             <font-awesome-icon class="icon-pw" :icon="['fas', 'eye']" @click="showPassword" />
         </div>
@@ -44,6 +44,7 @@ export default {
             email: '',
             password: '',
             isShowPassword: false,
+            isEmailError: false,
         }
     },
     emits: ['dataSubmit', 'isShow'],
@@ -77,6 +78,7 @@ export default {
                     this.$router.push({ name: 'main' });
                 } 
                 if(resultValidationEmail === false) {
+                    this.isEmailError = true;
                     console.log('Введите верный Email')
                 }
                 if(resultValidationPassword === false) {
@@ -150,6 +152,15 @@ export default {
     width: max-content;
     height: max-content;
 }
+.errorText {
+    position: absolute; 
+    left: 0; 
+    bottom: -.7rem;
+    background-color: var(--color-bg-main);
+    color: rgb(203, 20, 20);
+    z-index: 10;
+    animation: slideDown .5s forwards;
+}
 .icon-pw {
     width: 20px;
     height: 20px;
@@ -164,5 +175,13 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+@keyframes slideDown {
+    from {
+        bottom: 0;
+    }
+    to {
+        bottom: -10px;
+    }
 }
 </style>
