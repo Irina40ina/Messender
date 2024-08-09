@@ -13,7 +13,7 @@
                 :placeholder= "'Введите email'"
                 v-model.trim="email"
                 ></inputComp>
-                <span class="errorText" :style="{display: isEmailError ? 'block' : 'none'}">Email не верный</span>
+                <span class="errorText" :class="isEmailError? 'visible' : ''">Email не верный</span>
             </div>
             <!-- Password -->
             <div class="input-group">
@@ -23,14 +23,14 @@
                 placeholder="Введите пароль"
                 v-model.trim="password"
                 ></inputComp>
-                <span class="errorText">Пароль не верный</span>
+                <span class="errorText" :class="isPasswordError? 'visible' : ''">Пароль не верный</span>
             </div>
             <font-awesome-icon class="icon-pw" :icon="['fas', 'eye']" @click="showPassword" />
         </div>
         
         <div class="action-block">
-            <btnComp @click="$router.push({ name: 'logup' })">Регистрация</btnComp>
-            <btnComp @click="handlerLogin">Войти</btnComp>
+            <btnComp @click.prevent="$router.push({ name: 'logup' })">Регистрация</btnComp>
+            <btnComp @click.prevent="handlerLogin">Войти</btnComp>
         </div>
         
     </form>
@@ -45,6 +45,7 @@ export default {
             password: '',
             isShowPassword: false,
             isEmailError: false,
+            isPasswordError: false,
         }
     },
     emits: ['dataSubmit', 'isShow'],
@@ -77,13 +78,13 @@ export default {
                     await login(this.email, this.password);
                     this.$router.push({ name: 'main' });
                 } 
-                if(resultValidationEmail === false) {
+                if(!resultValidationEmail) {
                     this.isEmailError = true;
-                    console.log('Введите верный Email')
-                }
-                if(resultValidationPassword === false) {
-                    console.log('Введите верный пароль')
-                }
+                } else this.isEmailError = false;
+
+                if(!resultValidationPassword) {
+                    this.isPasswordError = true;
+                } else this.isPasswordError = false;
             } catch (err) {
                 console.error(`components/authView/authFormComp.vue: handlerLogin  => ${err}`)
             }
@@ -101,18 +102,13 @@ export default {
         }
     },
     mounted() {
-        window.addEventListener('keydown', async (e) => {
+        window.addEventListener('keydown', (e) => {
             if(e.key === 'Enter') {
                 try {
-                if(isValidEmail(this.email) === true && isValidPassword(this.password) === true) { 
-                    await login(this.email, this.password);
-                    this.$router.push({ name: 'main' });
-                } else {
-                    this.$router.push({ name: 'logup' });
+                    this.handlerLogin();
+                } catch (err) {
+                    console.error(`components/authView/authFormComp.vue: mounted -> keydownEnter  => ${err}`)
                 }
-            } catch (err) {
-                console.error(`components/authView/authFormComp.vue: mounted -> keydownEnter  => ${err}`)
-            }
             }
         })
     }
@@ -151,15 +147,23 @@ export default {
     min-width: 100%;
     width: max-content;
     height: max-content;
+    z-index: 2 !important;
 }
 .errorText {
     position: absolute; 
     left: 0; 
-    bottom: -.7rem;
+    bottom: 1rem;
     background-color: var(--color-bg-main);
-    color: rgb(203, 20, 20);
-    z-index: 10;
-    animation: slideDown .5s forwards;
+    color: rgb(224, 53, 53);
+    z-index: -1 !important;
+    margin-left: 0.4rem;
+    transition: all 0.5s ease;
+    opacity: 0;
+}
+.errorText.visible {
+    bottom: -.7rem;
+    opacity: 1;
+    transition: all 0.5s ease;
 }
 .icon-pw {
     width: 20px;
@@ -169,6 +173,7 @@ export default {
     top: 66%;
     right: 2%;
     cursor: pointer;
+    z-index: 10;
 }
 .action-block {
     width: 100%;
