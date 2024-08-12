@@ -83,6 +83,7 @@
             :key="message.id"
             :is-selected="computeSelectedMessage(message.id)"
             @select-message="(e) => selectMessage(e)"
+            :openned-chat="opennedChat"
             ></wraperMessageComp>
         </div>
         <!-- Панель при ответе на сообщение -->

@@ -7,8 +7,19 @@
     >
         <div class="message" :class="computePositionMessage">
             <forwardingContainerComp :message="message"></forwardingContainerComp>
-            <span class="reply-message-container" v-if="$props.message.replied">{{ $props.message.relatedMessage.content }}</span>
-
+            <div class="reply-message-container">
+                <span class="reply-message-fd-count" v-if="$props.message.relatedMessage?.isForwarding">
+                    Пересланные сообщения: <span style="font-weight: bolder;">{{ $props.message.relatedMessage.forwardedMessagesCount }}</span>
+                </span>
+                <span class="reply-message-content" v-if="$props.message.replied">
+                    <div class="reply-message-icon" v-if="store.user.id !== $props.message.relatedMessage.fromUserId">
+                      <p>{{ computeInitials }}</p>
+                    </div>
+                    <span v-else> {{ computeInitials }} </span>
+                    {{ $props.message.relatedMessage.content }}
+                </span>
+            </div>
+            
             <div class="message-content__container">
                <p class="message-content">{{ $props.message.content }}</p>
             </div> 
@@ -50,7 +61,12 @@ export default {
             type: Boolean,
             required: false,
             default: false,
-        }
+        },
+        opennedChat: {
+            type: Object,
+            required: false,
+            default: null,
+        },
     },
     emits: ['openContextMenu', 'selectMessage'],
     computed: {
@@ -63,6 +79,13 @@ export default {
                 }
             } catch (err) {
                 console.error(`components/mainView/wraperMessageComp: computePositionMessage => ${err}`)
+            }
+        },
+        computeInitials() {
+            if(this.store.user.id === this.$props.message.relatedMessage.fromUserId) {
+                return 'Вы:'
+            } else {
+                return this.$props.opennedChat.users[0].name.slice(0,1).toUpperCase() + this.$props.opennedChat.users[0].lastname.slice(0,1).toUpperCase();
             }
         }
     },
@@ -160,13 +183,56 @@ export default {
 }
 .reply-message-container {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: rgba(163, 163, 163, 0.3);
+    border-radius: 5px;
+    padding: 0 .5rem;
+}
+.reply-message-fd-count {
+    width: 100%;
     height: max-content;
     overflow: hidden;
-    background-color: rgba(163, 163, 163, 0.323);
+    border-bottom: 1px solid rgba(77, 77, 77, 0.5);
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding: .3rem .8rem;
-    border-radius: 5px;
+    padding: .1rem .8rem;
+    font-family: var(--font);
+    font-style: italic;
+    font-weight: 100px;
+    color: rgba(77, 77, 77, 0.8);
     cursor: pointer;
+}
+.reply-message-icon {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(161, 80, 161);
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: .3rem;
+}
+.reply-message-icon p {
+   font-size: 12px; 
+   color: white;
+}
+.reply-message-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: max-content;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: .3rem 0;
+    cursor: pointer;
+}
+.reply-message-content span {
+    margin-right: .3rem;
 }
 </style>
