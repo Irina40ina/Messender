@@ -29,6 +29,8 @@ export default {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     transition: all .3s ease;
+    z-index: 5 !important;
+    background-color: #fff;
 }
 .input:focus {
     box-shadow: none;

@@ -34,7 +34,26 @@ export async function forwardMessage(message) {
         });
         return response.data;
     } catch (err) {
-        console.error(`api/massagesApi: createMessage => ${err}`)
+        console.error(`api/massagesApi: createMessage => ${err}`);
+    }
+}
+
+export async function replyMessage(message) {
+    try {
+        const response = await axios.post(hostName + '/messages/create', {
+            ...message,
+        }, {
+            params: {
+                replied: true,
+            },
+            headers: {
+            ...ContentTypeJSON,
+            "Authorization": "Bearer " + localStorage.getItem('token'),
+            }
+        });
+        return response.data;
+    } catch (err) {
+        console.error(`api/massagesApi: replyMessage => ${err}`)
     }
 }
 // Редактирование сообщения

@@ -35,7 +35,7 @@
             </div>
             <div 
             class="context-menu-item"
-            @click="$emit('showReplyedMessage')"
+            @click="$emit('replyMessage')"
             >
                 <p class="text">Ответить</p>
                 <font-awesome-icon  class="icon reply" :icon="['fas', 'reply']" />
@@ -55,7 +55,7 @@ export default {
             requered: false,
         }
     },
-    emits: ['close', 'showReplyedMessage', 'editMessage', 'selectMessages', 'deleteMessage', 'forwardMessage'],
+    emits: ['close', 'replyMessage', 'editMessage', 'selectMessages', 'deleteMessage', 'forwardMessage'],
     watch: {
         isShow(newValue) {
             try {

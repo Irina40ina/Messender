@@ -22,7 +22,7 @@
         <contextMenuComp
         :is-show="isShowContextMenu"
         @close="isShowContextMenu = false"
-        @show-replyed-message="replyMessage"
+        @reply-message="replyMessage"
         @edit-message="editSelectedMessage"
         @select-messages="handlerSelectMessage"
         @delete-message="deleteMessage"
@@ -146,7 +146,7 @@
 
 <script>
 import wraperMessageComp from './wraperMessageComp.vue';
-import { editMessage, getChatMessagesById, forwardMessage } from '@/api/messagesApi';
+import { editMessage, getChatMessagesById, forwardMessage, replyMessage } from '@/api/messagesApi';
 import { useMainStore } from '@/store/mainStore';
 import { nextTick, watch } from 'vue';
 import { createMessage, deleteMessagesById } from '@/api/messagesApi';
@@ -170,6 +170,7 @@ export default {
                 chat_id: null,
                 content: '',
                 forwarded_ids: null,
+                replied_at: null,
             },
             isShowContextMenu: false,
             isShowReplyedMessage: false,
@@ -188,6 +189,7 @@ export default {
             toUserInitials: '',
             selectedMessage: null,
             editMode: false,
+            repliedMode: false,
             opennedChat: null,
             selectedMessagesId: [],
             deletedMessagesId: [],
@@ -285,6 +287,16 @@ export default {
                     this.resetMessageObj();
                     return;
                 }
+                if (this.messageObj.content !== '' && this.repliedMode === true) {
+                    this.createMessageObj(this.store.user?.id, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
+                    this.messageObj.replied_at = this.selectedMessage?.id;
+                    const response = await replyMessage(this.messageObj);
+                    this.store.messages.push(response?.data);
+                    this.isShowReplyedMessage = false;
+                    this.repliedMode = false;
+                    this.resetMessageObj();
+                    return;
+                }
                 
             } catch (err) {
                 console.error(`components/mainView/messangerWidgetComp: sendMessage => ${err}`)
@@ -298,6 +310,7 @@ export default {
                 this.messageObj.to_user_id = null;
                 this.messageObj.chat_id = null;
                 this.messageObj.content = '';
+                this.messageObj.replied_at = null;
             } catch (err) {
                 console.error(`components/mainView/messangerWidgetComp: sendMessage => ${err}`);
                 throw err;
@@ -314,6 +327,7 @@ export default {
         replyMessage() {
             try {
                 this.isShowReplyedMessage = true;
+                this.repliedMode = true;
             } catch (err) {
                 console.error(`components/mainView/messangerWidgetComp: replyMessage => ${err}`);
             }

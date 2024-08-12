@@ -7,6 +7,7 @@
     >
         <div class="message" :class="computePositionMessage">
             <forwardingContainerComp :message="message"></forwardingContainerComp>
+            <span class="reply-message-container" v-if="$props.message.replied">{{ $props.message.relatedMessage.content }}</span>
 
             <div class="message-content__container">
                <p class="message-content">{{ $props.message.content }}</p>
@@ -156,5 +157,16 @@ export default {
     color: gray;
     font-family: var(--font);
     font-size: 12px;
+}
+.reply-message-container {
+    width: 100%;
+    height: max-content;
+    overflow: hidden;
+    background-color: rgba(163, 163, 163, 0.323);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: .3rem .8rem;
+    border-radius: 5px;
+    cursor: pointer;
 }
 </style>
