@@ -6,7 +6,7 @@
     @click="selectMessage"
     >
         <div class="message" :class="computePositionMessage">
-            <forwardingContainerComp :message="message"></forwardingContainerComp>
+            <forwardingContainerComp :message="message" v-if="message?.forwardedMessages"></forwardingContainerComp>
             <div class="reply-message-container">
                 <span class="reply-message-fd-count" v-if="$props.message.relatedMessage?.isForwarding">
                     Пересланные сообщения: <span style="font-weight: bolder;">{{ $props.message.relatedMessage.forwardedMessagesCount }}</span>
@@ -137,7 +137,7 @@ export default {
     flex-direction: column;
     align-items: center;
     word-wrap: break-word;
-    padding: 0.1rem 1rem 0.1rem 1rem;
+    padding: .3rem .5rem .3rem .5rem;
     border-radius: 8px;
     box-shadow: var(--shadow);
     background-color: #fff;

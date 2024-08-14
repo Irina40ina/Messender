@@ -4,6 +4,7 @@
         v-if="$props.message?.forwardedMessages?.length > 0" 
         class="forwarded-list" 
         >
+        <span> Переслано от:</span>
             <li 
             class="forwarded-item"
             v-for="message in $props.message?.forwardedMessages" 
@@ -12,10 +13,17 @@
                 <forwardingContainerComp
                 :message="message"
                 /> 
-                <p class="content-item">
-                    <p>{{ message.fromUser.name + ' ' + message.fromUser.lastname }}</p>
-                    {{message.content}}
-                </p>
+                <div class="content-item">
+                    <div class="forwarded-user-container">
+                        <div class="forwarded-message-icon">
+                            <p>{{ message.fromUser.name[0] + message.fromUser.lastname[0] }}</p>
+                        </div>
+                        <p class="user-name">{{ message.fromUser.name + ':' }}</p>
+                    </div>
+                    
+                    <p class="message-content">{{message.content}}</p>
+                </div>
+                    
             </li>
         </ul>
     </div>
@@ -39,16 +47,29 @@ export default {
 <style scoped>
 .forwarding-container {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.164);
-    margin-bottom: .4rem;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: rgba(163, 163, 163, 0.3);
+    border-radius: 5px;
+    padding: 0 .3rem;
+}
+.forwarding-container ul {
+    list-style-type: none;
 }
 .forwarded-list {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    border-left: 2px solid white;
     border-radius: 5px;
+}
+.forwarded-list span {
+    width: 100%;
+    border-bottom: 1px solid rgba(77, 77, 77, 0.5);
+    font-style: italic;
 }
 .forwarded-item {
     width: 98%;
@@ -59,4 +80,29 @@ export default {
     text-align: left;
     padding-left: 1rem;
 }
+.forwarded-user-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.forwarded-message-icon {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(161, 80, 161);
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: .3rem;
+}
+.forwarded-message-icon p {
+    font-size: 12px; 
+    color: white;
+}
+.user-name {
+    font-style: italic;
+}
+
 </style>

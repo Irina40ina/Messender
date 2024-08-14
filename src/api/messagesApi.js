@@ -105,7 +105,7 @@ export async function deleteMessagesById(array, chatId) {
             "Authorization": "Bearer " + localStorage.getItem('token'),
         },
     }); 
-        return response.data.data;
+        return response.data;
     } catch (err) {
         console.error(`api/messagesApi: deleteMessagesById => ${err}`)
     }

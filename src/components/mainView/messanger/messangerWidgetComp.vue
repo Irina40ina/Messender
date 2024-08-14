@@ -281,11 +281,14 @@ export default {
                 // Пересылка сообщения
                 if (this.messageObj.content !== '' && this.$props.forwardingMode === true) {
                     this.createMessageObj(this.store.user?.id, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
-                    this.messageObj.forwarded_ids = this.selectedMessagesId;        
+                    if(this.selectedMessagesId.length === 0) {
+                        this.selectedMessagesId.push(this.selectedMessage.id);
+                    } 
                     const response = await forwardMessage(this.messageObj);
                     this.store.messages.push(response?.data);
                     this.$emit('disableForwardingMode');
                     this.resetMessageObj();
+                    this.isShowActionsBtn = false;
                     return;
                 }
                 if (this.messageObj.content !== '' && this.repliedMode === true) {
@@ -296,6 +299,7 @@ export default {
                     this.isShowReplyedMessage = false;
                     this.repliedMode = false;
                     this.resetMessageObj();
+                    this.isShowActionsBtn = false;
                     return;
                 }
                 
@@ -380,6 +384,7 @@ export default {
                     this.deletedMessagesId.push(this.selectedMessage.id);
                 }
                 const response = await deleteMessagesById(this.deletedMessagesId, this.selectedMessage.chatId);
+                console.log(response)
                 if(response.meta.status === 'success') {
                     this.store.deleteSelectedMessages(this.deletedMessagesId);
                     if(this.deletedMessagesId.includes(this.$props.opennedChat.previewMessage.id)){
@@ -390,6 +395,7 @@ export default {
                 console.error(`components/mainView/messangerWidgetComp: deleteMessage => ${err}`)
             } finally {
                 this.deletedMessagesId = [];
+                this.isShowActionsBtn = false;
             }
         },
         deleteSeveralMessages() {
