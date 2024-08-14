@@ -281,9 +281,7 @@ export default {
                 // Пересылка сообщения
                 if (this.messageObj.content !== '' && this.$props.forwardingMode === true) {
                     this.createMessageObj(this.store.user?.id, this.$props.opennedChat.users[0].id, this.$props.opennedChat.id);
-                    if(this.selectedMessagesId.length === 0) {
-                        this.selectedMessagesId.push(this.selectedMessage.id);
-                    } 
+                    this.messageObj.forwarded_ids = this.selectedMessagesId;
                     const response = await forwardMessage(this.messageObj);
                     this.store.messages.push(response?.data);
                     this.$emit('disableForwardingMode');
@@ -424,6 +422,9 @@ export default {
         forwardMessage() {
             try {
                this.selectForwardingChat = true; 
+               if(this.selectedMessagesId.length === 0) {
+                    this.selectedMessagesId.push(this.selectedMessage.id);
+                } 
             } catch (err) {
                 console.error(`components/mainView/messangerWidgetComp: forwardMessage => ${err}`);
             }

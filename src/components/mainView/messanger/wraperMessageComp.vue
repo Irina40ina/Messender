@@ -82,10 +82,18 @@ export default {
             }
         },
         computeInitials() {
-            if(this.store.user.id === this.$props.message.relatedMessage.fromUserId) {
-                return 'Вы:'
-            } else {
-                return this.$props.opennedChat.users[0].name.slice(0,1).toUpperCase() + this.$props.opennedChat.users[0].lastname.slice(0,1).toUpperCase();
+            try {
+                if(this.store.user.id === this.$props.message.relatedMessage.fromUserId) {
+                    return 'Вы:'
+                } else {
+                    if(this.$props.opennedChat) {
+                        return this.$props.opennedChat?.users[0].name.slice(0,1).toUpperCase() + this.$props.opennedChat?.users[0].lastname.slice(0,1).toUpperCase();
+                    } else {
+                        return '';
+                    }
+                }
+            } catch (err) {
+                console.error(`components/mainView/wraperMessageComp: computeInitials => ${err}`)
             }
         }
     },
