@@ -12,7 +12,7 @@
                 :placeholder= "'Введите Имя'"
                 v-model="firstName"
                 ></inputComp> 
-                <span class="errorText">TEEXT ERROR</span>
+                <span class="errorText" :class="isNameError? 'visible' : ''">Введите корректное имя</span>
             </div>
             <div class="input-group">
                 <inputComp
@@ -21,7 +21,7 @@
                 :placeholder= "'Введите Фамилию'"
                 v-model="lastName"
                 ></inputComp>
-                <span class="errorText">TEEXT ERROR</span>
+                <span class="errorText" :class="isLastnameError? 'visible' : ''">Введите корректную фамилию</span>
             </div>
             <div class="input-group">
                 <inputComp
@@ -30,7 +30,7 @@
                 :placeholder= "'Введите email'"
                 v-model="email"
                 ></inputComp>
-                <span class="errorText">TEEXT ERROR</span>
+                <span class="errorText" :class="isEmailError? 'visible' : ''">Введите корректный email</span>
             </div>
             <div class="input-group">
                 <inputComp
@@ -38,9 +38,9 @@
                 :type="computeTypePassword" 
                 placeholder="Введите пароль"
                 v-model="password"
-                @focus="isShowPasswordCheck = false"
+                @focus="isOpenedPasswordCheck = false"
                 ></inputComp>
-                <span class="errorText">TEEXT ERROR</span>
+                <span class="errorText" :class="isPasswordError? 'visible' : ''">Введите корректный пароль</span>
             </div>
             <div class="input-group">
                 <inputComp
@@ -48,12 +48,15 @@
                 :type="computeTypePasswordCheck" 
                 placeholder="Введите пароль ещё раз"
                 v-model="passwordCheck"
-                @focus="isShowPassword = false"
+                @focus="isOpenedPassword = false"
                 ></inputComp>
-                <span class="errorText">TEEXT ERROR</span>
+                <span class="errorText" :class="isPasswordCheckError? 'visible' : ''">Пароли не совпадают</span>
             </div>
-            <font-awesome-icon class="icon-pw1" :icon="['fas', 'eye']" @click="showPassword" />
-            <font-awesome-icon class="icon-pw2" :icon="['fas', 'eye']" @click="showPasswordCheck" />
+            <font-awesome-icon class="icon-open-eye1" :class="isOpenedPassword? 'unvisible' : ''" :icon="['fas', 'eye']" @click="isOpenedPassword = true" />
+            <font-awesome-icon class="icon-open-eye2" :class="isOpenedPasswordCheck? 'unvisible' : ''" :icon="['fas', 'eye']" @click="isOpenedPasswordCheck = true" />
+           
+            <font-awesome-icon class="icon-close-eye1" :class="isOpenedPassword? 'visible' : ''" :icon="['fas', 'eye-slash']" @click="isOpenedPassword = false" />
+            <font-awesome-icon class="icon-close-eye2" :class="isOpenedPasswordCheck? 'visible' : ''" :icon="['fas', 'eye-slash']" @click="isOpenedPasswordCheck = false" />
         </div>
         
         <div class="action-block">
@@ -73,16 +76,21 @@ export default {
             email: '',
             password: '',
             passwordCheck: '',
-            isShowPassword: false,
-            isShowPasswordCheck: false,
+            isOpenedPassword: false,
+            isOpenedPasswordCheck: false,
+            isNameError: false,
+            isLastnameError: false,
+            isEmailError: false,
+            isPasswordError: false,
+            isPasswordCheckError: false,
         }
     },
     computed: {
         computeTypePassword() {
             try {
-                if(this.isShowPassword === false) {
+                if(this.isOpenedPassword === false) {
                     return 'password'
-                } else if(this.isShowPassword === true) {
+                } else if(this.isOpenedPassword === true) {
                     return 'text'
                 }
             } catch (err) {
@@ -91,9 +99,9 @@ export default {
         },
         computeTypePasswordCheck() {
             try {
-                if(this.isShowPasswordCheck === false) {
+                if(this.isOpenedPasswordCheck === false) {
                     return 'password'
-                } else if(this.isShowPasswordCheck === true) {
+                } else if(this.isOpenedPasswordCheck === true) {
                     return 'text'
                 }
             } catch (err) {
@@ -104,49 +112,41 @@ export default {
     methods: {
         async handlerLogup() {
             try {
-                if(
-                    this.firstName !== '' && 
-                    hasSpecSymbols(this.firstName) === true &&
-                    this.lastName !== '' && 
-                    hasSpecSymbols(this.lastName) === true &&
-                    isValidEmail(this.email) === true && 
-                    isValidPassword(this.password) === true && 
-                    isValidPassword(this.passwordCheck) === true &&
-                    this.password === this.passwordCheck
-                ) {
-                    console.log('Запрос на сервер');
-                    // await logup(this.firstName, this.lastName, this.email, this.password); 
-                } 
-                else {
-                    console.log('ELSE');
+                if(this.firstName !== '' && hasSpecSymbols(this.firstName) === true) {
+                    this.isNameError = false;
+                } else {
+                    this.isNameError = true
                     return;
                 }
+                if(this.lastName !== '' && hasSpecSymbols(this.lastName) === true) {
+                    this.isLastnameError = false;
+                } else {
+                    this.isLastnameError = true;
+                    return;
+                }
+                if(isValidEmail(this.email) === true) {
+                    this.isEmailError = false;
+                } else {
+                    this.isEmailError = true;
+                    return;
+                }
+                if(isValidPassword(this.password) === true) {
+                    this.isPasswordError = false;
+                } else {
+                    this.isPasswordError = true;
+                    return;
+                }
+                if(isValidPassword(this.passwordCheck) === true && this.password === this.passwordCheck) {
+                    this.isPasswordCheckError = false;
+                } else {
+                    this.isPasswordCheckError = true;
+                    return;
+                }
+                await logup(this.firstName, this.lastName, this.email, this.password); 
             } catch (err) {
                 console.error(`components/authView/regFormComp.vue: handlerLogup  => ${err}`)
             }              
         },
-        showPassword() {
-            try {
-                if(this.isShowPassword === false) {
-                    this.isShowPassword = true;
-                } else if(this.isShowPassword === true) {
-                    this.isShowPassword = false;
-                }
-            } catch (err) {
-                console.error(`components/authView/regFormComp.vue: showPassword  => ${err}`)
-            }
-        },
-        showPasswordCheck() {
-            try {
-                if(this.isShowPasswordCheck === false) {
-                    this.isShowPasswordCheck = true;
-                } else if(this.isShowPasswordCheck === true) {
-                    this.isShowPasswordCheck = false;
-                }
-            } catch (err) {
-                console.error(`components/authView/regFormComp.vue: showPassword  => ${err}`)
-            }
-        }
     },
 }
 </script>
@@ -190,7 +190,7 @@ export default {
     justify-content: space-between;
     align-items: center;
 }
-.icon-pw1 {
+.icon-open-eye1 {
     width: 20px;
     height: 20px;
     color: grey;
@@ -199,7 +199,10 @@ export default {
     right: 2%;
     cursor: pointer;
 }
-.icon-pw2 {
+.icon-open-eye1.unvisible{
+    display: none;
+}
+.icon-open-eye2 {
     width: 20px;
     height: 20px;
     color: grey;
@@ -207,5 +210,50 @@ export default {
     top: 87%;
     right: 2%;
     cursor: pointer;
+}
+.icon-open-eye2.unvisible{
+    display: none;
+}
+.icon-close-eye1 {
+    display: none;
+    width: 20px;
+    height: 20px;
+    color: grey;
+    position: absolute;
+    top: 67%;
+    right: 2%;
+    cursor: pointer;
+}
+.icon-close-eye1.visible{
+    display: block;
+}
+.icon-close-eye2 {
+    display: none;
+    width: 20px;
+    height: 20px;
+    color: grey;
+    position: absolute;
+    top: 87%;
+    right: 2%;
+    cursor: pointer;
+}
+.icon-close-eye2.visible{
+    display: block;
+}
+.errorText {
+    position: absolute; 
+    left: 0; 
+    bottom: 1rem;
+    background-color: var(--color-bg-main);
+    color: rgb(224, 53, 53);
+    z-index: -1 !important;
+    margin-left: 0.4rem;
+    transition: all 0.5s ease;
+    opacity: 0;
+}
+.errorText.visible {
+    bottom: -.7rem;
+    opacity: 1;
+    transition: all 0.5s ease;
 }
 </style>

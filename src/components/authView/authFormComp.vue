@@ -25,7 +25,8 @@
                 ></inputComp>
                 <span class="errorText" :class="isPasswordError? 'visible' : ''">Пароль не верный</span>
             </div>
-            <font-awesome-icon class="icon-pw" :icon="['fas', 'eye']" @click="showPassword" />
+            <font-awesome-icon class="icon-open-eye" :class="isOpenedPassword? 'unvisible' : ''" :icon="['fas', 'eye']" @click="isOpenedPassword = true" />
+            <font-awesome-icon class="icon-close-eye" :class="isOpenedPassword? 'visible' : ''" :icon="['fas', 'eye-slash']" @click="isOpenedPassword = false" />
         </div>
         
         <div class="action-block">
@@ -43,7 +44,7 @@ export default {
         return {
             email: '',
             password: '',
-            isShowPassword: false,
+            isOpenedPassword: false,
             isEmailError: false,
             isPasswordError: false,
         }
@@ -52,9 +53,9 @@ export default {
     computed: {
         computeTypePassword() {
             try {
-                if(this.isShowPassword === false) {
+                if(this.isOpenedPassword === false) {
                     return 'password'
-                } else if(this.isShowPassword === true) {
+                } else if(this.isOpenedPassword === true) {
                     return 'text'
                 }
             } catch (err) {
@@ -165,7 +166,7 @@ export default {
     opacity: 1;
     transition: all 0.5s ease;
 }
-.icon-pw {
+.icon-open-eye {
     width: 20px;
     height: 20px;
     color: grey;
@@ -174,6 +175,23 @@ export default {
     right: 2%;
     cursor: pointer;
     z-index: 10;
+}
+.icon-open-eye.unvisible{
+    display: none;
+}
+.icon-close-eye {
+    display: none;
+    width: 20px;
+    height: 20px;
+    color: grey;
+    position: absolute;
+    top: 66%;
+    right: 2%;
+    cursor: pointer;
+    z-index: 10;
+}
+.icon-close-eye.visible{
+    display: block;
 }
 .action-block {
     width: 100%;
