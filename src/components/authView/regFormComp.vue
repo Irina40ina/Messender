@@ -11,6 +11,7 @@
                 :type="'text'"
                 :placeholder= "'Введите Имя'"
                 v-model="firstName"
+                @input="checkFieldFirstName()"
                 ></inputComp> 
                 <span class="errorText" :class="isNameError? 'visible' : ''">Введите корректное имя</span>
             </div>
@@ -20,6 +21,7 @@
                 :type="'text'" 
                 :placeholder= "'Введите Фамилию'"
                 v-model="lastName"
+                @input="checkFieldLasttName"
                 ></inputComp>
                 <span class="errorText" :class="isLastnameError? 'visible' : ''">Введите корректную фамилию</span>
             </div>
@@ -29,6 +31,7 @@
                 :type="'email'" 
                 :placeholder= "'Введите email'"
                 v-model="email"
+                @input="checkFieldEmail"
                 ></inputComp>
                 <span class="errorText" :class="isEmailError? 'visible' : ''">Введите корректный email</span>
             </div>
@@ -38,6 +41,7 @@
                 :type="computeTypePassword" 
                 placeholder="Введите пароль"
                 v-model="password"
+                @input="checkFieldPassword"
                 @focus="isOpenedPasswordCheck = false"
                 ></inputComp>
                 <span class="errorText" :class="isPasswordError? 'visible' : ''">Введите корректный пароль</span>
@@ -48,6 +52,7 @@
                 :type="computeTypePasswordCheck" 
                 placeholder="Введите пароль ещё раз"
                 v-model="passwordCheck"
+                @input="checkFieldPasswordCheck"
                 @focus="isOpenedPassword = false"
                 ></inputComp>
                 <span class="errorText" :class="isPasswordCheckError? 'visible' : ''">Пароли не совпадают</span>
@@ -110,7 +115,7 @@ export default {
         },
     },
     methods: {
-        async handlerLogup() {
+        checkFieldFirstName() {
             try {
                 if(this.firstName !== '' && hasSpecSymbols(this.firstName) === true) {
                     this.isNameError = false;
@@ -118,31 +123,65 @@ export default {
                     this.isNameError = true
                     return;
                 }
+            } catch (err) {
+                console.error(`components/authView/regFormComp.vue: checkFieldFirstName  => ${err}`)
+            }
+        },
+        checkFieldLasttName() {
+            try {
                 if(this.lastName !== '' && hasSpecSymbols(this.lastName) === true) {
                     this.isLastnameError = false;
                 } else {
                     this.isLastnameError = true;
                     return;
                 }
+            } catch (err) {
+                console.error(`components/authView/regFormComp.vue: checkFieldLasttName  => ${err}`)
+            }
+        },
+        checkFieldEmail() {
+            try {
                 if(isValidEmail(this.email) === true) {
                     this.isEmailError = false;
                 } else {
                     this.isEmailError = true;
                     return;
                 }
+            } catch (err) {
+                console.error(`components/authView/regFormComp.vue: checkFieldEmail  => ${err}`)
+            }
+        },
+        checkFieldPassword() {
+            try {
                 if(isValidPassword(this.password) === true) {
                     this.isPasswordError = false;
                 } else {
                     this.isPasswordError = true;
                     return;
                 }
+            } catch (err) {
+                console.error(`components/authView/regFormComp.vue: checkFieldPassword  => ${err}`)
+            }
+        },
+        checkFieldPasswordCheck() {
+            try {
                 if(isValidPassword(this.passwordCheck) === true && this.password === this.passwordCheck) {
                     this.isPasswordCheckError = false;
                 } else {
                     this.isPasswordCheckError = true;
                     return;
                 }
-                await logup(this.firstName, this.lastName, this.email, this.password); 
+            } catch (err) {
+                console.error(`components/authView/regFormComp.vue: checkFieldPasswordCheck  => ${err}`)
+            }
+        },
+        async handlerLogup() {
+            try {
+                if(this.isNameError === false && this.isLastnameError === false && this.isEmailError === false && this.isPasswordError === false && this.isPasswordCheckError === false) {
+                    await logup(this.firstName, this.lastName, this.email, this.password); 
+                } else {
+                    return;
+                }
             } catch (err) {
                 console.error(`components/authView/regFormComp.vue: handlerLogup  => ${err}`)
             }              
